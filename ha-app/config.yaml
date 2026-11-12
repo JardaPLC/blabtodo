@@ -8,7 +8,7 @@
 # Home Assistant treats every file in this repository named config.yaml, config.yml or
 # config.json as an app. Never give another file one of those names.
 name: blabtodo
-version: "0.1.1"
+version: "0.2.0"
 slug: blabtodo
 description: A home task manager for one family
 url: https://github.com/JardaPLC/blabtodo
