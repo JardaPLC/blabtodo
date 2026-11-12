@@ -76,14 +76,18 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      # The container runs on a network with IPv6, as it does under Home Assistant, and is
+      # requested over IPv4 and over IPv6. A server that listens on IPv4 only fails here.
       - name: Start it and request the health check, the page and its styles
         run: |
-          docker run -d --name blabtodo -p 8000:8000 blabtodo:ci
+          docker network create --ipv6 blabtodo-net
+          docker run -d --name blabtodo --network blabtodo-net -p 8000:8000 blabtodo:ci
           for attempt in $(seq 1 30); do
             if curl -fsS http://127.0.0.1:8000/health/ > /dev/null; then break; fi
             sleep 1
           done
           curl -fsS http://127.0.0.1:8000/health/ | grep '"status": "ok"'
+          curl -fsS -g "http://[::1]:8000/health/" | grep '"status": "ok"'
           curl -fsS http://127.0.0.1:8000/ | grep 'Funguje to!'
           css=$(curl -fsS http://127.0.0.1:8000/ | grep -o '/static/css/tailwind\.[0-9a-f]*\.css' | head -n 1)
           test -n "$css"
