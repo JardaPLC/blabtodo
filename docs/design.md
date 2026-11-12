@@ -2,7 +2,7 @@
 
 A home task manager for one family. Household tasks sit in one shared queue that any screen in the house can show, and marking a task done takes two taps.
 
-- **Status:** draft 0.6, 2026-11-12. Milestone 0 is in progress: the skeleton exists and is tested; publishing it and installing it on the Pi remain.
+- **Status:** draft 0.7, 2026-11-12. Milestone 0 is in progress: version 0.1.0, the skeleton, is published; installing it on the Pi, the backups and the restore rehearsal remain.
 - **Designed for:** a family with children who cannot read yet and who will grow into it. Czech by default, English as a second language. Used on phones, tablets, PCs and a wall panel. Reachable on the home network only.
 - **Not settled:** see [Open questions](#17-open-questions).
 - **How to read this:** sections 1–6 describe what the app does, 7–13 how it is built, 14–17 the plan, the decisions and what is still open.
@@ -435,7 +435,7 @@ An update is: fetch the new image, restart. The data is not touched, because it 
 The repository doubles as a [Home Assistant app repository](https://contributors.home-assistant.io/apps/guides/repository/): a `repository.yaml` at the root, and one folder with a [`config.yaml`](https://contributors.home-assistant.io/apps/reference/configuration/) that describes the app (name, version, processor types, image address, port, backup behaviour).
 
 - **Install.** In Home Assistant: Settings > Apps > Install app > menu > Repositories, paste the GitHub address, then install blabtodo and start it.
-- **Image.** Home Assistant downloads the image that GitHub built. Nothing is compiled on the Pi. The image tag must equal `version` in `config.yaml`, so a [release](https://contributors.home-assistant.io/apps/guides/publishing/) pushes the image first and changes the version second. The image must be set to public on GitHub once, after the first push.
+- **Image.** Home Assistant downloads the image that GitHub built. Nothing is compiled on the Pi. The image tag must equal `version` in `config.yaml`, so a [release](https://contributors.home-assistant.io/apps/guides/publishing/) pushes the image first and changes the version second. The image takes the repository's visibility, so a public repository gives a public image.
 - **Data.** Home Assistant gives each app a private `/data` folder that survives updates and is part of Home Assistant backups. The image keeps everything there.
 - **Address.** The app listens on its own port, for example `http://homeassistant.local:8000`. It is not shown inside the Home Assistant sidebar at first: that would put it behind the Home Assistant login, which the wall panel and the kids should not need.
 - **Updates.** After a release Home Assistant shows "update available", and one tap installs it.

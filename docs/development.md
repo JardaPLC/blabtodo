@@ -125,9 +125,10 @@ image exists. Never change that version by hand.
 Before tagging, add a short entry to `ha-app/CHANGELOG.md`. Home Assistant shows it
 next to the update.
 
-**Only once, after the very first release:** the image starts out private. On GitHub,
-open your profile, then Packages, then blabtodo, then Package settings, and change the
-visibility to Public. Home Assistant cannot download a private image.
+The image takes the visibility of the repository it was built from, so a public
+repository gives a public image and nothing has to be changed by hand. Home Assistant
+cannot download a private image. If an installation ever fails to download it, check the
+visibility on GitHub: your profile, then Packages, then blabtodo, then Package settings.
 
 ## Keeping the repository public-safe
 
