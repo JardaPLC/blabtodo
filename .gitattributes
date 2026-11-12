@@ -1,0 +1,11 @@
+# Text files use Unix line endings everywhere, also on Windows. The container is Linux,
+# and a Windows line ending in the wrong file breaks it.
+* text=auto eol=lf
+
+*.mo binary
+*.png binary
+*.jpg binary
+*.ico binary
+*.woff2 binary
+*.mp3 binary
+*.ogg binary

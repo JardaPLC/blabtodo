@@ -1,0 +1,15 @@
+# Example for running blabtodo on a Docker host other than Home Assistant:
+# a NAS with Container Manager, a mini PC, any Linux machine.
+# Step-by-step guide: docs/deploy/docker.md
+
+services:
+  blabtodo:
+    image: ghcr.io/jardaplc/blabtodo:latest
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      # Everything worth backing up lives in this one folder next to this file.
+      - ./data:/data
+    environment:
+      TZ: Europe/Prague

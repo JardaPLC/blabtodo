@@ -1,0 +1,5 @@
+# Makes this repository installable in Home Assistant as an app repository.
+# The app itself is described in ha-app/config.yaml.
+name: blabtodo
+url: https://github.com/JardaPLC/blabtodo
+maintainer: the blabtodo authors

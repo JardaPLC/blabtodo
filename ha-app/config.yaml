@@ -1,0 +1,32 @@
+# Home Assistant app definition.
+# Reference: https://contributors.home-assistant.io/apps/reference/configuration/
+#
+# "version" is written by the release workflow (.github/workflows/release.yml) after the
+# image with that tag has been published. Do not change it by hand: Home Assistant would
+# then offer an update whose image does not exist yet.
+#
+# Home Assistant treats every file in this repository named config.yaml, config.yml or
+# config.json as an app. Never give another file one of those names.
+name: blabtodo
+version: "0.0.0"
+slug: blabtodo
+description: A home task manager for one family
+url: https://github.com/JardaPLC/blabtodo
+arch:
+  - aarch64
+  - amd64
+# Image names on the GitHub Container Registry are always lower case.
+image: ghcr.io/jardaplc/blabtodo
+
+ports:
+  8000/tcp: 8000
+ports_description:
+  8000/tcp: Web interface
+webui: http://[HOST]:[PORT:8000]
+
+# Home Assistant restarts the app when this address stops answering.
+watchdog: http://[HOST]:[PORT:8000]/health/
+
+# The app is stopped for the few seconds a backup takes, so the copy of the database is
+# always consistent.
+backup: cold

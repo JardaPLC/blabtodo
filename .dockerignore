@@ -1,0 +1,26 @@
+# Keeps the image small and keeps local data and secrets out of it.
+.git
+.github
+.venv
+.vscode
+.django_tailwind_cli
+.pytest_cache
+.ruff_cache
+**/__pycache__
+
+data
+.env
+.env.*
+
+staticfiles
+static/css/tailwind.css
+
+docs
+tests
+tools
+ha-app
+*.md
+compose.yml
+repository.yaml
+Dockerfile
+.dockerignore

@@ -1,0 +1,8 @@
+{
+  // Python on Windows reads other programs' output in the system's old encoding unless
+  // told otherwise, which garbles the Tailwind build messages. This turns on UTF-8 for
+  // terminals opened in this workspace only. Reopen the terminal after changing it.
+  "terminal.integrated.env.windows": {
+    "PYTHONUTF8": "1"
+  }
+}

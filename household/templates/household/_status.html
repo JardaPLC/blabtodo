@@ -1,0 +1,15 @@
+{% load i18n %}
+<dl class="grid gap-x-8 gap-y-4 sm:grid-cols-3">
+  <div>
+    <dt class="text-lg text-stone-500">{% translate "Server time" %}</dt>
+    <dd class="text-3xl font-bold tabular-nums">{{ now|time:"H:i:s" }}</dd>
+  </div>
+  <div>
+    <dt class="text-lg text-stone-500">{% translate "Running" %}</dt>
+    <dd class="text-3xl font-bold tabular-nums">{% blocktranslate count count=minutes_running %}{{ count }} minute{% plural %}{{ count }} minutes{% endblocktranslate %}</dd>
+  </div>
+  <div>
+    <dt class="text-lg text-stone-500">{% translate "Database" %}</dt>
+    <dd class="text-3xl font-bold">{% if database_ok %}{% translate "OK" %}{% else %}{% translate "not reachable" %}{% endif %}</dd>
+  </div>
+</dl>

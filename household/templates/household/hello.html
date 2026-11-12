@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block body %}
+<main class="mx-auto max-w-[100rem] px-4 pt-6 pb-16 sm:px-6 lg:px-10">
+
+  <header class="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+    <div>
+      <p class="text-lg font-semibold text-green-700">blabtodo</p>
+      <h1 class="mt-1 text-4xl font-bold tracking-tight sm:text-5xl">{% translate "It works!" %}</h1>
+      <p class="mt-3 max-w-2xl text-stone-600">{% translate "The home task manager is installed and running." %}</p>
+    </div>
+
+    {# The choice is remembered on this device only (a cookie set by Django's set_language view). #}
+    <form action="{% url 'set_language' %}" method="post" class="flex shrink-0 gap-2"
+          aria-label="{% translate 'Language' %}">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ request.path }}">
+      {% for code, name in LANGUAGES %}
+      <button type="submit" name="language" value="{{ code }}"
+              {% if code == LANGUAGE_CODE %}aria-current="true"{% endif %}
+              class="min-h-16 rounded-2xl px-5 font-semibold ring-1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700 {% if code == LANGUAGE_CODE %}bg-stone-900 text-white ring-stone-900{% else %}bg-white text-stone-800 ring-stone-300 hover:bg-stone-100{% endif %}">
+        {{ name }}
+      </button>
+      {% endfor %}
+    </form>
+  </header>
+
+  {# Screen check: the same grid the Today screen will use (docs/design.md, section 3.7). #}
+  <section class="mt-10" aria-labelledby="screen-check">
+    <h2 id="screen-check" class="text-2xl font-bold">{% translate "Screen check" %}</h2>
+    <p class="mt-1 text-stone-600">
+      {% translate "Cards in one row on this screen:" %}
+      <strong class="font-bold text-stone-900">
+        <span class="sm:hidden">2</span>
+        <span class="hidden sm:inline lg:hidden">3</span>
+        <span class="hidden lg:inline xl:hidden">4</span>
+        <span class="hidden xl:inline 2xl:hidden">5</span>
+        <span class="hidden 2xl:inline">6</span>
+      </strong>
+    </p>
+    <ul class="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+      {% for number in tiles %}
+      <li class="flex aspect-square flex-col items-center justify-center rounded-3xl bg-white p-4 text-center shadow-sm ring-1 ring-stone-200">
+        <span class="text-6xl font-bold text-stone-300" aria-hidden="true">{{ number }}</span>
+        <span class="mt-2 font-semibold">{% blocktranslate %}Card {{ number }}{% endblocktranslate %}</span>
+      </li>
+      {% endfor %}
+    </ul>
+  </section>
+
+  {# Live connection: htmx fetches the status fragment again every 30 seconds, as Today will. #}
+  <section class="mt-10" aria-labelledby="live-connection">
+    <h2 id="live-connection" class="text-2xl font-bold">{% translate "Live connection" %}</h2>
+    <div class="mt-4 rounded-3xl bg-white p-6 shadow-sm ring-1 ring-stone-200">
+      <div id="status" hx-get="{% url 'status' %}" hx-trigger="every 30s" hx-swap="innerHTML">
+        {% include "household/_status.html" %}
+      </div>
+      <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
+        <button type="button" hx-get="{% url 'status' %}" hx-target="#status" hx-swap="innerHTML"
+                class="min-h-16 rounded-2xl bg-green-700 px-8 font-semibold text-white hover:bg-green-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700">
+          {% translate "Refresh now" %}
+        </button>
+        <p class="text-lg text-stone-500">{% translate "Refreshes by itself every 30 seconds." %}</p>
+      </div>
+    </div>
+  </section>
+
+  {# Technical details: opened and closed in the browser by Alpine.js, without the server. #}
+  <section class="mt-10" x-data="{ open: false }">
+    <button type="button" @click="open = !open" :aria-expanded="open.toString()" aria-controls="details"
+            class="min-h-16 rounded-2xl bg-white px-6 font-semibold text-stone-800 ring-1 ring-stone-300 hover:bg-stone-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700">
+      <span x-show="!open">{% translate "Show technical details" %}</span>
+      <span x-show="open" x-cloak>{% translate "Hide technical details" %}</span>
+    </button>
+    <dl id="details" x-show="open" x-cloak
+        class="mt-4 grid gap-x-8 gap-y-4 rounded-3xl bg-white p-6 shadow-sm ring-1 ring-stone-200 sm:grid-cols-2 lg:grid-cols-5">
+      <div>
+        <dt class="text-lg text-stone-500">{% translate "Version" %}</dt>
+        <dd class="font-semibold">{{ APP_VERSION }}</dd>
+      </div>
+      <div>
+        {# Stays the same for as long as the data folder does; see docs/deploy/home-assistant.md. #}
+        <dt class="text-lg text-stone-500">{% translate "Installation" %}</dt>
+        <dd class="font-semibold">{{ installation_id }}</dd>
+      </div>
+      <div>
+        <dt class="text-lg text-stone-500">{% translate "Language" %}</dt>
+        <dd class="font-semibold">{{ LANGUAGE_CODE }}</dd>
+      </div>
+      <div>
+        <dt class="text-lg text-stone-500">{% translate "Time zone" %}</dt>
+        <dd class="font-semibold">{{ time_zone }}</dd>
+      </div>
+      <div>
+        <dt class="text-lg text-stone-500">{% translate "Data folder" %}</dt>
+        <dd class="font-semibold">{% if data_dir_writable %}{% translate "writable" %}{% else %}{% translate "not writable" %}{% endif %}</dd>
+      </div>
+    </dl>
+  </section>
+
+</main>
+{% endblock %}

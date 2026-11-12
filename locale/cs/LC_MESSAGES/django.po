@@ -1,0 +1,87 @@
+# Czech translation of blabtodo.
+#
+# The texts in the code are English; this file gives the Czech for each of them.
+# After changing it, run:  uv run python tools/compile_translations.py
+msgid ""
+msgstr ""
+"Project-Id-Version: blabtodo\n"
+"Report-Msgid-Bugs-To: \n"
+"Language: cs\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+
+msgid "It works!"
+msgstr "Funguje to!"
+
+msgid "The home task manager is installed and running."
+msgstr "Domácí správce úkolů je nainstalovaný a běží."
+
+msgid "Language"
+msgstr "Jazyk"
+
+msgid "Screen check"
+msgstr "Kontrola obrazovky"
+
+msgid "Cards in one row on this screen:"
+msgstr "Počet karet v jednom řádku na této obrazovce:"
+
+#, python-format
+msgid "Card %(number)s"
+msgstr "Karta %(number)s"
+
+msgid "Live connection"
+msgstr "Živé spojení"
+
+msgid "Refresh now"
+msgstr "Obnovit teď"
+
+msgid "Refreshes by itself every 30 seconds."
+msgstr "Obnovuje se samo každých 30 sekund."
+
+msgid "Show technical details"
+msgstr "Zobrazit technické podrobnosti"
+
+msgid "Hide technical details"
+msgstr "Skrýt technické podrobnosti"
+
+msgid "Version"
+msgstr "Verze"
+
+msgid "Installation"
+msgstr "Instalace"
+
+msgid "Time zone"
+msgstr "Časové pásmo"
+
+msgid "Data folder"
+msgstr "Složka s daty"
+
+msgid "writable"
+msgstr "lze do ní zapisovat"
+
+msgid "not writable"
+msgstr "nelze do ní zapisovat"
+
+msgid "Server time"
+msgstr "Čas serveru"
+
+msgid "Running"
+msgstr "Běží"
+
+#, python-format
+msgid "%(count)s minute"
+msgid_plural "%(count)s minutes"
+msgstr[0] "%(count)s minutu"
+msgstr[1] "%(count)s minuty"
+msgstr[2] "%(count)s minut"
+
+msgid "Database"
+msgstr "Databáze"
+
+msgid "OK"
+msgstr "v pořádku"
+
+msgid "not reachable"
+msgstr "nedostupná"

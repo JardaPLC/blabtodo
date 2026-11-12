@@ -1,0 +1,86 @@
+name: Release
+
+# Pushing a tag such as v0.1.0 builds the image for both processor types, publishes it to
+# the GitHub Container Registry, and only then tells Home Assistant about the new version.
+# How to make a release: docs/development.md.
+
+on:
+  push:
+    tags: ["v[0-9]+.[0-9]+.[0-9]+"]
+
+permissions:
+  contents: write # to record the new version in ha-app/config.yaml
+  packages: write # to publish the image
+
+jobs:
+  image:
+    name: Build and publish the image
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.names.outputs.version }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Work out the version and the image name
+        id: names
+        run: |
+          echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+          echo "image=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/blabtodo" >> "$GITHUB_OUTPUT"
+
+      # Lets the build machine (amd64) also build the image for a Raspberry Pi (arm64).
+      - uses: docker/setup-qemu-action@v4
+
+      - uses: docker/setup-buildx-action@v4
+
+      - uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and publish
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          # A plain two-processor image, without extra attestation entries that some
+          # older Docker hosts cannot read.
+          provenance: false
+          tags: |
+            ${{ steps.names.outputs.image }}:${{ steps.names.outputs.version }}
+            ${{ steps.names.outputs.image }}:latest
+          build-args: BLABTODO_VERSION=${{ steps.names.outputs.version }}
+          labels: |
+            org.opencontainers.image.title=blabtodo
+            org.opencontainers.image.description=A home task manager for one family
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.version=${{ steps.names.outputs.version }}
+            org.opencontainers.image.licenses=MIT
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  home-assistant:
+    name: Tell Home Assistant about the new version
+    needs: image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+
+      # Home Assistant offers an update as soon as this number changes, so it changes
+      # only after the image exists.
+      - name: Record the version in ha-app/config.yaml
+        env:
+          VERSION: ${{ needs.image.outputs.version }}
+        run: |
+          sed -i -E "s/^version: .*/version: \"${VERSION}\"/" ha-app/config.yaml
+          if git diff --quiet; then
+            echo "ha-app/config.yaml already says ${VERSION}"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "Release ${VERSION} for Home Assistant"
+          git push

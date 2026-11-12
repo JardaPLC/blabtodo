@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# Local data and secrets: these never go into the repository
+/data/
+.env
+.env.*
+!.env.example
+
+# Build results
+/staticfiles/
+/static/css/tailwind.css
+.django_tailwind_cli/
+
+# Editors and operating systems
+.vscode/*
+!.vscode/settings.json
+.idea/
+Thumbs.db
+.DS_Store

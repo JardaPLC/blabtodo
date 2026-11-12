@@ -1,0 +1,94 @@
+name: Checks
+
+# Runs on every push to main and on every pull request.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  code:
+    name: Code, tests and translations
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v10.3.3
+        with:
+          enable-cache: true
+
+      - name: Install dependencies
+        run: uv sync --frozen
+
+      - name: Lint
+        run: uv run ruff check .
+
+      - name: Formatting
+        run: uv run ruff format --check .
+
+      - name: Build the styles
+        run: uv run python manage.py tailwind build
+
+      - name: Tests
+        run: uv run pytest
+
+      - name: No database migration is missing
+        run: uv run python manage.py makemigrations --check --dry-run
+
+      - name: Django's own deployment checks
+        run: uv run python manage.py check --deploy --fail-level WARNING
+        env:
+          BLABTODO_DEBUG: "0"
+
+      # makemessages collects every text from the code into the translation file.
+      # A text that was added without its Czech translation makes the check fail.
+      - name: Every text has a Czech translation
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq gettext
+          uv run python manage.py makemessages --locale cs
+          uv run python tools/check_translations.py
+
+  image:
+    name: The container image builds and starts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: docker/setup-buildx-action@v4
+
+      - name: Build the image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          load: true
+          tags: blabtodo:ci
+          build-args: BLABTODO_VERSION=ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Start it and request the health check, the page and its styles
+        run: |
+          docker run -d --name blabtodo -p 8000:8000 blabtodo:ci
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:8000/health/ > /dev/null; then break; fi
+            sleep 1
+          done
+          curl -fsS http://127.0.0.1:8000/health/ | grep '"status": "ok"'
+          curl -fsS http://127.0.0.1:8000/ | grep 'Funguje to!'
+          css=$(curl -fsS http://127.0.0.1:8000/ | grep -o '/static/css/tailwind\.[0-9a-f]*\.css' | head -n 1)
+          test -n "$css"
+          curl -fsS "http://127.0.0.1:8000${css}" > /dev/null
+
+      - name: Show the log if something failed
+        if: failure()
+        run: docker logs blabtodo

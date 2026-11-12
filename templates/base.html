@@ -1,0 +1,18 @@
+{% load static tailwind_cli %}<!doctype html>
+<html lang="{{ LANGUAGE_CODE }}" class="h-full">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#fafaf9">
+  <title>{% block title %}blabtodo{% endblock %}</title>
+  {% tailwind_css %}
+  {# htmx and Alpine.js are stored in the repository at fixed versions; see CREDITS.md. #}
+  <script src="{% static 'vendor/htmx.min.js' %}" defer></script>
+  <script src="{% static 'vendor/alpine.min.js' %}" defer></script>
+</head>
+{# Body text is 20 px at the default text size and follows the device's text-size setting. #}
+<body class="min-h-full bg-stone-50 text-xl text-stone-900 antialiased"
+      hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+{% block body %}{% endblock %}
+</body>
+</html>

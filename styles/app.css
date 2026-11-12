@@ -1,0 +1,31 @@
+/*
+  Tailwind CSS input file.
+
+  Built into static/css/tailwind.css by `manage.py tailwind build`, and kept up to date
+  during development by `manage.py tailwind runserver`.
+
+  Tailwind looks through the whole project for class names. This file lives outside
+  the static folder on purpose (django-tailwind-cli requires it).
+*/
+@import "tailwindcss" source("..");
+
+/* Folders that never contain class names of ours. */
+@source not "../.venv";
+@source not "../data";
+@source not "../docs";
+@source not "../locale";
+@source not "../staticfiles";
+@source not "../static/vendor";
+@source not "../tests";
+
+@theme {
+  /* Placeholder until the bundled font is chosen (docs/design.md, open questions). */
+  --font-sans: ui-rounded, "Segoe UI", system-ui, -apple-system, "Noto Sans", sans-serif;
+}
+
+@layer base {
+  /* Elements that Alpine.js keeps hidden until it has started. */
+  [x-cloak] {
+    display: none !important;
+  }
+}
