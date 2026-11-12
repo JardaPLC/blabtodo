@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block body %}
+<main class="mx-auto max-w-xl px-4 pt-6 pb-16 sm:px-6">
+  <div class="flex justify-end">{% include "_language_switch.html" %}</div>
+
+  <p class="mt-6 text-lg font-semibold text-green-700">blabtodo</p>
+  <h1 class="mt-1 text-4xl font-bold tracking-tight">{% translate "Welcome" %}</h1>
+  <p class="mt-3 text-stone-600">{% translate "Start by creating the first adult. The rest of the family is added afterwards." %}</p>
+
+  <form method="post" class="mt-8 space-y-6" novalidate>
+    {% csrf_token %}
+    {% for error in form.non_field_errors %}
+    <p class="text-lg font-semibold text-red-700" role="alert">{{ error }}</p>
+    {% endfor %}
+
+    {% include "_field.html" with field=form.name %}
+
+    <fieldset class="card space-y-6">
+      <legend class="sr-only">{% translate "PIN" %}</legend>
+      {% include "_field.html" with field=form.pin %}
+      {% include "_field.html" with field=form.pin_again %}
+    </fieldset>
+
+    <fieldset class="card space-y-6">
+      <legend class="sr-only">{% translate "Password" %}</legend>
+      {% include "_field.html" with field=form.password %}
+      {% include "_field.html" with field=form.password_again %}
+    </fieldset>
+
+    <button type="submit" class="btn btn-primary w-full">{% translate "Create and start" %}</button>
+  </form>
+</main>
+{% endblock %}

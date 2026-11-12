@@ -1,0 +1,7 @@
+{# A person's face: their photo, or their initial on their colour. `size` is a pair of Tailwind classes such as "size-24 text-4xl". #}
+{% if person.photo %}
+<img src="{{ person.photo.url }}" alt="" class="{{ size }} rounded-full object-cover">
+{% else %}
+<span class="{{ size }} {{ person.colour_classes }} inline-flex items-center justify-center rounded-full font-bold"
+      aria-hidden="true">{{ person.initial }}</span>
+{% endif %}

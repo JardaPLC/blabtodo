@@ -57,6 +57,7 @@ setx PYTHONUTF8 1
 | Run the tests | `uv run pytest` |
 | Check and fix code style | `uv run ruff check --fix .` then `uv run ruff format .` |
 | Create a migration after changing a model | `uv run python manage.py makemigrations` |
+| See which texts lack a translation | `uv run python tools/check_texts.py` |
 | Compile translations after editing them | `uv run python tools/compile_translations.py` |
 | Build the stylesheet once | `uv run python manage.py tailwind build` |
 | Add a package | `uv add <name>` (for a tool used only in development: `uv add --dev <name>`) |
@@ -70,8 +71,8 @@ tested.
 | Folder | Contents |
 |---|---|
 | `config/` | Django settings and the top-level addresses |
-| `household/` | Things that belong to the installation as a whole: the test page, the health check, the two middlewares |
-| `people/` | The user model |
+| `household/` | Things that belong to the installation as a whole: the first page, the device check page, the health check, uploaded files, and the host and language middlewares |
+| `people/` | Family members, PINs, allowed devices, the first-run and PIN screens |
 | `templates/` | The base layout shared by all pages. Each app keeps its own pages in its own `templates/` folder |
 | `styles/app.css` | The Tailwind input file |
 | `static/` | Files served as they are. `static/vendor/` holds htmx and Alpine.js at fixed versions |
@@ -92,17 +93,20 @@ English needs no file.
 When you add or change a text in a template or in Python code:
 
 1. Mark it for translation as usual (`{% translate %}`, `{% blocktranslate %}`, `gettext`).
-2. Add the English text and its Czech translation to `django.po`.
-3. Run `uv run python tools/compile_translations.py`.
-4. Commit both `django.po` and `django.mo`.
+2. Run `uv run python tools/check_texts.py --update`. It adds the new texts to
+   `django.po`, still untranslated, and removes the ones the code no longer uses.
+3. Fill in the Czech for the new entries in `django.po`.
+4. Run `uv run python tools/compile_translations.py`.
+5. Commit both `django.po` and `django.mo`.
 
 The compiled `.mo` file is kept in the repository, so that installing the app needs no
-translation tools. The tests fail when it is out of date.
+translation tools. The tests fail when it is out of date, when a text of the code is
+missing from `django.po`, and when an entry has no translation.
 
 Django's own `makemessages` and `compilemessages` need the GNU gettext programs, which
-Windows does not have. That is why step 2 is done by hand and step 3 uses a small Python
-script. If you do have gettext, `makemessages --locale cs` works as usual. GitHub runs
-it on every push and fails when a text has no Czech translation.
+Windows does not have. The two scripts in `tools/` do the same jobs in pure Python. If
+you do have gettext, `makemessages --locale cs` works as usual. GitHub runs it on every
+push as the final word.
 
 ## Releasing a version
 

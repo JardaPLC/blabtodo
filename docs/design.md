@@ -2,7 +2,7 @@
 
 A home task manager for one family. Household tasks sit in one shared queue that any screen in the house can show, and marking a task done takes two taps.
 
-- **Status:** draft 0.7, 2026-11-12. Milestone 0 is in progress: version 0.1.0, the skeleton, is published; installing it on the Pi, the backups and the restore rehearsal remain.
+- **Status:** draft 0.8, 2026-11-12. Milestone 0 runs on the Pi; its backups and restore rehearsal are still to be done. Milestone 1 is in progress: people and devices are built, and tasks with the Today and Done screens are next.
 - **Designed for:** a family with children who cannot read yet and who will grow into it. Czech by default, English as a second language. Used on phones, tablets, PCs and a wall panel. Reachable on the home network only.
 - **Not settled:** see [Open questions](#17-open-questions).
 - **How to read this:** sections 1–6 describe what the app does, 7–13 how it is built, 14–17 the plan, the decisions and what is still open.
@@ -372,15 +372,16 @@ The road to a phone app: (1) a browser shortcut on the home screen works from th
 
 | Table | Fields | Notes |
 |---|---|---|
-| **User** | display name, role (adult or child), face (photo, or built-in picture and colour), PIN (hashed; required for adults), active | A custom Django user model from the first migration, because Django makes it hard to switch later |
-| **Device** | name, kind (shared or personal), owner (personal only), language, second language, "do not ask for PIN" (adult's own device), token (hashed), last seen, active | "Kitchen panel", "Dad's phone" |
+| **User** | display name, role (adult or child), face (photo, or the initial on a colour), PIN (hashed; required for adults), active | A custom Django user model from the first migration, because Django makes it hard to switch later |
+| **Device** | name, kind (shared or personal), owner (personal only), language, second language, "do not ask for PIN" (adult's own device), token (hashed), last seen, active | "Kitchen panel", "Dad's phone". The kind, owner and language fields arrive with milestone 2; until then every device asks who did a task |
+| **PinLock** | wrong PINs in a row, paused until | Always exactly one row; see section 13 |
 | **Room** | names (one per language), picture (built-in key or own photo), position, active | Any place in or around the home; the garden and the garage count too |
 | **Task** | names (one per language), picture (built-in key or uploaded image), hint, room (optional), effort (1–3), repeat type, interval, weekdays, day of month, start date, end date, faces (many users; empty means anyone), day-only switch, active, **next card date** | The definition, plus the one date that says when its next card appears |
 | **Completion** | task, card date (the day the card had appeared), done at, done by (many users), recorded on (device), note, points | Written when a card is done. Points are copied from the task at that moment |
 | **Photo** | completion, image, thumbnail, created at | None or several per completion |
 | **Goal** | names (one per language), picture, target points, position, status (queued, active, reached), reached at, celebrated at | Jar goals |
 | **Thanks** | completion, from user | One per person per completion |
-| **HouseholdSettings** | family name, time zone, default language, enabled languages, rewards on/off, sounds on/off, last housekeeping date | Always exactly one row |
+| **HouseholdSettings** | family name, rewards on/off, sounds on/off, last housekeeping date | Always exactly one row. The time zone comes from the host, and the languages from the app itself |
 
 Constraints and derived values:
 
@@ -462,7 +463,7 @@ One caution: Home Assistant searches the whole repository for app folders, so no
 
 ### 10.6 First run and updates
 
-- No settings are required to start. A setup screen asks for the family name, language, time zone and the first adult with a PIN. The secret key is generated and kept in `/data`.
+- No settings are required to start. A first-run screen asks for the first adult: a name, a PIN, and a password for the management pages. The time zone comes from the host. The secret key is generated and kept in `/data`.
 - Optional settings: allowed host names, port, time zone.
 - Images carry version numbers such as `1.2.0`. Database migrations run automatically at start, after the snapshot.
 
@@ -535,7 +536,8 @@ Milestone 0 created everything above except `tasks/` and `jar/`, which arrive wi
 ## 13. Security and privacy
 
 - The app is for the home network. An untrusted device sees only the "ask an adult" PIN screen, without names or faces.
-- Wrong PINs are counted. After five, the device waits, and the wait grows with each further miss.
+- Wrong PINs are counted. After five in a row, PIN entry pauses for a minute, and the pause doubles with each further miss, up to an hour. The pause is for the whole household: behind the container's network all devices can look alike, so it cannot be kept per device. Devices that are already allowed keep working during it.
+- PINs are stored hashed, with less hashing work than passwords. A PIN is at most eight digits, so what protects it is the pause, not the hash, and a Raspberry Pi should not keep people waiting at the PIN pad.
 - The server answers only to home-network addresses, with no configuration needed: IP addresses that are not public, single-word names such as `homeassistant`, and names with a local-only ending such as `.local`. Any other name must be configured. This blocks websites that try to reach home devices through the browser (DNS rebinding).
 - Photos are re-encoded on the server, location data is removed, file names are random, and they are served to trusted devices only.
 - Django's admin pages need the owner's full password, not a PIN.
@@ -554,6 +556,8 @@ Milestone 0 created everything above except `tasks/` and `jar/`, which arrive wi
 | **Later** | Home Assistant link (sensors, notifications, tasks started by events), the repeat and reward candidates from sections 5 and 6, push notifications, an API and a native app if ever needed | |
 
 Milestone 0 comes first on purpose. Containers and Home Assistant packaging are the unfamiliar part, so they are tried while the app is still trivial.
+
+Milestone 1 is delivered as three releases, each usable on its own: 0.2 with people and allowed devices, 0.3 with tasks, rooms, Today and Done, and 0.4 with the archive and the picture and font drafts.
 
 ## 15. Risks to watch
 
@@ -594,6 +598,8 @@ Milestone 0 comes first on purpose. Containers and Home Assistant packaging are 
 | 23 | Rooms: a task belongs to one room or to none, and a Rooms screen sits next to Today | "What needs doing where I am" is how people tidy; a photo of a room is something a pre-reader recognises | A second row of filter buttons on Today; free tags or categories; several rooms per task; floors and room groups |
 | 24 | The host check accepts home-network addresses without configuration | An installation works the moment it starts, and outside websites are still refused | A list of allowed names that every installation must fill in; accepting every name |
 | 25 | Compiled translations are kept in the repository | No translation tools are needed on Windows or when installing | Compiling them while the image is built |
+| 26 | The pause after wrong PINs is for the whole household | Behind the container's network devices cannot be told apart reliably; a household-wide pause is simple and cannot be sidestepped | A pause per device or per address |
+| 27 | The time zone comes from the host, not from a setting in the app | Home Assistant already knows it; one question less at first run | A time zone field on the first-run screen |
 
 ## 17. Open questions
 

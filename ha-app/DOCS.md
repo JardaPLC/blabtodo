@@ -3,7 +3,8 @@
 A home task manager for one family: a shared queue of household tasks that any screen in
 the house can show.
 
-This is an early version. It shows a test page that confirms the installation works.
+This is an early version. You can set up your family and allow your devices. Tasks arrive
+with the next version.
 
 ## Opening it
 
@@ -18,6 +19,18 @@ instead, for example `http://192.168.1.10:8000`.
 The app is not shown inside the Home Assistant sidebar. A wall panel or a child's tablet
 should be able to open it without a Home Assistant login.
 
+## The first time
+
+A fresh installation greets you with **Vítejte** (Welcome) and asks you to create the
+first adult: a name, a PIN of 4 to 8 digits, and a password.
+
+- The **PIN** is for every day. An adult enters it once on each new phone, tablet or PC
+  to allow it. After that the device opens the app without asking.
+- The **password** is for the management pages, where you add the rest of the family.
+
+Do this on a PC. The page that follows shows a link to the management pages and the user
+name to sign in with.
+
 ## Home network only
 
 The app answers only to home-network addresses. Do not forward its port on your router.
@@ -25,7 +38,7 @@ For access from outside, use a VPN.
 
 ## Your data
 
-Everything the app stores (its database, and later photos) is kept by Home Assistant in
+Everything the app stores (its database and the face photos) is kept by Home Assistant in
 the app's private data folder. It survives updates and is included in Home Assistant
 backups. During a backup the app is stopped for a few seconds, so the copy is always
 consistent.

@@ -1,0 +1,14 @@
+{% load i18n %}
+{# The choice is remembered on this device only (a cookie set by Django's set_language view). #}
+<form action="{% url 'set_language' %}" method="post" class="flex shrink-0 gap-2"
+      aria-label="{% translate 'Language' %}">
+  {% csrf_token %}
+  <input type="hidden" name="next" value="{{ request.get_full_path }}">
+  {% for code, name in LANGUAGES %}
+  <button type="submit" name="language" value="{{ code }}"
+          {% if code == LANGUAGE_CODE %}aria-current="true"{% endif %}
+          class="btn min-h-12 px-4 text-lg {% if code == LANGUAGE_CODE %}bg-stone-900 text-white ring-stone-900 hover:bg-stone-900{% endif %}">
+    {{ name }}
+  </button>
+  {% endfor %}
+</form>

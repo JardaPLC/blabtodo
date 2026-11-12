@@ -7,5 +7,6 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     # Provides the `set_language` address used by the language buttons.
     path("i18n/", include("django.conf.urls.i18n")),
+    path("", include("people.urls")),
     path("", include("household.urls")),
 ]
