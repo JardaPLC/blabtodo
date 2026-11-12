@@ -437,7 +437,7 @@ The repository doubles as a [Home Assistant app repository](https://contributors
 - **Install.** In Home Assistant: Settings > Apps > Install app > menu > Repositories, paste the GitHub address, then install blabtodo and start it.
 - **Image.** Home Assistant downloads the image that GitHub built. Nothing is compiled on the Pi. The image tag must equal `version` in `config.yaml`, so a [release](https://contributors.home-assistant.io/apps/guides/publishing/) pushes the image first and changes the version second. The image takes the repository's visibility, so a public repository gives a public image.
 - **Data.** Home Assistant gives each app a private `/data` folder that survives updates and is part of Home Assistant backups. The image keeps everything there.
-- **Address.** The app listens on its own port, for example `http://homeassistant.local:8000`. It is not shown inside the Home Assistant sidebar at first: that would put it behind the Home Assistant login, which the wall panel and the kids should not need.
+- **Address.** The app listens on its own port, for example `http://homeassistant.local:8000`. It listens on IPv4 and on IPv6: such a name usually resolves to an IPv6 address first, and Home Assistant gives its containers IPv6 addresses. It is not shown inside the Home Assistant sidebar at first: that would put it behind the Home Assistant login, which the wall panel and the kids should not need.
 - **Updates.** After a release Home Assistant shows "update available", and one tap installs it.
 - **Trying unreleased versions.** Copy the app folder into Home Assistant's `local_apps` folder through the Samba or SSH app ([testing guide](https://contributors.home-assistant.io/apps/guides/testing/)).
 

@@ -49,7 +49,7 @@ RUN --mount=from=uv-target,source=/uv,target=/bin/uv \
 
 # Every Django app folder must be listed here. The checks on GitHub start the image and
 # request a page, so a forgotten folder is caught before a release.
-COPY manage.py ./
+COPY manage.py gunicorn.conf.py ./
 COPY config/ config/
 COPY household/ household/
 COPY people/ people/
@@ -67,6 +67,6 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
     CMD ["python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/', timeout=4)"]
 
-# Bring the database up to date, then serve. One process with a few threads is plenty for
-# a household and keeps memory use low.
-CMD ["sh", "-c", "python manage.py migrate --noinput && exec gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 1 --threads 4 --access-logfile -"]
+# Bring the database up to date, then serve. How it serves (addresses, threads, logging)
+# is in gunicorn.conf.py.
+CMD ["sh", "-c", "python manage.py migrate --noinput && exec gunicorn -c gunicorn.conf.py config.wsgi:application"]
