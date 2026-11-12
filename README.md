@@ -10,9 +10,8 @@ screen in the house can show, and marking a task done takes two taps.
   stays at home, in one folder.
 - Czech and English, chosen per device.
 
-**Status: early development.** Today the app shows a test page that proves an
-installation works. The task screens are next. The whole plan is in
-[docs/design.md](docs/design.md).
+**Status: early development.** Today you can set up your family and allow your devices.
+The task screens are next. The whole plan is in [docs/design.md](docs/design.md).
 
 ## Install
 

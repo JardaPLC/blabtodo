@@ -1,7 +1,11 @@
 # Czech translation of blabtodo.
 #
 # The texts in the code are English; this file gives the Czech for each of them.
-# After changing it, run:  uv run python tools/compile_translations.py
+#
+# To see which texts are missing here or no longer used:
+#     uv run python tools/check_texts.py
+# After changing this file:
+#     uv run python tools/compile_translations.py
 msgid ""
 msgstr ""
 "Project-Id-Version: blabtodo\n"
@@ -12,14 +16,272 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 
+# ---- Shared ----
+
+msgid "Language"
+msgstr "Jazyk"
+
+msgid "Today"
+msgstr "Dnes"
+
+msgid "PIN"
+msgstr "PIN"
+
+msgid "Password"
+msgstr "Heslo"
+
+# ---- First-run setup ----
+
+msgid "Welcome"
+msgstr "Vítejte"
+
+msgid "Start by creating the first adult. The rest of the family is added afterwards."
+msgstr "Začněte vytvořením prvního dospělého. Ostatní členy rodiny přidáte potom."
+
+msgid "Your name"
+msgstr "Vaše jméno"
+
+msgid "As the family calls you, for example Dad. It is shown under your face."
+msgstr "Tak, jak vám říká rodina, například Táta. Zobrazuje se pod vaší tváří."
+
+msgid "4 to 8 digits. You enter it to allow a new phone, tablet or PC."
+msgstr "4 až 8 číslic. Zadáváte ho, když povolujete nový telefon, tablet nebo počítač."
+
+msgid "PIN again"
+msgstr "PIN znovu"
+
+msgid ""
+"For the management pages, where people and tasks are set up. Make it longer and "
+"harder to guess than the PIN."
+msgstr ""
+"Pro stránky správy, kde se nastavují lidé a úkoly. Zvolte ho delší a hůře "
+"uhodnutelné než PIN."
+
+msgid "Password again"
+msgstr "Heslo znovu"
+
+msgid "The two PINs are not the same."
+msgstr "Zadané PINy se neshodují."
+
+msgid "The two passwords are not the same."
+msgstr "Zadaná hesla se neshodují."
+
+msgid "Create and start"
+msgstr "Vytvořit a začít"
+
+#, python-format
+msgid "A PIN is %(shortest)d to %(longest)d digits."
+msgstr "PIN má %(shortest)d až %(longest)d číslic."
+
+# ---- Allowing a device ----
+
+msgid "This device is not allowed yet"
+msgstr "Toto zařízení ještě není povolené"
+
+msgid "Ask an adult to enter their PIN. It is needed only once on each device."
+msgstr "Požádejte dospělého, aby zadal svůj PIN. Na každém zařízení to stačí jednou."
+
+msgid "Wrong PIN."
+msgstr "Špatný PIN."
+
+msgid "Too many wrong tries."
+msgstr "Příliš mnoho špatných pokusů."
+
+#, python-format
+msgid "Try again in %(count)s minute."
+msgid_plural "Try again in %(count)s minutes."
+msgstr[0] "Zkuste to znovu za %(count)s minutu."
+msgstr[1] "Zkuste to znovu za %(count)s minuty."
+msgstr[2] "Zkuste to znovu za %(count)s minut."
+
+#, python-format
+msgid "Try again in %(count)s second."
+msgid_plural "Try again in %(count)s seconds."
+msgstr[0] "Zkuste to znovu za %(count)s sekundu."
+msgstr[1] "Zkuste to znovu za %(count)s sekundy."
+msgstr[2] "Zkuste to znovu za %(count)s sekund."
+
+msgid "Clear"
+msgstr "Smazat"
+
+msgid "Delete the last digit"
+msgstr "Smazat poslední číslici"
+
+msgid "Allow this device"
+msgstr "Povolit toto zařízení"
+
+msgid "Android phone"
+msgstr "Telefon s Androidem"
+
+msgid "Android tablet"
+msgstr "Tablet s Androidem"
+
+msgid "Windows PC"
+msgstr "Počítač s Windows"
+
+msgid "Linux PC"
+msgstr "Počítač s Linuxem"
+
+msgid "Device"
+msgstr "Zařízení"
+
+# ---- Today (until tasks exist) ----
+
+msgid "No tasks yet. They arrive with the next version."
+msgstr "Zatím tu nejsou žádné úkoly. Přibydou v příští verzi."
+
+msgid "Family"
+msgstr "Rodina"
+
+msgid "For adults"
+msgstr "Pro dospělé"
+
+msgid "The rest of the family is added in the management pages. They are made for a PC."
+msgstr "Ostatní členy rodiny přidáte na stránkách správy. Ty jsou určené pro počítač."
+
+msgid "Sign in there with the password chosen at the start. The user name is:"
+msgstr "Přihlaste se tam heslem, které jste zvolili na začátku. Uživatelské jméno je:"
+
+msgid "Management pages"
+msgstr "Stránky správy"
+
+msgid "Device check"
+msgstr "Kontrola zařízení"
+
+# ---- People and devices in the management pages ----
+
+msgid "blabtodo management"
+msgstr "Správa blabtodo"
+
+msgid "What would you like to set up?"
+msgstr "Co chcete nastavit?"
+
+msgid "person"
+msgstr "člen rodiny"
+
+msgid "people"
+msgstr "členové rodiny"
+
+msgid "Adult"
+msgstr "Dospělý"
+
+msgid "Child"
+msgstr "Dítě"
+
+msgid "name"
+msgstr "jméno"
+
+msgid "Shown under the face."
+msgstr "Zobrazuje se pod tváří."
+
+msgid "role"
+msgstr "role"
+
+msgid "colour"
+msgstr "barva"
+
+msgid "The colour of the face when there is no photo."
+msgstr "Barva tváře, když chybí fotka."
+
+msgid "photo"
+msgstr "fotka"
+
+msgid "Photo"
+msgstr "Fotka"
+
+msgid "Any photo of the face. It is cropped to a square and made small."
+msgstr "Jakákoli fotka obličeje. Ořízne se na čtverec a zmenší."
+
+msgid "New PIN"
+msgstr "Nový PIN"
+
+msgid ""
+"4 to 8 digits. Leave empty to keep the current PIN. Adults need a PIN; children do "
+"not."
+msgstr ""
+"4 až 8 číslic. Nechte prázdné, pokud má zůstat dosavadní PIN. Dospělí PIN "
+"potřebují, děti ne."
+
+msgid "PIN set"
+msgstr "PIN nastaven"
+
+msgid "Lives here"
+msgstr "Bydlí tady"
+
+msgid ""
+"Untick instead of deleting: the person disappears from the screens, and what they "
+"did stays in the archive."
+msgstr ""
+"Místo mazání zrušte zaškrtnutí: člověk zmizí z obrazovek a to, co udělal, zůstane "
+"v archivu."
+
+msgid "An adult needs a PIN."
+msgstr "Dospělý potřebuje PIN."
+
+msgid "This is the only adult. The household needs at least one."
+msgstr "Toto je jediný dospělý. Domácnost potřebuje alespoň jednoho."
+
+msgid "This photo is too large. The limit is 15 MB."
+msgstr "Tato fotka je příliš velká. Limit je 15 MB."
+
+msgid "This file is not a picture that can be read."
+msgstr "Tento soubor není obrázek, který lze načíst."
+
+msgid "Pink"
+msgstr "Růžová"
+
+msgid "Orange"
+msgstr "Oranžová"
+
+msgid "Yellow"
+msgstr "Žlutá"
+
+msgid "Green"
+msgstr "Zelená"
+
+msgid "Teal"
+msgstr "Tyrkysová"
+
+msgid "Light blue"
+msgstr "Světle modrá"
+
+msgid "Blue"
+msgstr "Modrá"
+
+msgid "Purple"
+msgstr "Fialová"
+
+msgid "device"
+msgstr "zařízení"
+
+msgid "devices"
+msgstr "zařízení"
+
+msgid "device name"
+msgstr "název zařízení"
+
+msgid "allowed by"
+msgstr "povolil(a)"
+
+msgid "allowed on"
+msgstr "povoleno dne"
+
+msgid "last seen"
+msgstr "naposledy použito"
+
+msgid "allowed"
+msgstr "povoleno"
+
+msgid "Untick to stop this device from using the app."
+msgstr "Zrušte zaškrtnutí, pokud toto zařízení už aplikaci používat nemá."
+
+# ---- Device check page ----
+
 msgid "It works!"
 msgstr "Funguje to!"
 
 msgid "The home task manager is installed and running."
 msgstr "Domácí správce úkolů je nainstalovaný a běží."
-
-msgid "Language"
-msgstr "Jazyk"
 
 msgid "Screen check"
 msgstr "Kontrola obrazovky"

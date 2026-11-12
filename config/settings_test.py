@@ -18,6 +18,13 @@ from .settings import *  # noqa: E402, F403
 
 DEBUG = False
 APP_VERSION = "test"
+
+# Passwords are hashed quickly in tests. PINs keep their real hasher.
+PASSWORD_HASHERS = [
+    "django.contrib.auth.hashers.MD5PasswordHasher",
+    "people.hashers.PinHasher",
+]
+MEDIA_ROOT = os.path.join(_test_data_dir, "media")
 EXTRA_ALLOWED_HOSTS = []
 TIME_ZONE = "Europe/Prague"
 

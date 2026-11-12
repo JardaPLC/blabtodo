@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{# Where the Today screen will be. Until tasks exist it shows the family, so that faces can be seen on every device. #}
+{% block body %}
+<main class="mx-auto max-w-[100rem] px-4 pt-6 pb-16 sm:px-6 lg:px-10">
+  <header class="flex items-start justify-between gap-4">
+    <div>
+      <p class="text-lg font-semibold text-green-700">blabtodo</p>
+      <h1 class="mt-1 text-4xl font-bold tracking-tight sm:text-5xl">{% translate "Today" %}</h1>
+    </div>
+    {% include "_language_switch.html" %}
+  </header>
+
+  <p class="card mt-8 text-stone-600">{% translate "No tasks yet. They arrive with the next version." %}</p>
+
+  <section class="mt-10" aria-labelledby="family">
+    <h2 id="family" class="text-2xl font-bold">{% translate "Family" %}</h2>
+    <ul class="mt-4 flex flex-wrap gap-x-6 gap-y-4">
+      {% for person in people %}
+      <li class="flex w-28 flex-col items-center text-center">
+        {% include "people/_face.html" with person=person size="size-24 text-4xl" %}
+        <span class="mt-2 font-semibold">{{ person }}</span>
+      </li>
+      {% endfor %}
+    </ul>
+  </section>
+
+  <section class="card mt-10">
+    <h2 class="text-2xl font-bold">{% translate "For adults" %}</h2>
+    <p class="mt-2 text-stone-600">{% translate "The rest of the family is added in the management pages. They are made for a PC." %}</p>
+    {% if owner %}
+    <p class="mt-2 text-stone-600">{% translate "Sign in there with the password chosen at the start. The user name is:" %} <strong class="text-stone-900">{{ owner.username }}</strong></p>
+    {% endif %}
+    <div class="mt-4 flex flex-col gap-3 sm:flex-row">
+      <a href="{% url 'admin:index' %}" class="btn">{% translate "Management pages" %}</a>
+      <a href="{% url 'check' %}" class="btn">{% translate "Device check" %}</a>
+    </div>
+  </section>
+</main>
+{% endblock %}

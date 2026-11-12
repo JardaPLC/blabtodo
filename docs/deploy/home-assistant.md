@@ -25,8 +25,8 @@ Menu names below are from Home Assistant 2026. They may differ slightly in your 
 2. Turn on **Start on boot** and **Watchdog**. The watchdog restarts the app if it ever
    stops answering.
 3. Select **Start**.
-4. Open the **Log** tab. After a few seconds it should end with a line containing
-   `Listening at: http://0.0.0.0:8000`.
+4. Open the **Log** tab. After a few seconds it should show a line containing
+   `Listening at:`.
 
 ## 3. Open it
 
@@ -37,14 +37,46 @@ On any device in your home network, open:
 If that name does not work on a device, use the IP address of your Home Assistant
 instead, for example `http://192.168.1.10:8000`.
 
-You should see a page saying "Funguje to!". Try it on a phone, a tablet and a PC:
-
-- The **Čeština** and **English** buttons switch the language on that device only.
-- **Screen check** shows how many task cards fit in one row on that screen.
-- **Live connection** shows the server's clock. It refreshes by itself every 30 seconds.
+The **Čeština** and **English** buttons at the top switch the language on that device
+only.
 
 If port 8000 is already used by another app, change it on the blabtodo
 **Configuration** tab under **Network**.
+
+### The first time: create the first adult
+
+A fresh installation greets you with **Vítejte** (Welcome). Do this on a PC, because the
+management pages you will use next are made for one.
+
+1. Enter your name as the family calls you, for example "Táta".
+2. Choose a **PIN** of 4 to 8 digits. It is for every day: an adult enters it once on
+   each new phone, tablet or PC to allow it.
+3. Choose a **password**. It is for the management pages only. Make it longer and harder
+   to guess than the PIN.
+4. Select **Vytvořit a začít** (Create and start).
+
+The PC you did this on is now an allowed device, and the page shows your face.
+
+### Add the rest of the family
+
+On the same page, under **Pro dospělé** (For adults), open the **management pages** and
+sign in with the user name shown there and your password. Under **Členové rodiny**
+(People) add each family member: a name, whether they are an adult or a child, and
+optionally a photo of the face. Adults need a PIN. Children do not.
+
+### Allow the other devices
+
+Open the same address on a phone or a tablet. It asks for a PIN: any adult enters theirs,
+once. From then on that device opens blabtodo without asking.
+
+After five wrong PINs in a row, PIN entry pauses for a minute for everyone, and longer
+after each further wrong try. An allowed device is listed under **Zařízení** (Devices) in
+the management pages, where you can rename it or remove it.
+
+### Check a device
+
+**Kontrola zařízení** (Device check) on the first page shows how a screen will lay out
+the task cards and whether the page keeps itself up to date.
 
 ## 4. Send backups to a NAS
 
@@ -74,23 +106,21 @@ sure the copy of the database is consistent.
 A backup you have never restored is only a hope. This takes ten minutes and is worth
 doing while the app holds nothing important.
 
-1. Open blabtodo, select **Zobrazit technické podrobnosti** (Show technical details),
-   and write down the value under **Instalace** (Installation). It is a fingerprint of
-   this installation's data.
+1. Make sure blabtodo is set up and shows your family.
 2. In Home Assistant, create a backup now and wait until it is finished. Check that the
    file arrived on the NAS.
 3. Open the blabtodo app page, select **Uninstall**, and choose to delete its data too.
-4. Install and start blabtodo again, as in step 2 above. The **Instalace** value is now
-   different: this is a fresh, empty installation.
+4. Install and start blabtodo again, as in step 2 above, and open it. It greets you with
+   **Vítejte** again: this is a fresh, empty installation. Do not fill it in.
 5. Open **Settings**, **System**, **Backups**, select the backup from step 2, select
    **Restore**, and choose only the blabtodo app.
-6. Open blabtodo again. The **Instalace** value is the one you wrote down. The restore
-   works.
+6. Open blabtodo again. Your family is back, and the device you are using is still
+   allowed. The restore works.
 
 ## 6. Check memory use
 
 Open the blabtodo app page in Home Assistant. It shows the app's current memory and CPU
-use. Expect somewhere between 100 and 250 MB of memory and almost no CPU. **Settings**,
+use. Expect roughly 70 to 150 MB of memory and almost no CPU. **Settings**,
 **System**, **Hardware** shows the totals for the whole device.
 
 ## Updating

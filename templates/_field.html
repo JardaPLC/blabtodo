@@ -1,0 +1,11 @@
+{# One form field: its label, an explanation, the box, and what is wrong with it if anything. #}
+<div>
+  <label for="{{ field.id_for_label }}" class="block font-semibold">{{ field.label }}</label>
+  {% if field.help_text %}
+  <p class="mt-1 text-lg text-stone-600">{{ field.help_text }}</p>
+  {% endif %}
+  <div class="mt-2">{{ field }}</div>
+  {% for error in field.errors %}
+  <p class="mt-2 text-lg font-semibold text-red-700" role="alert">{{ error }}</p>
+  {% endfor %}
+</div>

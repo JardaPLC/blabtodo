@@ -16,6 +16,16 @@ def _language(po_path: Path) -> str:
     return po_path.parts[-3]
 
 
+def test_the_translation_file_has_every_text_of_the_code_and_nothing_else():
+    # The pure-Python stand-in for Django's makemessages, which GitHub runs for real.
+    from tools.check_texts import compare
+
+    missing, unused = compare()
+
+    assert missing == set(), "run: uv run python tools/check_texts.py"
+    assert unused == set(), "run: uv run python tools/check_texts.py"
+
+
 def test_there_is_a_czech_translation():
     assert "cs" in {_language(path) for path in PO_FILES}
 

@@ -97,6 +97,7 @@ MIDDLEWARE = [
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "household.middleware.DeviceLanguageMiddleware",
+    "people.middleware.DeviceMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -145,6 +146,13 @@ DATABASES = {
 # The project has its own user model from the first migration, because Django makes it
 # hard to switch later.
 AUTH_USER_MODEL = "people.User"
+
+# The first entry stores passwords (only the owner has one). The second stores PINs; why
+# they are stored differently is explained in people/hashers.py.
+PASSWORD_HASHERS = [
+    "django.contrib.auth.hashers.PBKDF2PasswordHasher",
+    "people.hashers.PinHasher",
+]
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
