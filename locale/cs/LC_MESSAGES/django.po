@@ -75,9 +75,6 @@ msgstr "PIN má %(shortest)d až %(longest)d číslic."
 msgid "This device is not allowed yet"
 msgstr "Toto zařízení ještě není povolené"
 
-msgid "Ask an adult to enter their PIN. It is needed only once on each device."
-msgstr "Požádejte dospělého, aby zadal svůj PIN. Na každém zařízení to stačí jednou."
-
 msgid "Wrong PIN."
 msgstr "Špatný PIN."
 
@@ -795,3 +792,9 @@ msgstr "úkol"
 
 msgid "tasks"
 msgstr "úkoly"
+
+msgid "Ask an adult to enter their PIN."
+msgstr "Požádejte dospělého, aby zadal svůj PIN."
+
+msgid "The PIN is needed only once on each device."
+msgstr "PIN stačí na každém zařízení zadat jednou."

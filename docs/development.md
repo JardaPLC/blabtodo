@@ -55,6 +55,7 @@ setx PYTHONUTF8 1
 |---|---|
 | Start the app with live styles | `uv run python manage.py tailwind runserver` |
 | Run the tests | `uv run pytest` |
+| Run the tests that tap through the pages in a real browser | `uv run pytest -m browser` (once before: `uv run playwright install chromium`) |
 | Check and fix code style | `uv run ruff check --fix .` then `uv run ruff format .` |
 | Create a migration after changing a model | `uv run python manage.py makemigrations` |
 | See which texts lack a translation | `uv run python tools/check_texts.py` |
@@ -65,6 +66,19 @@ setx PYTHONUTF8 1
 The same checks run on GitHub for every push (`.github/workflows/ci.yml`). There the
 container image is also built and started, which is the only place the `Dockerfile` gets
 tested.
+
+### Looking at the screens
+
+The browser tests can also save screenshots of every screen in phone, tablet and PC
+sizes, filled with an invented family. Name a folder for them:
+
+```
+set BLABTODO_SCREENSHOTS=screenshots
+uv run pytest -m browser
+```
+
+Run `uv run python manage.py tailwind build` first if templates changed since the last
+build, because the screenshots use the built stylesheet.
 
 ## Where things are
 

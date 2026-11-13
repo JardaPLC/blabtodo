@@ -350,7 +350,7 @@ The server builds the pages. The browser shows them and asks the server for smal
 | Languages | Django's translation system | Mature, and it handles Czech plural forms. |
 | Images | Pillow | Shrink, make thumbnails, remove location data. |
 | Serving | Gunicorn and WhiteNoise | No separate web server such as nginx is needed. |
-| Tooling | uv, Ruff, pytest; Playwright for a few end-to-end checks later | All Python, and all of it runs on Windows. |
+| Tooling | uv, Ruff, pytest; Playwright for the checks that need a real browser | All Python, and all of it runs on Windows. The browser checks tap through the pages and can save screenshots in phone, tablet and PC sizes. |
 
 Points that follow from this:
 

@@ -19,6 +19,7 @@ dev = [
     "polib>=1.2.0",
     "pytest>=9.2.0",
     "pytest-django>=4.14.0",
+    "pytest-playwright>=0.10.0",
     "ruff>=0.17.4",
 ]
 
@@ -38,4 +39,7 @@ select = ["E", "F", "W", "I", "UP", "B", "DJ", "SIM", "C4"]
 DJANGO_SETTINGS_MODULE = "config.settings_test"
 python_files = ["test_*.py"]
 testpaths = ["tests"]
-addopts = "-ra"
+# The browser tests need a test browser installed, so they run only when asked for:
+#     uv run pytest -m browser
+addopts = "-ra -m 'not browser'"
+markers = ["browser: taps through the pages in a real browser"]
