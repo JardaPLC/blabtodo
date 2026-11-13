@@ -41,6 +41,13 @@ jobs:
       - name: Tests
         run: uv run pytest
 
+      # Taps through the pages in a headless Chromium: what only works if htmx and
+      # Alpine.js do, such as the Done sheet, Undo and the PIN pad.
+      - name: Tests in a real browser
+        run: |
+          uv run playwright install --with-deps chromium
+          uv run pytest -m browser
+
       - name: No database migration is missing
         run: uv run python manage.py makemigrations --check --dry-run
 

@@ -1,15 +1,14 @@
 {% extends "base.html" %}
 {% load i18n %}
 
+{# Kept compact on purpose: on a phone the whole pad and its button must fit without scrolling. #}
 {% block body %}
-<main class="mx-auto max-w-md px-4 pt-6 pb-10">
-  <div class="flex justify-end">{% include "_language_switch.html" %}</div>
+<main class="mx-auto max-w-md px-4 pt-4 pb-6">
+  <p class="text-lg font-semibold text-green-700">blabtodo</p>
+  <h1 class="mt-1 text-2xl leading-tight font-bold tracking-tight sm:text-3xl">{% translate "This device is not allowed yet" %}</h1>
+  <p class="mt-2 text-lg leading-snug text-stone-600">{% translate "Ask an adult to enter their PIN." %}</p>
 
-  <p class="mt-6 text-lg font-semibold text-green-700">blabtodo</p>
-  <h1 class="mt-1 text-3xl font-bold tracking-tight">{% translate "This device is not allowed yet" %}</h1>
-  <p class="mt-3 text-stone-600">{% translate "Ask an adult to enter their PIN. It is needed only once on each device." %}</p>
-
-  <div class="mt-4 min-h-8" aria-live="polite">
+  <div class="mt-2 min-h-7 text-lg leading-snug" aria-live="polite">
     {% if paused %}
     <p class="font-semibold text-red-700">
       {% translate "Too many wrong tries." %}
@@ -29,29 +28,32 @@
   </div>
 
   {# The PIN can be tapped on the pad below or typed on a keyboard; both fill the same box. #}
-  <form method="post" class="mt-2" x-data="{ pin: '' }">
+  <form method="post" class="mt-1" x-data="{ pin: '' }">
     {% csrf_token %}
     <input type="hidden" name="next" value="{{ next }}">
     <input type="password" name="pin" x-model="pin" inputmode="numeric" autocomplete="off"
            maxlength="8" aria-label="{% translate 'PIN' %}" {% if paused %}disabled{% else %}autofocus{% endif %}
-           class="field text-center text-4xl tracking-[0.4em]">
+           class="field min-h-14 text-center text-4xl tracking-[0.4em] sm:min-h-16">
 
-    <div class="mt-4 grid grid-cols-3 gap-3">
+    <div class="mt-3 grid grid-cols-3 gap-2 sm:gap-3">
       {% for digit in "123456789" %}
-      <button type="button" class="btn text-3xl" {% if paused %}disabled{% endif %}
+      <button type="button" class="btn min-h-14 text-3xl sm:min-h-16" {% if paused %}disabled{% endif %}
               @click="if (pin.length < 8) pin += '{{ digit }}'">{{ digit }}</button>
       {% endfor %}
-      <button type="button" class="btn text-lg" {% if paused %}disabled{% endif %}
+      <button type="button" class="btn min-h-14 px-2 text-lg sm:min-h-16" {% if paused %}disabled{% endif %}
               @click="pin = ''">{% translate "Clear" %}</button>
-      <button type="button" class="btn text-3xl" {% if paused %}disabled{% endif %}
+      <button type="button" class="btn min-h-14 text-3xl sm:min-h-16" {% if paused %}disabled{% endif %}
               @click="if (pin.length < 8) pin += '0'">0</button>
-      <button type="button" class="btn text-3xl" {% if paused %}disabled{% endif %}
+      <button type="button" class="btn min-h-14 text-3xl sm:min-h-16" {% if paused %}disabled{% endif %}
               aria-label="{% translate 'Delete the last digit' %}"
               @click="pin = pin.slice(0, -1)">&larr;</button>
     </div>
 
-    <button type="submit" class="btn btn-primary mt-4 w-full" {% if paused %}disabled{% endif %}
+    <button type="submit" class="btn btn-primary mt-3 w-full" {% if paused %}disabled{% endif %}
             :disabled="{{ paused|yesno:'true,false' }} || pin.length < 4">{% translate "Allow this device" %}</button>
   </form>
+
+  <p class="mt-4 text-lg leading-snug text-stone-500">{% translate "The PIN is needed only once on each device." %}</p>
+  <div class="mt-4 flex">{% include "_language_switch.html" %}</div>
 </main>
 {% endblock %}

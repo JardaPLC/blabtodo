@@ -32,7 +32,7 @@
   <dialog id="sheet" x-data
           @htmx:after-swap="if ($event.target === $el && !$el.open) $el.showModal()"
           @sheet-close.window="if ($el.open) $el.close()"
-          class="m-0 h-dvh max-h-none w-screen max-w-none overflow-y-auto bg-white p-0 text-xl text-stone-900 backdrop:bg-stone-900/60 sm:m-auto sm:h-auto sm:max-h-[92dvh] sm:w-full sm:max-w-xl sm:rounded-3xl"></dialog>
+          class="m-0 h-dvh max-h-none w-screen max-w-none overflow-y-auto bg-white p-0 text-xl text-stone-900 backdrop:bg-stone-900/60 sm:m-auto sm:h-fit sm:max-h-[92dvh] sm:w-full sm:max-w-xl sm:rounded-3xl"></dialog>
 
   {# Where "Done: … Undo" appears for a few seconds. #}
   <div id="undo-bar" class="pointer-events-none fixed inset-x-0 bottom-4 z-10 px-4" aria-live="polite"></div>

@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.3.1
+
+Fixes found by trying the screens in a real browser at phone, tablet and PC sizes.
+
+- On a small phone the PIN pad and its button now fit without scrolling.
+- On a small phone the Done and Not yet buttons stay at the bottom edge of the sheet,
+  always in view.
+- On a tablet or PC the Done panel is as tall as its content instead of nearly filling
+  the screen.
+
 ## 0.3.0
 
 Tasks.
