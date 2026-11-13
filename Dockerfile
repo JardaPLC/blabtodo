@@ -53,6 +53,7 @@ COPY manage.py gunicorn.conf.py ./
 COPY config/ config/
 COPY household/ household/
 COPY people/ people/
+COPY tasks/ tasks/
 COPY templates/ templates/
 COPY locale/ locale/
 COPY --from=assets /app/staticfiles/ staticfiles/
@@ -67,6 +68,6 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
     CMD ["python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/', timeout=4)"]
 
-# Bring the database up to date, then serve. How it serves (addresses, threads, logging)
-# is in gunicorn.conf.py.
-CMD ["sh", "-c", "python manage.py migrate --noinput && exec gunicorn -c gunicorn.conf.py config.wsgi:application"]
+# Keep a copy of the database as the previous version left it, bring the database up to
+# date, then serve. How it serves (addresses, threads, logging) is in gunicorn.conf.py.
+CMD ["sh", "-c", "python manage.py snapshot_before_update && python manage.py migrate --noinput && exec gunicorn -c gunicorn.conf.py config.wsgi:application"]

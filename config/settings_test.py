@@ -18,6 +18,8 @@ from .settings import *  # noqa: E402, F403
 
 DEBUG = False
 APP_VERSION = "test"
+# Tests run inside a database transaction, where a snapshot cannot be taken.
+DAILY_SNAPSHOT = False
 
 # Passwords are hashed quickly in tests. PINs keep their real hasher.
 PASSWORD_HASHERS = [

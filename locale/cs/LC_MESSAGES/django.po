@@ -17,7 +17,6 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 
 # ---- Shared ----
-
 msgid "Language"
 msgstr "Jazyk"
 
@@ -31,7 +30,6 @@ msgid "Password"
 msgstr "Heslo"
 
 # ---- First-run setup ----
-
 msgid "Welcome"
 msgstr "Vítejte"
 
@@ -51,11 +49,11 @@ msgid "PIN again"
 msgstr "PIN znovu"
 
 msgid ""
-"For the management pages, where people and tasks are set up. Make it longer and "
-"harder to guess than the PIN."
+"For the management pages, where people and tasks are set up. Make it longer and harder"
+" to guess than the PIN."
 msgstr ""
-"Pro stránky správy, kde se nastavují lidé a úkoly. Zvolte ho delší a hůře "
-"uhodnutelné než PIN."
+"Pro stránky správy, kde se nastavují lidé a úkoly. Zvolte ho delší a hůře uhodnutelné "
+"než PIN."
 
 msgid "Password again"
 msgstr "Heslo znovu"
@@ -74,7 +72,6 @@ msgid "A PIN is %(shortest)d to %(longest)d digits."
 msgstr "PIN má %(shortest)d až %(longest)d číslic."
 
 # ---- Allowing a device ----
-
 msgid "This device is not allowed yet"
 msgstr "Toto zařízení ještě není povolené"
 
@@ -125,19 +122,11 @@ msgstr "Počítač s Linuxem"
 msgid "Device"
 msgstr "Zařízení"
 
-# ---- Today (until tasks exist) ----
-
-msgid "No tasks yet. They arrive with the next version."
-msgstr "Zatím tu nejsou žádné úkoly. Přibydou v příští verzi."
-
 msgid "Family"
 msgstr "Rodina"
 
 msgid "For adults"
 msgstr "Pro dospělé"
-
-msgid "The rest of the family is added in the management pages. They are made for a PC."
-msgstr "Ostatní členy rodiny přidáte na stránkách správy. Ty jsou určené pro počítač."
 
 msgid "Sign in there with the password chosen at the start. The user name is:"
 msgstr "Přihlaste se tam heslem, které jste zvolili na začátku. Uživatelské jméno je:"
@@ -149,7 +138,6 @@ msgid "Device check"
 msgstr "Kontrola zařízení"
 
 # ---- People and devices in the management pages ----
-
 msgid "blabtodo management"
 msgstr "Správa blabtodo"
 
@@ -199,8 +187,8 @@ msgid ""
 "4 to 8 digits. Leave empty to keep the current PIN. Adults need a PIN; children do "
 "not."
 msgstr ""
-"4 až 8 číslic. Nechte prázdné, pokud má zůstat dosavadní PIN. Dospělí PIN "
-"potřebují, děti ne."
+"4 až 8 číslic. Nechte prázdné, pokud má zůstat dosavadní PIN. Dospělí PIN potřebují, "
+"děti ne."
 
 msgid "PIN set"
 msgstr "PIN nastaven"
@@ -209,11 +197,11 @@ msgid "Lives here"
 msgstr "Bydlí tady"
 
 msgid ""
-"Untick instead of deleting: the person disappears from the screens, and what they "
-"did stays in the archive."
+"Untick instead of deleting: the person disappears from the screens, and what they did "
+"stays in the archive."
 msgstr ""
-"Místo mazání zrušte zaškrtnutí: člověk zmizí z obrazovek a to, co udělal, zůstane "
-"v archivu."
+"Místo mazání zrušte zaškrtnutí: člověk zmizí z obrazovek a to, co udělal, zůstane v "
+"archivu."
 
 msgid "An adult needs a PIN."
 msgstr "Dospělý potřebuje PIN."
@@ -276,7 +264,6 @@ msgid "Untick to stop this device from using the app."
 msgstr "Zrušte zaškrtnutí, pokud toto zařízení už aplikaci používat nemá."
 
 # ---- Device check page ----
-
 msgid "It works!"
 msgstr "Funguje to!"
 
@@ -347,3 +334,464 @@ msgstr "v pořádku"
 
 msgid "not reachable"
 msgstr "nedostupná"
+
+#, python-format
+msgid "%(count)d card put back."
+msgid_plural "%(count)d cards put back."
+msgstr[0] "%(count)d karta vrácena."
+msgstr[1] "%(count)d karty vráceny."
+msgstr[2] "%(count)d karet vráceno."
+
+#, python-format
+msgid "%(count)d card skipped."
+msgid_plural "%(count)d cards skipped."
+msgstr[0] "%(count)d karta přeskočena."
+msgstr[1] "%(count)d karty přeskočeny."
+msgstr[2] "%(count)d karet přeskočeno."
+
+msgid ""
+"1 means every day, week or month. 2 means every second one, and so on. Not used for a "
+"one-time task."
+msgstr ""
+"1 znamená každý den, týden nebo měsíc. 2 znamená každý druhý a tak dále. U "
+"jednorázového úkolu se nepoužívá."
+
+msgid "31 means the last day in shorter months."
+msgstr "31 znamená v kratších měsících poslední den."
+
+msgid "A short note shown when marking it done, for example where things are."
+msgstr "Krátká poznámka, která se ukáže při označování za hotové, například kde co je."
+
+msgid "Add a note"
+msgstr "Přidat poznámku"
+
+msgid "All"
+msgstr "Všichni"
+
+msgid "All done!"
+msgstr "Hotovo!"
+
+msgid "Balcony"
+msgstr "Balkon"
+
+msgid "Bathroom"
+msgstr "Koupelna"
+
+msgid "Bedroom"
+msgstr "Ložnice"
+
+msgid "Big"
+msgstr "Velká"
+
+msgid "Cellar"
+msgstr "Sklep"
+
+msgid "Change the bed sheets"
+msgstr "Převléct postele"
+
+msgid "Children's room"
+msgstr "Dětský pokoj"
+
+msgid "Choose at least one day of the week."
+msgstr "Vyberte aspoň jeden den v týdnu."
+
+msgid "Choose the day of the month."
+msgstr "Vyberte den v měsíci."
+
+msgid "Clean the bathroom"
+msgstr "Uklidit koupelnu"
+
+msgid "Clean the fridge"
+msgstr "Vyčistit lednici"
+
+msgid "Clean the litter box"
+msgstr "Vyčistit kočičí záchod"
+
+msgid "Clean the sink"
+msgstr "Umýt umyvadlo"
+
+msgid "Clean the toilet"
+msgstr "Umýt záchod"
+
+msgid "Clean the windows"
+msgstr "Umýt okna"
+
+msgid "Cook"
+msgstr "Uvařit"
+
+msgid "Days of the week"
+msgstr "Dny v týdnu"
+
+msgid "Done"
+msgstr "Hotovo"
+
+msgid "Done."
+msgstr "Hotovo."
+
+#, python-format
+msgid "Done: %(name)s"
+msgstr "Hotovo: %(name)s"
+
+msgid "Dust"
+msgstr "Utřít prach"
+
+msgid "Empty the dishwasher"
+msgstr "Vyklidit myčku"
+
+msgid "Every day, or every few days"
+msgstr "Každý den nebo jednou za několik dní"
+
+msgid "Feed the pet"
+msgstr "Nakrmit zvíře"
+
+msgid "Fold the laundry"
+msgstr "Složit prádlo"
+
+msgid "For a one-time task, this is its day."
+msgstr "U jednorázového úkolu je to jeho den."
+
+msgid ""
+"For things like putting the bins out: the card disappears at the end of the day if "
+"nobody did it."
+msgstr ""
+"Pro věci jako vystavení popelnic: když to nikdo neudělá, karta na konci dne zmizí."
+
+msgid "Friday"
+msgstr "Pátek"
+
+msgid "Garage"
+msgstr "Garáž"
+
+msgid "Garden"
+msgstr "Zahrada"
+
+msgid "Go shopping"
+msgstr "Nakoupit"
+
+msgid "Hall"
+msgstr "Předsíň"
+
+msgid "Hang up the laundry"
+msgstr "Pověsit prádlo"
+
+msgid "Iron"
+msgstr "Vyžehlit"
+
+msgid "Kitchen"
+msgstr "Kuchyně"
+
+msgid "Laundry room"
+msgstr "Prádelna"
+
+msgid "Leave empty if anyone can do it. It is a hint: anyone may still do it."
+msgstr ""
+"Nechte prázdné, pokud to může udělat kdokoli. Je to jen nápověda: udělat to může stále"
+" kdokoli."
+
+msgid "Leave empty to let the app work it out. Set a day to make the card appear then."
+msgstr ""
+"Nechte prázdné a aplikace si den určí sama. Když den zadáte, karta se objeví právě "
+"tehdy."
+
+msgid "Leave empty to use the name that belongs to the picture."
+msgstr "Nechte prázdné, pokud se má použít název, který patří k obrázku."
+
+msgid "Living room"
+msgstr "Obývací pokoj"
+
+msgid "Load the dishwasher"
+msgstr "Naplnit myčku"
+
+msgid "Load the washing machine"
+msgstr "Naplnit pračku"
+
+msgid "Make the bed"
+msgstr "Ustlat postel"
+
+msgid "Meant for"
+msgstr "Určeno pro"
+
+msgid "Medium"
+msgstr "Střední"
+
+msgid "Monday"
+msgstr "Pondělí"
+
+msgid "Mop the floor"
+msgstr "Vytřít podlahu"
+
+msgid "Mow the lawn"
+msgstr "Posekat trávník"
+
+msgid "Name"
+msgstr "Název"
+
+msgid "Not yet"
+msgstr "Ještě ne"
+
+msgid "Note"
+msgstr "Poznámka"
+
+msgid "Nothing is waiting for this person right now."
+msgstr "Na tohoto člověka teď nic nečeká."
+
+msgid "Nothing is waiting right now."
+msgstr "Teď tu nic nečeká."
+
+msgid "On a day of the month"
+msgstr "V určitý den v měsíci"
+
+msgid "On chosen days of the week"
+msgstr "Ve vybrané dny v týdnu"
+
+msgid "Once"
+msgstr "Jednou"
+
+msgid "Only for \"On chosen days of the week\"."
+msgstr "Jen pro volbu „Ve vybrané dny v týdnu“."
+
+msgid "Only the latest finished card of a task can be put back."
+msgstr "Vrátit lze jen poslední hotovou kartu úkolu."
+
+msgid "Pantry"
+msgstr "Spíž"
+
+msgid "Pay the bills"
+msgstr "Zaplatit účty"
+
+msgid "Picture"
+msgstr "Obrázek"
+
+msgid "Put the bins out"
+msgstr "Vystavit popelnice"
+
+msgid "Put the toys away"
+msgstr "Uklidit hračky"
+
+msgid "Rake the leaves"
+msgstr "Shrabat listí"
+
+msgid "Rooms are shown in this order, lowest first. It never changes by itself."
+msgstr ""
+"Místnosti se zobrazují v tomto pořadí, od nejnižšího čísla. Samo se nikdy nemění."
+
+msgid "Saturday"
+msgstr "Sobota"
+
+msgid "Set the table"
+msgstr "Prostřít stůl"
+
+msgid "Shovel the snow"
+msgstr "Odklidit sníh"
+
+msgid "Show the card today"
+msgstr "Zobrazit kartu dnes"
+
+msgid "Skip the waiting card (not needed this time)"
+msgstr "Přeskočit čekající kartu (tentokrát není potřeba)"
+
+msgid "Small"
+msgstr "Malá"
+
+msgid "Someone has already done that one."
+msgstr "Tohle už někdo udělal."
+
+msgid "Sort the recycling"
+msgstr "Roztřídit odpad"
+
+msgid "State"
+msgstr "Stav"
+
+msgid "Study"
+msgstr "Pracovna"
+
+msgid "Sunday"
+msgstr "Neděle"
+
+msgid "Take a parcel to the post office"
+msgstr "Odnést balík na poštu"
+
+msgid "Take out the rubbish"
+msgstr "Vynést odpadky"
+
+msgid "Tap at least one face."
+msgstr "Ťukněte aspoň na jednu tvář."
+
+msgid "Tasks"
+msgstr "Úkoly"
+
+msgid ""
+"Tasks, rooms and family members are set up in the management pages. They are made for "
+"a PC."
+msgstr ""
+"Úkoly, místnosti a členové rodiny se nastavují na stránkách správy. Ty jsou určené pro"
+" počítač."
+
+msgid "The end cannot be before the start."
+msgstr "Konec nemůže být před začátkem."
+
+msgid "Thursday"
+msgstr "Čtvrtek"
+
+msgid "Tidy the room"
+msgstr "Uklidit pokoj"
+
+msgid "Tidy the shoes"
+msgstr "Uklidit boty"
+
+msgid "Toilet"
+msgstr "Záchod"
+
+msgid "Tuesday"
+msgstr "Úterý"
+
+msgid "Type a name, or choose a picture that has one."
+msgstr "Napište název, nebo vyberte obrázek, který nějaký má."
+
+msgid "Undo"
+msgstr "Vrátit zpět"
+
+msgid "Undo: put the card back as if it had not been done"
+msgstr "Vrátit zpět: kartu vrátit, jako by nebyla hotová"
+
+msgid "Vacuum"
+msgstr "Vysát"
+
+msgid "Walk the dog"
+msgstr "Vyvenčit psa"
+
+msgid "Wash the car"
+msgstr "Umýt auto"
+
+msgid "Wash the dishes"
+msgstr "Umýt nádobí"
+
+msgid "Water the garden"
+msgstr "Zalít zahradu"
+
+msgid "Water the plants"
+msgstr "Zalít květiny"
+
+msgid "Wednesday"
+msgstr "Středa"
+
+msgid "When"
+msgstr "Kdy"
+
+msgid "Who did it?"
+msgstr "Kdo to udělal?"
+
+msgid "Whose tasks"
+msgstr "Čí úkoly"
+
+msgid "Wipe the table"
+msgstr "Utřít stůl"
+
+msgid "card of"
+msgstr "karta ze dne"
+
+msgid "day of the month"
+msgstr "den v měsíci"
+
+msgid "days of the week"
+msgstr "dny v týdnu"
+
+msgid "done at"
+msgstr "hotovo v"
+
+msgid "done by"
+msgstr "udělal(a)"
+
+msgid "effort"
+msgstr "náročnost"
+
+msgid "ends on"
+msgstr "končí dne"
+
+msgid "every"
+msgstr "každý kolikátý"
+
+msgid "finished task"
+msgstr "hotový úkol"
+
+msgid "finished tasks"
+msgstr "hotové úkoly"
+
+msgid "hint"
+msgstr "nápověda"
+
+msgid "in use"
+msgstr "používá se"
+
+msgid "j F"
+msgstr "j. E"
+
+msgid "meant for"
+msgstr "určeno pro"
+
+msgid "next card appears on"
+msgstr "další karta se objeví dne"
+
+msgid "note"
+msgstr "poznámka"
+
+msgid "only makes sense on the day"
+msgstr "má smysl jen ten den"
+
+msgid "picture"
+msgstr "obrázek"
+
+msgid "points"
+msgstr "body"
+
+msgid "position"
+msgstr "pořadí"
+
+msgid "recorded on"
+msgstr "zaznamenáno na"
+
+msgid "repeats"
+msgstr "opakování"
+
+msgid "room"
+msgstr "místnost"
+
+msgid "rooms"
+msgstr "místnosti"
+
+#, python-format
+msgid "since %(date)s"
+msgstr "od %(date)s"
+
+msgid "since Friday"
+msgstr "od pátku"
+
+msgid "since Monday"
+msgstr "od pondělí"
+
+msgid "since Saturday"
+msgstr "od soboty"
+
+msgid "since Sunday"
+msgstr "od neděle"
+
+msgid "since Thursday"
+msgstr "od čtvrtka"
+
+msgid "since Tuesday"
+msgstr "od úterý"
+
+msgid "since Wednesday"
+msgstr "od středy"
+
+msgid "since yesterday"
+msgstr "od včerejška"
+
+msgid "starts on"
+msgstr "začíná dne"
+
+msgid "task"
+msgstr "úkol"
+
+msgid "tasks"
+msgstr "úkoly"

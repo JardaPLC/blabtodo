@@ -1,0 +1,51 @@
+{% load i18n %}
+{# The sheet for marking one card done. Loaded into the <dialog> of the Today screen. #}
+<form class="flex min-h-full flex-col p-5 sm:p-8"
+      hx-post="{% url 'card-done' task.pk %}{% if face %}?face={{ face.pk }}{% endif %}"
+      hx-target="#cards" hx-swap="innerHTML"
+      x-data="{ picked: {{ preselected|length }}, note: false }">
+  {# Which card this is. If someone else finishes it meanwhile, the server can tell. #}
+  <input type="hidden" name="card_date" value="{{ task.next_card_date|date:'Y-m-d' }}">
+
+  <div class="text-center">
+    {% include "tasks/_picture.html" with item=task size="text-8xl" %}
+    <h2 class="mt-3 text-3xl leading-tight font-bold">{{ task.name }}</h2>
+    {% if task.room %}<p class="mt-1 text-stone-500">{{ task.room.name }}</p>{% endif %}
+    {% if task.hint %}<p class="mt-2 text-stone-600">{{ task.hint }}</p>{% endif %}
+  </div>
+
+  <fieldset class="mt-6">
+    <legend class="text-2xl font-bold">{% translate "Who did it?" %}</legend>
+    {% if error %}
+    <p class="mt-1 font-semibold text-red-700" role="alert">{% translate "Tap at least one face." %}</p>
+    {% endif %}
+    <div class="mt-3 flex flex-wrap gap-2">
+      {% for person in people %}
+      <label class="cursor-pointer">
+        <input type="checkbox" name="who" value="{{ person.pk }}" class="peer sr-only"
+               {% if person.pk in preselected %}checked{% endif %}
+               @change="picked += $event.target.checked ? 1 : -1">
+        <span class="flex w-24 flex-col items-center rounded-2xl p-2 text-center ring-2 ring-transparent peer-checked:bg-green-50 peer-checked:ring-green-600 peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-green-700">
+          {% include "people/_face.html" with person=person size="size-16 text-2xl" %}
+          <span class="mt-1 text-lg leading-tight font-semibold">{{ person }}</span>
+        </span>
+      </label>
+      {% endfor %}
+    </div>
+  </fieldset>
+
+  <div class="mt-6">
+    <button type="button" class="btn min-h-12 px-4 text-lg" x-show="!note"
+            @click="note = true; $nextTick(() => $refs.note.focus())">{% translate "Add a note" %}</button>
+    <input type="text" name="note" maxlength="280" class="field" x-ref="note" x-show="note" x-cloak
+           placeholder="{% translate 'Note' %}" aria-label="{% translate 'Note' %}">
+  </div>
+
+  {# The main action is always the big green button, at the bottom, within thumb reach. #}
+  <div class="mt-auto flex flex-col-reverse gap-3 pt-8 sm:flex-row">
+    <button type="button" class="btn sm:flex-1"
+            @click="$el.closest('dialog').close()">{% translate "Not yet" %}</button>
+    <button type="submit" class="btn btn-primary sm:flex-[2]"
+            :disabled="picked < 1">{% translate "Done" %}</button>
+  </div>
+</form>

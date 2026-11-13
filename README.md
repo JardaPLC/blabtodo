@@ -10,8 +10,10 @@ screen in the house can show, and marking a task done takes two taps.
   stays at home, in one folder.
 - Czech and English, chosen per device.
 
-**Status: early development.** Today you can set up your family and allow your devices.
-The task screens are next. The whole plan is in [docs/design.md](docs/design.md).
+**Status: early development.** Today you can set up your family, rooms and tasks, and
+mark tasks done on any allowed device. Setting things up still happens in management
+pages made for a PC, and the pictures are stand-ins. The whole plan is in
+[docs/design.md](docs/design.md).
 
 ## Install
 

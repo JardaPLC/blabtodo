@@ -73,6 +73,7 @@ tested.
 | `config/` | Django settings and the top-level addresses |
 | `household/` | Things that belong to the installation as a whole: the first page, the device check page, the health check, uploaded files, and the host and language middlewares |
 | `people/` | Family members, PINs, allowed devices, the first-run and PIN screens |
+| `tasks/` | Tasks, rooms and finished tasks; the repeat rules (`schedule.py`), what done, undo and skip do (`cards.py`), the starter catalogue, and the Today screen |
 | `templates/` | The base layout shared by all pages. Each app keeps its own pages in its own `templates/` folder |
 | `styles/app.css` | The Tailwind input file |
 | `static/` | Files served as they are. `static/vendor/` holds htmx and Alpine.js at fixed versions |

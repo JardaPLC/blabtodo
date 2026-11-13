@@ -3,8 +3,9 @@
 A home task manager for one family: a shared queue of household tasks that any screen in
 the house can show.
 
-This is an early version. You can set up your family and allow your devices. Tasks arrive
-with the next version.
+This is an early version. You can set up your family, rooms and tasks, and mark tasks
+done on any allowed device. Tasks are set up in management pages that are made for a PC;
+a touch-friendly editor comes later.
 
 ## Opening it
 
@@ -44,6 +45,10 @@ backups. During a backup the app is stopped for a few seconds, so the copy is al
 consistent.
 
 Uninstalling the app deletes this data. Make a backup first if you want to keep it.
+
+The app also keeps its own copies of the database in the same folder: one per day for
+the last two weeks, and one from before each update. They help after a mistake. They do
+not replace the Home Assistant backup, because they sit on the same disk.
 
 ## Changing the port
 
