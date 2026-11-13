@@ -18,6 +18,7 @@ and update its row here.
 
 ## Used while building
 
+- [segno](https://github.com/heuer/segno) (BSD-3-Clause) draws the QR codes.
 - [Tailwind CSS](https://tailwindcss.com) (MIT) generates the stylesheet.
 - [Django](https://www.djangoproject.com) (BSD-3-Clause) and the other Python packages
   are listed in `pyproject.toml`. They are installed into the image, not copied here.

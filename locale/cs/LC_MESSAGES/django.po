@@ -798,3 +798,55 @@ msgstr "Požádejte dospělého, aby zadal svůj PIN."
 
 msgid "The PIN is needed only once on each device."
 msgstr "PIN stačí na každém zařízení zadat jednou."
+
+msgid "Back to tasks"
+msgstr "Zpět na úkoly"
+
+msgid "Go to Today"
+msgstr "Přejít na Dnes"
+
+msgid "If the address of the app changes, print the stickers again."
+msgstr "Když se adresa aplikace změní, vytiskněte nálepky znovu."
+
+msgid "It is already waiting on Today."
+msgstr "Už čeká v Dnes."
+
+msgid "No task in use was chosen."
+msgstr "Nebyl vybrán žádný používaný úkol."
+
+msgid "Not now"
+msgstr "Teď ne"
+
+msgid "Only when asked for, for example by its QR code"
+msgstr "Jen na vyžádání, například QR kódem"
+
+msgid "Print"
+msgstr "Vytisknout"
+
+msgid "Print QR stickers"
+msgstr "Vytisknout QR nálepky"
+
+msgid "QR stickers"
+msgstr "QR nálepky"
+
+msgid ""
+"Scanning a sticker with a phone's camera opens the task and offers to show it on "
+"Today."
+msgstr ""
+"Když nálepku naskenujete fotoaparátem telefonu, otevře se úkol s nabídkou zobrazit ho "
+"v Dnes."
+
+msgid "Show it"
+msgstr "Zobrazit"
+
+msgid "Show this task on Today?"
+msgstr "Zobrazit tento úkol v Dnes?"
+
+msgid "The codes lead to this address:"
+msgstr "Kódy vedou na tuto adresu:"
+
+msgid "The task it belonged to was deleted or is no longer in use."
+msgstr "Úkol, ke kterému patřil, byl smazán nebo se už nepoužívá."
+
+msgid "This code leads nowhere"
+msgstr "Tento kód nikam nevede"

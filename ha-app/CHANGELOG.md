@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.4.0
+
+QR stickers.
+
+- A new way of repeating, **Jen na vyžádání** (Only when asked for): the task never
+  appears by itself.
+- In the management pages, select tasks and choose **Vytisknout QR nálepky** (Print QR
+  stickers) to print a sticker for each.
+- Scanning a sticker with a phone's camera opens the task and asks whether to show it on
+  Today. This works for repeating tasks too, to bring one forward.
+- The codes hold the address the stickers were printed from. If that address changes,
+  print them again; the tasks keep their codes.
+
 ## 0.3.2
 
 A task that was never done can now be deleted, for example one added by mistake. Once it has been done it can still only be switched off, so that the record of what was done stays whole.

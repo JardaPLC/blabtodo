@@ -1,3 +1,5 @@
+import secrets
+
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -71,6 +73,7 @@ class Task(NamedInLanguages):
         DAYS = schedule.DAYS, _("Every day, or every few days")
         WEEKLY = schedule.WEEKLY, _("On chosen days of the week")
         MONTHLY = schedule.MONTHLY, _("On a day of the month")
+        ON_DEMAND = schedule.ON_DEMAND, _("Only when asked for, for example by its QR code")
 
     class Effort(models.IntegerChoices):
         SMALL = 1, _("Small")
@@ -139,6 +142,9 @@ class Task(NamedInLanguages):
         ),
     )
     is_active = models.BooleanField(_("in use"), default=True)
+    # The secret part of the address in the task's QR code. Made when the first sticker is
+    # printed, and kept, so that printed stickers keep working.
+    qr_key = models.CharField(max_length=32, unique=True, null=True, blank=True, editable=False)
     next_card_date = models.DateField(_("next card appears on"), null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -151,6 +157,12 @@ class Task(NamedInLanguages):
     def emoji(self) -> str:
         entry = TASKS_BY_KEY.get(self.picture)
         return entry.emoji if entry else FALLBACK_EMOJI
+
+    def ensure_qr_key(self) -> str:
+        if not self.qr_key:
+            self.qr_key = secrets.token_urlsafe(12)
+            self.save(update_fields=["qr_key"])
+        return self.qr_key
 
     @property
     def rule(self) -> schedule.Rule:

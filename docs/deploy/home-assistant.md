@@ -96,6 +96,26 @@ than one card per task, however long it waits.
 To stop using a task, untick **používá se** (in use). A task that was never done can also be deleted, for example one added by mistake; once it has been done it can only be switched off, so that the
 record of what was done stays whole.
 
+### QR stickers
+
+A task can be put on Today by scanning a sticker, for example one on the cooker hood for
+"change the filter". For such a task choose **Jen na vyžádání** (Only when asked for), so
+that it never appears by itself.
+
+1. In the management pages, under **Úkoly** (Tasks), tick the tasks, choose **Vytisknout
+   QR nálepky** (Print QR stickers) from the action menu, and confirm with the button
+   next to it.
+2. Print the page, cut out the stickers and put them where the task is done.
+3. Scan a sticker with a phone's camera app and open the link. blabtodo asks **Zobrazit
+   tento úkol v Dnes?** (Show this task on Today?).
+
+Print the stickers from the address the family uses, because that address is in the
+codes. A fixed IP address for the Pi, reserved in your router, is the safest choice. If
+the address changes, print the stickers again; each task keeps its code.
+
+The phone must open the link in the browser that was allowed with the PIN. If its camera
+app opens a different browser, that browser asks for the PIN once.
+
 ### Every day
 
 Open blabtodo on any allowed device. **Dnes** (Today) shows the cards that are waiting,

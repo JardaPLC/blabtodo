@@ -603,6 +603,7 @@ Milestone 1 is delivered as three releases, each usable on its own: 0.2 with peo
 | 28 | A task stores the key of its picture, and the starter catalogue gives each key a name in every language | The picture set can be chosen later, or changed, without touching anyone's tasks; adding a task is choosing a picture | Storing the picture itself with the task |
 | 29 | A task that is switched on again starts afresh from that day | A card "since" the day it was switched off would be misleading | Reviving the old waiting card |
 | 30 | Day-only tasks are moved on when the queue is read, not by a daily job | One thing less that has to run at the right time | A housekeeping step with its own "last run" record |
+| 31 | A QR sticker holds a link to the task, opened by the phone's own camera app; the app asks before showing the card | Works on plain HTTP and every phone; live camera access in a browser needs HTTPS | Scanning inside the app with the browser's camera |
 
 ## 17. Open questions
 

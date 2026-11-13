@@ -357,3 +357,56 @@ def test_screenshots(page: Page, live_server, transactional_db):
 
     page.goto(live_server.url + "/check/")
     _shoot(page, folder, "6-device-check")
+
+
+def test_scanning_a_code_and_confirming_shows_the_card(allowed_page, live_server):
+    from tasks.schedule import ON_DEMAND
+
+    task = make_task("Vyměnit filtr", repeat=ON_DEMAND)
+    page = allowed_page
+    page.goto(live_server.url + f"/t/{task.ensure_qr_key()}/")
+
+    expect(page.get_by_text("Zobrazit tento úkol v Dnes?")).to_be_visible()
+    page.get_by_role("button", name="Zobrazit").click()
+
+    expect(page.get_by_role("heading", name="Dnes")).to_be_visible()
+    expect(page.locator("#cards")).to_contain_text("Vyměnit filtr")
+
+
+@pytest.mark.skipif(not os.environ.get("BLABTODO_SCREENSHOTS"), reason="no folder named for them")
+def test_screenshots_of_qr_stickers(page: Page, live_server, transactional_db):
+    from tasks.schedule import ON_DEMAND
+
+    folder = Path(os.environ["BLABTODO_SCREENSHOTS"])
+    folder.mkdir(parents=True, exist_ok=True)
+    owner = make_person("Máma", User.Role.ADULT, ADULT_PIN)
+    owner.is_staff = owner.is_superuser = True
+    owner.set_password("correct horse battery")
+    owner.save()
+    tasks = [
+        make_task(name, picture=picture, repeat=ON_DEMAND)
+        for name, picture in [
+            ("Vyměnit filtr v digestoři", "cook"),
+            ("Odnést balík na poštu", "post"),
+            ("Vyčistit lednici", "clean-fridge"),
+            ("Umýt auto", "wash-car"),
+        ]
+    ]
+    _device, token = trust_device(name="Test browser", trusted_by=owner)
+    page.context.add_cookies([{"name": COOKIE_NAME, "value": token, "url": live_server.url}])
+
+    page.goto(live_server.url + "/admin/login/")
+    page.locator("#id_username").fill(owner.username)
+    page.locator("#id_password").fill("correct horse battery")
+    page.locator("input[type=submit]").click()
+    ids = ",".join(str(task.pk) for task in tasks)
+    page.set_viewport_size({"width": 1000, "height": 900})
+    page.goto(live_server.url + f"/admin/tasks/task/stickers/?ids={ids}")
+    page.screenshot(path=str(folder / "7-stickers-pc.png"), full_page=True)
+    page.emulate_media(media="print")
+    page.screenshot(path=str(folder / "7-stickers-print.png"), full_page=True)
+    page.emulate_media(media="screen")
+
+    tasks[0].refresh_from_db()
+    page.goto(live_server.url + f"/t/{tasks[0].qr_key}/")
+    _shoot(page, folder, "8-scan")
