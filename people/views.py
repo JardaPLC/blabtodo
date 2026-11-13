@@ -25,14 +25,14 @@ def _device_name(request) -> str:
 def setup(request):
     """Create the first adult. Open to anyone on the home network, but only until it is done."""
     if household_is_set_up():
-        return redirect("home")
+        return redirect("today")
 
     form = SetupForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
         with transaction.atomic():
             owner = form.save()
             _device, token = trust_device(name=_device_name(request), trusted_by=owner)
-        response = redirect("home")
+        response = redirect("today")
         remember_device(response, token)
         return response
     return render(request, "people/setup.html", {"form": form})

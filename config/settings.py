@@ -68,6 +68,9 @@ DEBUG = _env_flag("BLABTODO_DEBUG")
 # replaced, which makes a restored backup recognisable. It reveals nothing about the key.
 INSTALLATION_ID = hashlib.sha256(SECRET_KEY.encode()).hexdigest()[:8]
 
+# A snapshot of the database is written into the data folder on the first use of each day.
+DAILY_SNAPSHOT = True
+
 # Shown on screen and in the health check. The container image sets it to the release number.
 APP_VERSION = os.environ.get("BLABTODO_VERSION", "dev")
 
@@ -89,6 +92,7 @@ INSTALLED_APPS = [
     "django_tailwind_cli",
     "people",
     "household",
+    "tasks",
 ]
 
 MIDDLEWARE = [

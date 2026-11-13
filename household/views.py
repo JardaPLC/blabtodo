@@ -1,7 +1,6 @@
 """
 Pages that belong to the installation as a whole.
 
-- home: where Today will be. Until tasks exist it shows the family.
 - check: the device check page, which proves the whole chain on a real device: styles,
   both languages, page fragments fetched by htmx, in-page behaviour by Alpine.js.
 - media: uploaded files, served to allowed devices only.
@@ -21,7 +20,6 @@ from django.utils._os import safe_join
 from django.views.decorators.http import require_GET
 
 from people.devices import trusted_device_required
-from people.models import User
 
 _STARTED = time.monotonic()
 
@@ -42,16 +40,6 @@ def _status_context() -> dict:
         "minutes_running": int((time.monotonic() - _STARTED) // 60),
         "database_ok": _database_ok(),
     }
-
-
-@trusted_device_required
-def home(request):
-    context = {
-        "people": User.objects.filter(is_active=True),
-        # The one person who can sign in to the management pages, to remind them how.
-        "owner": User.objects.filter(is_superuser=True, is_active=True).first(),
-    }
-    return render(request, "household/home.html", context)
 
 
 @trusted_device_required

@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.3.0
+
+Tasks.
+
+- Tasks and rooms are set up in the management pages. Choosing a picture is enough: its
+  name comes with it, in Czech and English.
+- A task repeats every few days, on chosen days of the week, on a day of the month, or
+  happens once.
+- **Today** shows the waiting cards, oldest first. A card waits until someone does it,
+  and there is never more than one card per task.
+- Tap a card, tap who did it, tap Done. Undo is offered for ten seconds.
+- Tapping a face shows only the cards meant for that person.
+- The app keeps a copy of its database once a day and before each update.
+
+The pictures are stand-ins for now. The real picture set is chosen in the next version.
+
 ## 0.2.0
 
 The family and its devices.

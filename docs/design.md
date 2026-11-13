@@ -2,7 +2,7 @@
 
 A home task manager for one family. Household tasks sit in one shared queue that any screen in the house can show, and marking a task done takes two taps.
 
-- **Status:** draft 0.8, 2026-11-12. Milestone 0 runs on the Pi; its backups and restore rehearsal are still to be done. Milestone 1 is in progress: people and devices are built, and tasks with the Today and Done screens are next.
+- **Status:** draft 0.9, 2026-11-13. Milestone 0 runs on the Pi; its backups and restore rehearsal are still to be done. Milestone 1 is in progress: people, devices, tasks, rooms and the Today and Done screens are built. The archive and the picture and font drafts are next.
 - **Designed for:** a family with children who cannot read yet and who will grow into it. Czech by default, English as a second language. Used on phones, tablets, PCs and a wall panel. Reachable on the home network only.
 - **Not settled:** see [Open questions](#17-open-questions).
 - **How to read this:** sections 1–6 describe what the app does, 7–13 how it is built, 14–17 the plan, the decisions and what is still open.
@@ -148,7 +148,7 @@ Tasks (a list and an editor with a picture picker and repeat settings), Rooms, P
 
 ### 3.6 Rules for every screen
 
-- Every task has a picture: one from the built-in set, or your own photo. A photo of *your* dishwasher is the picture a small child recognises fastest.
+- Every task has a picture: one from the built-in set, or your own photo. A photo of *your* dishwasher is the picture a small child recognises fastest. Until the built-in set is chosen, emoji stand in for it. A task stores only the key of its picture, so the pictures can change without touching the tasks.
 - Large type in the user view: at least 20 px on phones, and larger on tablets and the panel, where task titles must be readable from across the room. The admin view uses ordinary sizes, at least 16 px. These are starting values to tune on real devices.
 - The font is bundled with the app and must cover Czech letters fully (ě, š, č, ř, ž, ů and the rest).
 - Touch targets at least 64 px in the user view and 48 px in the admin view. No actions that need hover, a right-click or a swipe. No nested menus.
@@ -270,7 +270,7 @@ Had it been done on Saturday instead, the date would move to the following Wedne
 
 "One open card per task" needs no checking, because a task has only one date. A server that was off for a week needs no catching up: the dates are simply in the past and the cards are waiting.
 
-The only step that runs by itself is a small daily housekeeping on the first request of each day. It moves day-only tasks whose day has passed on to their next day, and writes the database snapshot. A real scheduler is added only when timed reminders need one.
+Two small things happen when the Today screen is fetched, and nowhere else. Day-only tasks whose day has passed are moved on to their next day. And on the first fetch of a day, the database snapshot is written. A real scheduler is added only when timed reminders need one.
 
 ### Why this model
 
@@ -401,7 +401,7 @@ Addresses are English and stay the same in every language. Only the visible text
 | `/` | Today: the queue | Trusted device |
 | `/cards/` | The card grid as a fragment, fetched again every 30 seconds | Trusted device |
 | `/cards/<id>/done/` | Opens the Done sheet; submitting it marks the card done (who, note, photo) | Trusted device |
-| `/cards/<id>/undo/` | Undo | Anyone within 10 seconds, later the admin view |
+| `/completions/<id>/undo/` | Undo | For a short while, on the device that recorded it; later the admin view |
 | `/cards/<id>/thanks/` | Add or remove a heart | Trusted device |
 | `/rooms/` | The rooms, each with what waits there | Trusted device |
 | `/rooms/<id>/` | The waiting cards of one room; `/rooms/elsewhere/` for tasks without a room | Trusted device |
@@ -456,7 +456,7 @@ One caution: Home Assistant searches the whole repository for app folders, so no
 - Everything lives in `/data`: the database, the photos and the snapshots.
 - **Home Assistant backups include the app.** The app is configured for "cold" backup, so Home Assistant stops it for the few seconds the backup takes, and the database copy is always consistent.
 - **The NAS keeps the copies.** Home Assistant can use a shared folder on the NAS as a backup location, so backups do not stay on the Pi's own storage.
-- Daily housekeeping also writes a database snapshot into `/data/backups` and keeps the last 14. A snapshot is taken before every database migration too. These cover mistakes rather than disk failures.
+- The app also writes a database snapshot into `/data/backups` on the first use of each day and keeps the last 14. A snapshot is taken before each update too, once per version, and the last 5 of those are kept. These cover mistakes rather than disk failures.
 - Restore: restore the Home Assistant backup, or on other hosts stop the container, put the folder back and start it. The restore is rehearsed once in milestone 0.
 - The database must sit on the host's own storage, not on a network share. SQLite's file locking is unreliable over a network.
 - Every backup contains all photos. When the photo folder passes a couple of gigabytes, either move the photos to a NAS share that Home Assistant mounts, or add a rule that removes old photos.
@@ -600,6 +600,9 @@ Milestone 1 is delivered as three releases, each usable on its own: 0.2 with peo
 | 25 | Compiled translations are kept in the repository | No translation tools are needed on Windows or when installing | Compiling them while the image is built |
 | 26 | The pause after wrong PINs is for the whole household | Behind the container's network devices cannot be told apart reliably; a household-wide pause is simple and cannot be sidestepped | A pause per device or per address |
 | 27 | The time zone comes from the host, not from a setting in the app | Home Assistant already knows it; one question less at first run | A time zone field on the first-run screen |
+| 28 | A task stores the key of its picture, and the starter catalogue gives each key a name in every language | The picture set can be chosen later, or changed, without touching anyone's tasks; adding a task is choosing a picture | Storing the picture itself with the task |
+| 29 | A task that is switched on again starts afresh from that day | A card "since" the day it was switched off would be misleading | Reviving the old waiting card |
+| 30 | Day-only tasks are moved on when the queue is read, not by a daily job | One thing less that has to run at the right time | A housekeeping step with its own "last run" record |
 
 ## 17. Open questions
 

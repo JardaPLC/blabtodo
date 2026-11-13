@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block body %}
+<main class="mx-auto max-w-[100rem] px-4 pt-4 pb-28 sm:px-6 lg:px-10">
+  <h1 class="text-4xl font-bold tracking-tight sm:text-5xl">{% translate "Today" %}</h1>
+
+  {# Whose cards: everyone's, or only the cards with one person's face on them. #}
+  <nav class="-mx-4 mt-4 flex gap-2 overflow-x-auto px-4 pb-2" aria-label="{% translate 'Whose tasks' %}">
+    <a href="{% url 'today' %}" {% if not face %}aria-current="true"{% endif %}
+       class="flex w-20 shrink-0 flex-col items-center rounded-2xl p-2 text-center ring-2 {% if not face %}bg-white ring-green-600{% else %}ring-transparent hover:bg-white{% endif %}">
+      <span class="inline-flex size-14 items-center justify-center rounded-full bg-stone-200 text-2xl" aria-hidden="true">🏠</span>
+      <span class="mt-1 text-lg leading-tight font-semibold">{% translate "All" %}</span>
+    </a>
+    {% for person in people %}
+    <a href="{% url 'today' %}?face={{ person.pk }}" {% if face == person %}aria-current="true"{% endif %}
+       class="flex w-20 shrink-0 flex-col items-center rounded-2xl p-2 text-center ring-2 {% if face == person %}bg-white ring-green-600{% else %}ring-transparent hover:bg-white{% endif %}">
+      {% include "people/_face.html" with person=person size="size-14 text-2xl" %}
+      <span class="mt-1 w-full truncate text-lg leading-tight font-semibold">{{ person }}</span>
+    </a>
+    {% endfor %}
+  </nav>
+
+  {# The cards refresh by themselves, so a wall panel follows what happens on phones. #}
+  <div id="cards" class="mt-4"
+       hx-get="{% url 'cards' %}{% if face %}?face={{ face.pk }}{% endif %}"
+       hx-trigger="every 30s" hx-swap="innerHTML">
+    {% include "tasks/_cards.html" %}
+  </div>
+
+  {# The sheet for marking a card done. Tapping a card loads the sheet into it, which opens it. It fills the screen on a phone and is a centred panel on anything wider. #}
+  <dialog id="sheet" x-data
+          @htmx:after-swap="if ($event.target === $el && !$el.open) $el.showModal()"
+          @sheet-close.window="if ($el.open) $el.close()"
+          class="m-0 h-dvh max-h-none w-screen max-w-none overflow-y-auto bg-white p-0 text-xl text-stone-900 backdrop:bg-stone-900/60 sm:m-auto sm:h-auto sm:max-h-[92dvh] sm:w-full sm:max-w-xl sm:rounded-3xl"></dialog>
+
+  {# Where "Done: … Undo" appears for a few seconds. #}
+  <div id="undo-bar" class="pointer-events-none fixed inset-x-0 bottom-4 z-10 px-4" aria-live="polite"></div>
+
+  {# Setting things up still happens in the management pages, which are made for a PC. #}
+  <details class="mt-16 text-stone-600">
+    <summary class="cursor-pointer text-lg font-semibold">{% translate "For adults" %}</summary>
+    <div class="card mt-3">
+      <p>{% translate "Tasks, rooms and family members are set up in the management pages. They are made for a PC." %}</p>
+      {% if owner %}
+      <p class="mt-2">{% translate "Sign in there with the password chosen at the start. The user name is:" %} <strong class="text-stone-900">{{ owner.username }}</strong></p>
+      {% endif %}
+      <div class="mt-4 flex flex-col gap-3 sm:flex-row">
+        <a href="{% url 'admin:index' %}" class="btn">{% translate "Management pages" %}</a>
+        <a href="{% url 'check' %}" class="btn">{% translate "Device check" %}</a>
+        {% include "_language_switch.html" %}
+      </div>
+    </div>
+  </details>
+</main>
+{% endblock %}

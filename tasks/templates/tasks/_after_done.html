@@ -1,0 +1,22 @@
+{% load i18n %}
+{# The answer to Done and to Undo: the refreshed cards, plus (out of band) what goes into the bar at the bottom. #}
+{% include "tasks/_cards.html" %}
+<div id="undo-bar" hx-swap-oob="innerHTML">
+  {% if completion %}
+  {# Stays for ten seconds, because small fingers hit the wrong card. #}
+  <div class="pointer-events-auto mx-auto flex max-w-xl items-center justify-between gap-4 rounded-2xl bg-stone-900 py-3 pr-3 pl-5 text-white shadow-lg"
+       role="status" x-data="{ shown: true }" x-init="setTimeout(() => shown = false, 10000)"
+       x-show="shown" x-transition.opacity>
+    <span class="leading-tight font-semibold">{% blocktranslate with name=completion.task.name %}Done: {{ name }}{% endblocktranslate %}</span>
+    <button type="button" class="btn min-h-12 shrink-0 px-5"
+            hx-post="{% url 'completion-undo' completion.pk %}{% if face %}?face={{ face.pk }}{% endif %}"
+            hx-target="#cards" hx-swap="innerHTML">{% translate "Undo" %}</button>
+  </div>
+  {% elif gone %}
+  <div class="pointer-events-auto mx-auto max-w-xl rounded-2xl bg-stone-900 px-5 py-4 text-white shadow-lg"
+       role="status" x-data="{ shown: true }" x-init="setTimeout(() => shown = false, 6000)"
+       x-show="shown" x-transition.opacity>
+    <span class="font-semibold">{% translate "Someone has already done that one." %}</span>
+  </div>
+  {% endif %}
+</div>

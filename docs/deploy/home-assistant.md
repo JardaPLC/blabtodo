@@ -59,8 +59,8 @@ The PC you did this on is now an allowed device, and the page shows your face.
 
 ### Add the rest of the family
 
-On the same page, under **Pro dospělé** (For adults), open the **management pages** and
-sign in with the user name shown there and your password. Under **Členové rodiny**
+At the bottom of that page, open **Pro dospělé** (For adults), then the **management
+pages**, and sign in with the user name shown there and your password. Under **Členové rodiny**
 (People) add each family member: a name, whether they are an adult or a child, and
 optionally a photo of the face. Adults need a PIN. Children do not.
 
@@ -73,10 +73,50 @@ After five wrong PINs in a row, PIN entry pauses for a minute for everyone, and 
 after each further wrong try. An allowed device is listed under **Zařízení** (Devices) in
 the management pages, where you can rename it or remove it.
 
+### Add rooms and tasks
+
+Still in the management pages, on a PC:
+
+1. Under **Místnosti** (Rooms), add the rooms of your home. Choosing a picture is enough;
+   its name is filled in for you in Czech and English. Give each room a position number:
+   rooms are always shown in that order.
+2. Under **Úkoly** (Tasks), add your tasks. Again, choosing a picture is enough. Then say
+   when it repeats:
+   - **Každý den nebo jednou za několik dní** (Every day, or every few days), with
+     "every 1" for daily or "every 3" for every third day.
+   - **Ve vybrané dny v týdnu** (On chosen days of the week), and tick the days.
+   - **V určitý den v měsíci** (On a day of the month), and give the day.
+   - **Jednou** (Once): the start date is its day.
+3. Optionally give the task a room, a hint (for example where the watering can is), and
+   the faces of the people it is meant for.
+
+A task's card appears on its day and waits until someone does it. There is never more
+than one card per task, however long it waits.
+
+To stop using a task, untick **používá se** (in use). Tasks are not deleted, so that the
+record of what was done stays whole.
+
+### Every day
+
+Open blabtodo on any allowed device. **Dnes** (Today) shows the cards that are waiting,
+the oldest first.
+
+- Tap a card, tap the face of whoever did it (several faces if you did it together), and
+  tap **Hotovo** (Done).
+- A bar with **Vrátit zpět** (Undo) stays for ten seconds, in case the wrong card was
+  tapped.
+- Tap a face at the top to see only the cards with that face on them.
+- The screen refreshes by itself every 30 seconds, so a wall panel follows what happens
+  on phones.
+
+What was done is listed under **Hotové úkoly** (Finished tasks) in the management pages.
+From there a finished card can also be put back.
+
 ### Check a device
 
-**Kontrola zařízení** (Device check) on the first page shows how a screen will lay out
-the task cards and whether the page keeps itself up to date.
+**Kontrola zařízení** (Device check), under **Pro dospělé** (For adults) at the bottom of
+the first page, shows how a screen will lay out the task cards and whether the page keeps
+itself up to date.
 
 ## 4. Send backups to a NAS
 
