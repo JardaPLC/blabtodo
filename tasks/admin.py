@@ -5,7 +5,12 @@ For now these are Django's own admin pages. The touch-friendly task editor repla
 for everyday use in milestone 2.
 """
 
+import segno
 from django.contrib import admin, messages
+from django.shortcuts import redirect
+from django.template.response import TemplateResponse
+from django.urls import path, reverse
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import ngettext
 
@@ -33,7 +38,7 @@ class TaskAdmin(admin.ModelAdmin):
     form = TaskAdminForm
     list_display = ["label", "room", "repeat", "next_card_date", "is_active"]
     list_filter = ["is_active", "room", "repeat"]
-    actions = ["show_today", "skip_waiting_card"]
+    actions = ["show_today", "skip_waiting_card", "print_stickers"]
     fieldsets = [
         (None, {"fields": ["picture", "names", "hint", "room", "effort", "faces"]}),
         (
@@ -56,6 +61,31 @@ class TaskAdmin(admin.ModelAdmin):
     @admin.display(description=_("task"))
     def label(self, task):
         return f"{task.emoji}  {task.name}"
+
+    def get_urls(self):
+        stickers = self.admin_site.admin_view(self.stickers_view)
+        return [path("stickers/", stickers, name="tasks_task_stickers"), *super().get_urls()]
+
+    @admin.action(description=_("Print QR stickers"))
+    def print_stickers(self, request, queryset):
+        chosen = ",".join(str(pk) for pk in queryset.values_list("pk", flat=True))
+        return redirect(reverse("admin:tasks_task_stickers") + "?ids=" + chosen)
+
+    def stickers_view(self, request):
+        """
+        A page of QR stickers for the chosen tasks.
+
+        Each code holds the full address of the task's scan page, as this browser reached
+        the app. That is why the stickers are printed from the address the family uses.
+        """
+        ids = [int(part) for part in request.GET.get("ids", "").split(",") if part.isdigit()]
+        stickers = []
+        for task in Task.objects.filter(pk__in=ids, is_active=True):
+            address = request.build_absolute_uri(reverse("task-qr", args=[task.ensure_qr_key()]))
+            code = segno.make(address, error="m").svg_inline(omitsize=True, title=task.name)
+            stickers.append((task, mark_safe(code)))  # noqa: S308 - segno escapes the title
+        context = {"stickers": stickers, "address": request.build_absolute_uri("/")}
+        return TemplateResponse(request, "tasks/stickers.html", context)
 
     def has_delete_permission(self, request, obj=None):
         # A task that was never done can be deleted, for example one added by mistake.

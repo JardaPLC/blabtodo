@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{# Where a task's QR code leads: one question, one big button. #}
+{% block body %}
+<main class="mx-auto flex min-h-dvh max-w-md flex-col px-4 pt-6 pb-6">
+  {% if task %}
+  <div class="card text-center">
+    {% include "tasks/_picture.html" with item=task size="text-8xl" %}
+    <h1 class="mt-3 text-3xl leading-tight font-bold">{{ task.name }}</h1>
+    {% if task.room %}<p class="mt-1 text-stone-500">{{ task.room.name }}</p>{% endif %}
+  </div>
+
+  {% if already_waiting %}
+  <p class="mt-6 text-center text-2xl font-bold">{% translate "It is already waiting on Today." %}</p>
+  <a href="{% url 'today' %}" class="btn btn-primary mt-auto w-full">{% translate "Go to Today" %}</a>
+  {% else %}
+  <p class="mt-6 text-center text-2xl font-bold">{% translate "Show this task on Today?" %}</p>
+  <form method="post" class="mt-auto flex gap-3 pt-6">
+    {% csrf_token %}
+    <a href="{% url 'today' %}" class="btn flex-1 px-3">{% translate "Not now" %}</a>
+    <button type="submit" class="btn btn-primary flex-[2]">{% translate "Show it" %}</button>
+  </form>
+  {% endif %}
+
+  {% else %}
+  <p class="text-7xl" aria-hidden="true">🤔</p>
+  <h1 class="mt-4 text-3xl font-bold">{% translate "This code leads nowhere" %}</h1>
+  <p class="mt-2 text-stone-600">{% translate "The task it belonged to was deleted or is no longer in use." %}</p>
+  <a href="{% url 'today' %}" class="btn btn-primary mt-auto w-full">{% translate "Go to Today" %}</a>
+  {% endif %}
+</main>
+{% endblock %}

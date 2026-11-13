@@ -14,6 +14,9 @@ ONCE = "once"
 DAYS = "days"
 WEEKLY = "weekly"
 MONTHLY = "monthly"
+# Never scheduled by itself. Its card appears only when asked for, for example by scanning
+# its QR code.
+ON_DEMAND = "demand"
 
 
 @dataclass(frozen=True)
@@ -42,6 +45,8 @@ def _day_in_month(wanted: int, month_of: date) -> int:
 def is_scheduled(rule: Rule, day: date) -> bool:
     if day < rule.start or (rule.end is not None and day > rule.end):
         return False
+    if rule.repeat == ON_DEMAND:
+        return False
     if rule.repeat == ONCE:
         return day == rule.start
     if rule.repeat == DAYS:
@@ -62,7 +67,9 @@ def first_on_or_after(rule: Rule, day: date) -> date | None:
     """The first scheduled day that is `day` or later. None if there is none."""
     day = max(day, rule.start)
 
-    if rule.repeat == ONCE:
+    if rule.repeat == ON_DEMAND:
+        found = None
+    elif rule.repeat == ONCE:
         found = rule.start if day == rule.start else None
     elif rule.repeat == DAYS:
         days_into_cycle = (day - rule.start).days % rule.interval

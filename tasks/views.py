@@ -3,7 +3,7 @@
 import contextlib
 from datetime import date
 
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_GET, require_http_methods, require_POST
 
 from household.backups import snapshot_if_due
@@ -145,3 +145,22 @@ def _after(request, day, face, *, completion=None, gone=False):
     response.headers["HX-Reswap"] = "innerHTML"
     response.headers["HX-Trigger"] = "sheet-close"
     return response
+
+
+@require_http_methods(["GET", "POST"])
+@trusted_device_required
+def from_qr(request, key):
+    """
+    Where a task's QR code leads. Asks before showing the card, so that a scan by accident
+    changes nothing.
+    """
+    task = Task.objects.filter(qr_key=key, is_active=True).first()
+    if task is None:
+        return render(request, "tasks/qr.html", {"task": None}, status=404)
+    day = cards.today()
+    already_waiting = cards.is_waiting(task, day)
+    if request.method == "POST":
+        if not already_waiting:
+            cards.show_today(task, day)
+        return redirect("today")
+    return render(request, "tasks/qr.html", {"task": task, "already_waiting": already_waiting})

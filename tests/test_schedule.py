@@ -243,3 +243,16 @@ def test_first_on_or_after_agrees_with_checking_every_day_one_by_one(rule):
 
         expected_next = next((s for s in scheduled if s > day), None)
         assert next_after(rule, day) == expected_next, f"asked for the day after {day}"
+
+
+# ---- Only when asked for ----
+
+
+def test_an_on_demand_task_is_never_scheduled_by_itself():
+    from tasks.schedule import ON_DEMAND
+
+    rule = Rule(ON_DEMAND, start=MONDAY)
+
+    assert not is_scheduled(rule, MONDAY)
+    assert first_on_or_after(rule, MONDAY) is None
+    assert next_after(rule, MONDAY) is None
