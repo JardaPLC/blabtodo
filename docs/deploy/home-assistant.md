@@ -93,7 +93,7 @@ Still in the management pages, on a PC:
 A task's card appears on its day and waits until someone does it. There is never more
 than one card per task, however long it waits.
 
-To stop using a task, untick **používá se** (in use). Tasks are not deleted, so that the
+To stop using a task, untick **používá se** (in use). A task that was never done can also be deleted, for example one added by mistake; once it has been done it can only be switched off, so that the
 record of what was done stays whole.
 
 ### Every day

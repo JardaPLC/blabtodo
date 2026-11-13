@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.2
+
+A task that was never done can now be deleted, for example one added by mistake. Once it has been done it can still only be switched off, so that the record of what was done stays whole.
+
 ## 0.3.1
 
 Fixes found by trying the screens in a real browser at phone, tablet and PC sizes.
