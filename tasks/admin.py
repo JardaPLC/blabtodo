@@ -58,8 +58,13 @@ class TaskAdmin(admin.ModelAdmin):
         return f"{task.emoji}  {task.name}"
 
     def has_delete_permission(self, request, obj=None):
-        # Tasks are switched off, not deleted, so that the archive stays whole.
-        return False
+        # A task that was never done can be deleted, for example one added by mistake.
+        # Once it has been done, it can only be switched off, so that the archive stays
+        # whole. (Deleting several from the list is checked the same way: the database
+        # refuses to delete a task that has finished cards, and the page says which.)
+        if obj is not None and obj.completions.exists():
+            return False
+        return super().has_delete_permission(request, obj)
 
     def save_model(self, request, obj, form, change):
         day = cards.today()

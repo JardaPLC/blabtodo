@@ -266,11 +266,39 @@ def test_a_task_switched_off_has_no_card_and_starts_afresh_when_switched_on(owne
     assert task.next_card_date == TODAY()
 
 
-def test_tasks_cannot_be_deleted_only_switched_off(owner_client):
-    task = make_task("Vysát")
+def test_a_task_that_was_never_done_can_be_deleted(owner_client):
+    task = make_task("Vysát s překlepem")
 
+    page = owner_client.get(f"/admin/tasks/task/{task.pk}/change/").content.decode()
+    assert f"/admin/tasks/task/{task.pk}/delete/" in page
+
+    owner_client.post(f"/admin/tasks/task/{task.pk}/delete/", {"post": "yes"})
+
+    assert not Task.objects.filter(pk=task.pk).exists()
+
+
+def test_a_task_that_was_done_can_only_be_switched_off(owner_client, adult):
+    task = make_task("Vysát")
+    cards.complete(task_id=task.pk, card_date=TODAY(), people=[adult])
+
+    page = owner_client.get(f"/admin/tasks/task/{task.pk}/change/").content.decode()
+    assert f"/admin/tasks/task/{task.pk}/delete/" not in page
     assert owner_client.get(f"/admin/tasks/task/{task.pk}/delete/").status_code == 403
     assert Task.objects.filter(pk=task.pk).exists()
+
+
+def test_deleting_from_the_list_spares_tasks_that_were_done(owner_client, adult):
+    unused = make_task("Překlep")
+    used = make_task("Vysát")
+    cards.complete(task_id=used.pk, card_date=TODAY(), people=[adult])
+
+    owner_client.post(
+        "/admin/tasks/task/",
+        {"action": "delete_selected", "_selected_action": [unused.pk, used.pk], "post": "yes"},
+    )
+
+    assert Task.objects.filter(pk=used.pk).exists()
+    assert Completion.objects.count() == 1
 
 
 # ---- Actions on tasks ----
