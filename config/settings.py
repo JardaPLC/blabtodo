@@ -218,6 +218,17 @@ MAILERS = {
     },
 }
 
+# Errors go to the log, where the host (Home Assistant, Docker) shows them. Without this,
+# Django would only email them to the site's admins, of which there are none, and a
+# failing page would leave no trace.
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {"plain": {"format": "{levelname} {name}: {message}", "style": "{"}},
+    "handlers": {"console": {"class": "logging.StreamHandler", "formatter": "plain"}},
+    "root": {"handlers": ["console"], "level": "WARNING"},
+}
+
 # Checks from `manage.py check --deploy` that do not apply, each for a stated reason.
 SILENCED_SYSTEM_CHECKS = [
     # No email is sent, on purpose (see MAILERS above).

@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.5.1
+
+Fix: **Done did nothing** for a task that had already been done earlier the same day,
+for example "Vyklidit myčku" shown a second time by a chain, or a QR sticker scanned
+twice. Such a task can now be done as often as it is asked for.
+
+- If a tap on Today fails for any reason, a red message now says so, instead of nothing
+  happening.
+- Errors are now written to the app's log in Home Assistant.
+
 ## 0.5.0
 
 Chains, finished tasks, and drafts of the pictures and font to choose from.

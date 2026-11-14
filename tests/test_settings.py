@@ -52,3 +52,13 @@ def test_everything_that_must_survive_lives_in_the_data_folder():
 
     assert project_settings.DATABASE_FILE.parent == data_dir
     assert project_settings.MEDIA_ROOT.parent == data_dir
+
+
+def test_errors_are_written_to_the_log_where_the_host_shows_them():
+    import logging
+
+    from django.conf import settings
+
+    assert settings.LOGGING["root"]["handlers"] == ["console"]
+    # Django's own messages, a failing page among them, reach that handler.
+    assert logging.getLogger("django.request").propagate

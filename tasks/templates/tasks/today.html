@@ -42,6 +42,27 @@
   {# Where "Done: … Undo" appears for a few seconds. #}
   <div id="undo-bar" class="pointer-events-none fixed inset-x-0 bottom-4 z-10 px-4" aria-live="polite"></div>
 
+  {# When a tap reaches the server but fails, or does not reach it at all, say so instead of doing nothing. The sheet closes, because an open sheet covers everything else; the card stays for another try. The refresh every 30 seconds is left out: it simply tries again. #}
+  <div id="problem" class="pointer-events-none fixed inset-x-0 top-4 z-50 px-4" role="alert"
+       x-data="{
+         shown: false,
+         timer: null,
+         failed(event) {
+           if (event.detail.elt.id === 'cards') return;
+           this.$dispatch('sheet-close');
+           this.shown = true;
+           clearTimeout(this.timer);
+           this.timer = setTimeout(() => this.shown = false, 8000);
+         },
+       }"
+       @htmx:response-error.camel.window="failed($event)"
+       @htmx:send-error.camel.window="failed($event)">
+    <div x-show="shown" x-cloak x-transition.opacity
+         class="pointer-events-auto mx-auto max-w-xl rounded-2xl bg-red-700 px-5 py-4 font-semibold text-white shadow-lg">
+      {% translate "That did not work. Please try again in a moment." %}
+    </div>
+  </div>
+
   {# Setting things up still happens in the management pages, which are made for a PC. #}
   <details class="mt-16 text-stone-600">
     <summary class="cursor-pointer text-lg font-semibold">{% translate "For adults" %}</summary>

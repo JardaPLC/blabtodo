@@ -241,3 +241,39 @@ def test_the_undo_bar_says_what_comes_next(trusted_client, adult):
 
     html = response.content.decode()
     assert "Empty the dishwasher" in html
+
+
+# ---- Twice a day ----
+
+
+def test_a_chain_can_run_twice_in_one_day(adult):
+    load, empty = chain("Load", "Empty")
+    morning, evening = noon(MON), noon(MON) + timedelta(hours=8)
+    load.repeat = ON_DEMAND
+    load.save()
+    cards.show_today(load, MON)
+
+    done(load, MON, adult, now=morning)
+    done(empty, MON, adult, now=morning + timedelta(hours=2))
+    cards.show_today(load, MON)
+    done(load, MON, adult, now=evening)
+
+    assert waiting(MON) == [empty]
+    done(empty, MON, adult, now=evening + timedelta(hours=2))
+    assert Completion.objects.filter(task=empty).count() == 2
+
+
+def test_undo_in_the_evening_takes_back_the_evenings_next_card(adult):
+    load, empty = chain("Load", "Empty")
+    load.repeat = ON_DEMAND
+    load.save()
+    cards.show_today(load, MON)
+    done(load, MON, adult, now=noon(MON))
+    done(empty, MON, adult, now=noon(MON) + timedelta(hours=2))
+    cards.show_today(load, MON)
+    evening = done(load, MON, adult, now=noon(MON) + timedelta(hours=8))
+
+    # Empty was done this morning, but this evening's Empty card was not done yet.
+    cards.undo(evening)
+
+    assert waiting(MON) == [load]

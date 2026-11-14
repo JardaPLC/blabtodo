@@ -11,7 +11,7 @@ import pytest
 from people.devices import trust_device
 from tasks import cards
 from tasks.models import Completion
-from tasks.schedule import MONTHLY, ONCE, WEEKLY
+from tasks.schedule import MONTHLY, ON_DEMAND, ONCE, WEEKLY
 from tests.conftest import make_task, noon
 
 pytestmark = pytest.mark.django_db
@@ -338,3 +338,37 @@ def test_a_task_done_today_is_not_brought_back_today_by_an_edit(adult):
 
     # Monday is a scheduled day, but Monday is already done.
     assert task.next_card_date == THU
+
+
+# ---- A task asked for more than once a day ----
+
+
+def test_a_task_asked_for_again_the_same_day_can_be_done_again(adult):
+    # Its QR code is scanned in the morning and again in the evening.
+    task = make_task("Change the filter", repeat=ON_DEMAND, start_date=MON)
+    cards.show_today(task, MON)
+    cards.complete(task_id=task.pk, card_date=MON, people=[adult], now=noon(MON))
+    cards.show_today(task, MON)
+
+    evening = noon(MON) + timedelta(hours=6)
+    cards.complete(task_id=task.pk, card_date=MON, people=[adult], now=evening)
+
+    assert Completion.objects.filter(task=task, card_date=MON).count() == 2
+    assert waiting(MON) == []
+
+
+def test_undo_of_the_second_time_the_same_day_puts_that_card_back(adult):
+    task = make_task("Change the filter", repeat=ON_DEMAND, start_date=MON)
+    cards.show_today(task, MON)
+    first = cards.complete(task_id=task.pk, card_date=MON, people=[adult], now=noon(MON))
+    cards.show_today(task, MON)
+    second = cards.complete(
+        task_id=task.pk, card_date=MON, people=[adult], now=noon(MON) + timedelta(hours=6)
+    )
+
+    with pytest.raises(cards.CannotUndo):
+        cards.undo(first)
+    cards.undo(second)
+
+    assert waiting(MON) == [task]
+    assert list(Completion.objects.all()) == [first]

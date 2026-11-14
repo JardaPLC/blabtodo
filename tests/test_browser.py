@@ -545,3 +545,32 @@ def test_screenshots_of_the_drafts_and_finished_tasks(page: Page, live_server, t
     page.goto(live_server.url + "/done/")
     page.wait_for_load_state("networkidle")
     _shoot(page, folder, "10-finished")
+
+
+def test_when_done_fails_the_screen_says_so_instead_of_doing_nothing(
+    page: Page, live_server, family
+):
+    # Without the `problems` fixture: the failed request is reported to the console here
+    # on purpose.
+    _device, token = trust_device(name="Test browser", trusted_by=family[0])
+    page.context.add_cookies([{"name": COOKIE_NAME, "value": token, "url": live_server.url}])
+    make_task("Zalít květiny", picture="water-plants")
+    page.goto(live_server.url)
+    # The server answers Done with an error, as 0.5.0 did for a task done twice in a day.
+    page.route(
+        re.compile(r".*/done/.*"),
+        lambda route: (
+            route.fulfill(status=500, body="error")
+            if route.request.method == "POST"
+            else route.continue_()
+        ),
+    )
+
+    page.get_by_role("button", name=re.compile("Zalít květiny")).click()
+    sheet = page.locator("#sheet")
+    sheet.get_by_text("Mum", exact=True).click()
+    sheet.get_by_role("button", name="Hotovo", exact=True).click()
+
+    expect(page.locator("#problem")).to_contain_text("Nepodařilo se to")
+    expect(sheet).not_to_be_visible()
+    expect(page.locator("#cards")).to_contain_text("Zalít květiny")
