@@ -3,7 +3,12 @@
 
 {% block body %}
 <main class="mx-auto max-w-[100rem] px-4 pt-4 pb-28 sm:px-6 lg:px-10">
-  <h1 class="text-4xl font-bold tracking-tight sm:text-5xl">{% translate "Today" %}</h1>
+  <div class="flex items-center justify-between gap-4">
+    <h1 class="text-4xl font-bold tracking-tight sm:text-5xl">{% translate "Today" %}</h1>
+    <a href="{% url 'archive' %}" class="btn min-h-14 gap-2 px-4 text-lg">
+      <span aria-hidden="true">✅</span> {% translate "Finished" %}
+    </a>
+  </div>
 
   {# Whose cards: everyone's, or only the cards with one person's face on them. #}
   <nav class="-mx-4 mt-4 flex gap-2 overflow-x-auto px-4 pb-2" aria-label="{% translate 'Whose tasks' %}">
@@ -48,6 +53,7 @@
       <div class="mt-4 flex flex-col gap-3 sm:flex-row">
         <a href="{% url 'admin:index' %}" class="btn">{% translate "Management pages" %}</a>
         <a href="{% url 'check' %}" class="btn">{% translate "Device check" %}</a>
+        <a href="{% url 'look' %}" class="btn">{% translate "Look: drafts to choose from" %}</a>
         {% include "_language_switch.html" %}
       </div>
     </div>

@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.5.0
+
+Chains, finished tasks, and drafts of the pictures and font to choose from.
+
+- **Chains.** In a task's settings, **Potom zobrazit** (Then show) names the task that
+  comes next: load the dishwasher, then empty it. When the card is done, the next card
+  appears on Today straight away. Undo takes it away again. The next task is best set to
+  **Jen na vyžádání** (Only when asked for). A new catalogue picture, **Uklidit prádlo**
+  (Put the laundry away), completes the laundry chain.
+- **Finished tasks.** The **Hotové** (Finished) button on Today lists what was done, newest
+  first and by day, with who did it, when, and the note. Older days load as you scroll.
+- **Look.** Under **Pro dospělé** (For adults), **Vzhled** (Look) shows two picture sets
+  and three fonts. A choice there changes only that device, so everyone can try them.
+  Tell us which you like; the rest will be removed.
+
 ## 0.4.0
 
 QR stickers.

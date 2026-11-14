@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% translate "Finished tasks" %} · blabtodo{% endblock %}
+
+{% block body %}
+<main class="mx-auto max-w-3xl px-4 pt-4 pb-16 sm:px-6">
+  <a href="{% url 'today' %}" class="btn min-h-12 px-4 text-lg">← {% translate "Today" %}</a>
+  <h1 class="mt-4 text-4xl font-bold tracking-tight sm:text-5xl">{% translate "Finished tasks" %}</h1>
+
+  {% if groups %}
+  <div id="archive-days" class="mt-6">
+    {% include "tasks/_archive_days.html" %}
+  </div>
+  {% else %}
+  <div class="card mt-6 py-12 text-center">
+    <p class="text-7xl leading-none" aria-hidden="true">🌱</p>
+    <p class="mt-4 text-stone-600">{% translate "Nothing has been finished yet. Finished tasks will be listed here." %}</p>
+  </div>
+  {% endif %}
+</main>
+{% endblock %}

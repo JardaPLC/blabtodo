@@ -1,0 +1,33 @@
+{% load i18n %}
+{# A few days of finished tasks, newest first. The end of the list fetches the days before them. #}
+{% for group in groups %}
+<section class="mb-8">
+  <h2 class="text-2xl font-bold">{{ group.heading|capfirst }}</h2>
+  <ul class="mt-3 flex flex-col gap-3">
+    {% for entry in group.entries %}
+    <li class="card flex items-start gap-4 p-4">
+      <span class="flex size-16 shrink-0 items-center justify-center">
+        {% include "tasks/_picture.html" with item=entry.task size="text-5xl" %}
+      </span>
+      <div class="min-w-0 flex-1">
+        <p class="leading-tight font-semibold">{{ entry.task.name }}</p>
+        <p class="mt-1 text-lg leading-tight text-stone-500">
+          <time datetime="{{ entry.done_at|date:'c' }}">{{ entry.done_at|time:"H:i" }}</time>{% if entry.task.room %} · {{ entry.task.room.name }}{% endif %}
+        </p>
+        {% if entry.note %}<p class="mt-2 leading-snug text-stone-700">„{{ entry.note }}“</p>{% endif %}
+      </div>
+      <span class="flex shrink-0 -space-x-2" aria-label="{% translate 'Done by' %}: {{ entry.done_by.all|join:', ' }}">
+        {% for person in entry.done_by.all %}
+        {% include "people/_face.html" with person=person size="size-11 text-lg ring-2 ring-white" %}
+        {% endfor %}
+      </span>
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+{% endfor %}
+{% if next_before %}
+<div hx-get="{% url 'archive' %}?before={{ next_before|date:'Y-m-d' }}" hx-trigger="revealed" hx-swap="outerHTML">
+  <a href="{% url 'archive' %}?before={{ next_before|date:'Y-m-d' }}" class="btn w-full">{% translate "Older" %}</a>
+</div>
+{% endif %}

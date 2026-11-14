@@ -59,6 +59,7 @@ TASKS = [
     Entry("load-washing-machine", _("Load the washing machine"), "🧺", 1, "bathroom"),
     Entry("hang-laundry", _("Hang up the laundry"), "👕", 2),
     Entry("fold-laundry", _("Fold the laundry"), "🧦", 2),
+    Entry("put-away-laundry", _("Put the laundry away"), "👚", 1),
     Entry("iron", _("Iron"), "👔", 3),
     Entry("change-bed-sheets", _("Change the bed sheets"), "🛏️", 2, "bedroom"),
     Entry("make-bed", _("Make the bed"), "🛌", 1, "bedroom"),

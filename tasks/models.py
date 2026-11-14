@@ -8,7 +8,7 @@ from django.utils import timezone
 from django.utils.translation import get_language
 from django.utils.translation import gettext_lazy as _
 
-from . import schedule
+from . import picture_drafts, schedule
 from .catalogue import FALLBACK_EMOJI, ROOMS_BY_KEY, TASKS_BY_KEY
 
 
@@ -58,6 +58,10 @@ class Room(NamedInLanguages):
     def emoji(self) -> str:
         entry = ROOMS_BY_KEY.get(self.picture)
         return entry.emoji if entry else FALLBACK_EMOJI
+
+    @property
+    def picture_draft(self) -> dict:
+        return picture_drafts.picture_of("rooms", self.picture)
 
 
 class Task(NamedInLanguages):
@@ -141,6 +145,19 @@ class Task(NamedInLanguages):
             "day if nobody did it."
         ),
     )
+    next_task = models.ForeignKey(
+        "self",
+        verbose_name=_("then show"),
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="comes_after",
+        help_text=_(
+            "When this task is done, the card of the chosen task appears on Today, for "
+            'example "Empty the dishwasher" after "Load the dishwasher". Best set to '
+            '"Only when asked for".'
+        ),
+    )
     is_active = models.BooleanField(_("in use"), default=True)
     # The secret part of the address in the task's QR code. Made when the first sticker is
     # printed, and kept, so that printed stickers keep working.
@@ -157,6 +174,10 @@ class Task(NamedInLanguages):
     def emoji(self) -> str:
         entry = TASKS_BY_KEY.get(self.picture)
         return entry.emoji if entry else FALLBACK_EMOJI
+
+    @property
+    def picture_draft(self) -> dict:
+        return picture_drafts.picture_of("tasks", self.picture)
 
     def ensure_qr_key(self) -> str:
         if not self.qr_key:
@@ -183,8 +204,45 @@ class Task(NamedInLanguages):
             errors["day_of_month"] = _("Choose the day of the month.")
         if self.end_date and self.start_date and self.end_date < self.start_date:
             errors["end_date"] = _("The end cannot be before the start.")
+        errors.update(self._chain_errors())
         if errors:
             raise ValidationError(errors)
+
+    def _chain_errors(self) -> dict:
+        """What is wrong with this task's place in a chain, if anything."""
+        errors = {}
+        follower = self.next_task
+        if follower is not None:
+            if follower.repeat == self.Repeat.ONCE:
+                # Once done, a one-time task would come back every time the chain reached it.
+                errors["next_task"] = _("A one-time task cannot come next. Choose another kind.")
+            elif self._chain_leads_back(follower):
+                errors["next_task"] = _(
+                    "This would make a circle that never ends. Choose a task that does not "
+                    "lead back here."
+                )
+        if (
+            self.repeat == self.Repeat.ONCE
+            and self.pk is not None
+            and Task.objects.filter(next_task=self).exists()
+        ):
+            errors["repeat"] = _(
+                "Another task shows this one when it is done, so it cannot be a one-time task."
+            )
+        return errors
+
+    def _chain_leads_back(self, follower: "Task") -> bool:
+        if self.pk is None:
+            # A task that does not exist yet cannot be pointed at by anything.
+            return False
+        seen = set()
+        current = follower
+        while current is not None and current.pk not in seen:
+            if current.pk == self.pk:
+                return True
+            seen.add(current.pk)
+            current = current.next_task
+        return False
 
 
 class Completion(models.Model):
@@ -212,6 +270,12 @@ class Completion(models.Model):
     # Copied from the task's effort at that moment, so that changing a task later does
     # not rewrite what was earned.
     points = models.PositiveSmallIntegerField(_("points"), default=1)
+    # The task whose card this completion made appear (its task's "then show"), and the
+    # day that task's next card was planned for before. Undo uses both to put it back.
+    brought_forward = models.ForeignKey(
+        Task, null=True, blank=True, on_delete=models.SET_NULL, related_name="+", editable=False
+    )
+    brought_forward_from = models.DateField(null=True, blank=True, editable=False)
 
     class Meta:
         verbose_name = _("finished task")

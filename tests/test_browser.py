@@ -410,3 +410,138 @@ def test_screenshots_of_qr_stickers(page: Page, live_server, transactional_db):
     tasks[0].refresh_from_db()
     page.goto(live_server.url + f"/t/{tasks[0].qr_key}/")
     _shoot(page, folder, "8-scan")
+
+
+# ---- Chains, finished tasks, look drafts ----
+
+
+def _mark_done(page: Page, name: str, person: str = "Mum") -> None:
+    page.get_by_role("button", name=re.compile(name)).click()
+    sheet = page.locator("#sheet")
+    expect(sheet).to_be_visible()
+    sheet.get_by_text(person, exact=True).click()
+    sheet.get_by_role("button", name="Hotovo", exact=True).click()
+    expect(sheet).not_to_be_visible()
+
+
+def test_the_laundry_chain_walks_step_by_step_and_undo_takes_a_step_back(allowed_page, live_server):
+    from tasks.schedule import ON_DEMAND
+
+    steps = [make_task("Vyprat prádlo")]
+    for name in ["Pověsit prádlo", "Složit prádlo", "Uklidit prádlo"]:
+        steps.append(make_task(name, repeat=ON_DEMAND))
+    for task, follower in zip(steps, steps[1:], strict=False):
+        task.next_task = follower
+        task.save()
+    page = allowed_page
+    page.goto(live_server.url)
+    grid, bar = page.locator("#cards"), page.locator("#undo-bar")
+
+    _mark_done(page, "Vyprat prádlo")
+    expect(grid).to_contain_text("Pověsit prádlo")
+    expect(bar).to_contain_text("Další: Pověsit prádlo")
+
+    bar.get_by_role("button", name="Vrátit zpět").click()
+    expect(grid).to_contain_text("Vyprat prádlo")
+    expect(grid).not_to_contain_text("Pověsit prádlo")
+
+    _mark_done(page, "Vyprat prádlo")
+    _mark_done(page, "Pověsit prádlo")
+    _mark_done(page, "Složit prádlo")
+    expect(grid).to_contain_text("Uklidit prádlo")
+    _mark_done(page, "Uklidit prádlo")
+    expect(grid).to_contain_text("Hotovo!")
+
+
+def test_finished_tasks_are_listed_and_older_days_load_on_scrolling(
+    allowed_page, live_server, family
+):
+    from tasks.views import ARCHIVE_DAYS
+    from tests.conftest import noon
+
+    task = make_task("Zalít květiny", picture="water-plants")
+    today = cards.today()
+    for days_ago in range(ARCHIVE_DAYS + 3):
+        day = today - timedelta(days=days_ago)
+        task.next_card_date = day
+        task.save()
+        cards.complete(task_id=task.pk, card_date=day, people=[family[1]], now=noon(day))
+    page = allowed_page
+    page.set_viewport_size({"width": 360, "height": 640})
+    page.goto(live_server.url)
+
+    page.get_by_role("link", name="Hotové").click()
+    expect(page.get_by_role("heading", name="Hotové úkoly")).to_be_visible()
+    expect(page.get_by_role("heading", name="Dnes")).to_be_visible()
+    expect(page.get_by_role("heading", name="Včera")).to_be_visible()
+
+    sections = page.locator("section")
+    expect(sections).to_have_count(ARCHIVE_DAYS)
+    page.mouse.wheel(0, 20000)
+    expect(sections).to_have_count(ARCHIVE_DAYS + 3)
+
+
+def test_choosing_a_look_applies_at_once_and_stays(allowed_page, live_server):
+    make_task("Zalít květiny", picture="water-plants")
+    page = allowed_page
+    page.goto(live_server.url + "/look/")
+
+    page.get_by_label("Fluent Emoji: barevné").check()
+    expect(page.get_by_label("Fluent Emoji: barevné")).to_be_checked()
+    page.get_by_label("Andika").check()
+    expect(page.locator("html")).to_have_class(re.compile("font-andika"))
+
+    page.goto(live_server.url)
+    picture = page.locator("#cards img").first
+    expect(picture).to_have_attribute("src", re.compile("fluent/tasks/water-plants"))
+    # The picture file really arrived and is drawn.
+    assert picture.evaluate("img => img.naturalWidth") > 0
+    assert page.evaluate("document.fonts.check('700 20px Andika', 'ěščřž')")
+
+
+@pytest.mark.skipif(not os.environ.get("BLABTODO_SCREENSHOTS"), reason="no folder named for them")
+def test_screenshots_of_the_drafts_and_finished_tasks(page: Page, live_server, transactional_db):
+    from tests.conftest import noon
+
+    folder = Path(os.environ["BLABTODO_SCREENSHOTS"])
+    folder.mkdir(parents=True, exist_ok=True)
+    mum = _a_household()
+    _device, token = trust_device(name="Test browser", trusted_by=mum)
+    page.context.add_cookies([{"name": COOKIE_NAME, "value": token, "url": live_server.url}])
+
+    people = list(User.objects.all())
+    today = cards.today()
+    for days_ago, name, picture, who in [
+        (0, "Vynést odpadky", "take-out-rubbish", people[0:1]),
+        (0, "Prostřít stůl", "set-table", people[2:4]),
+        (1, "Vysát", "vacuum", people[1:2]),
+        (2, "Zalít květiny", "water-plants", people[2:3]),
+    ]:
+        day = today - timedelta(days=days_ago)
+        # Asked for only, so that once done they do not come back onto Today.
+        task = make_task(name, picture=picture, repeat="demand")
+        cards.show_today(task, day)
+        note = "i ten fíkus v ložnici" if picture == "water-plants" else ""
+        cards.complete(task_id=task.pk, card_date=day, people=who, note=note, now=noon(day))
+
+    for pictures, font in [
+        ("emoji", "system"),
+        ("fluent", "andika"),
+        ("fluent", "nunito"),
+        ("material", "andika"),
+        ("material", "atkinson"),
+    ]:
+        page.context.add_cookies(
+            [{"name": "blabtodo_look", "value": f"{pictures}.{font}", "url": live_server.url}]
+        )
+        page.goto(live_server.url)
+        page.wait_for_load_state("networkidle")
+        _shoot(page, folder, f"8-today-{pictures}-{font}")
+        page.goto(live_server.url + "/look/")
+        page.wait_for_load_state("networkidle")
+        page.set_viewport_size({"width": 1440, "height": 900})
+        page.screenshot(path=str(folder / f"9-look-{pictures}-{font}.png"), full_page=True)
+
+    page.goto(live_server.url + "/done/")
+    page.wait_for_load_state("networkidle")
+    _shoot(page, folder, "10-finished")

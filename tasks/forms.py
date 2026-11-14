@@ -122,6 +122,7 @@ class TaskAdminForm(forms.ModelForm):
             "end_date",
             "faces",
             "day_only",
+            "next_task",
             "is_active",
             "next_card_date",
         ]
@@ -131,6 +132,11 @@ class TaskAdminForm(forms.ModelForm):
         self.fields["picture"].choices = [("", "---------"), *catalogue.choices(catalogue.TASKS)]
         self.fields["faces"].queryset = get_user_model().objects.filter(is_active=True)
         self.fields["room"].queryset = Room.objects.filter(is_active=True)
+        # Any task in use can come next, except one-time tasks and this task itself.
+        followers = Task.objects.filter(is_active=True).exclude(repeat=Task.Repeat.ONCE)
+        if self.instance.pk is not None:
+            followers = followers.exclude(pk=self.instance.pk)
+        self.fields["next_task"].queryset = followers
         self.fields["next_card_date"].help_text = _(
             "Leave empty to let the app work it out. Set a day to make the card appear then."
         )

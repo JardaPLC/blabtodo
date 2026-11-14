@@ -122,6 +122,8 @@ TEMPLATES = [
                 "django.template.context_processors.i18n",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                # The picture and font drafts this device chose to try.
+                "tasks.picture_drafts.look",
                 "household.context_processors.app",
             ],
         },
