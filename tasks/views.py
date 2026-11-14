@@ -1,18 +1,20 @@
-"""The Today screen, the sheet for marking a card done, and Undo."""
+"""The Today screen, the sheet for marking a card done, Undo, and the finished tasks."""
 
 import contextlib
 from datetime import date
 
+from django.db.models.functions import TruncDate
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
 from django.views.decorators.http import require_GET, require_http_methods, require_POST
 
 from household.backups import snapshot_if_due
 from people.devices import trusted_device_required
 from people.models import User
 
-from . import cards
-from .labels import waiting_since
-from .models import Completion, Task
+from . import cards, catalogue, picture_drafts
+from .labels import day_heading, waiting_since
+from .models import Completion, Room, Task
 
 
 def _people():
@@ -164,3 +166,78 @@ def from_qr(request, key):
             cards.show_today(task, day)
         return redirect("today")
     return render(request, "tasks/qr.html", {"task": task, "already_waiting": already_waiting})
+
+
+# How many days with finished tasks one look at the archive shows. Older days load as the
+# list is scrolled to its end.
+ARCHIVE_DAYS = 7
+
+
+@require_GET
+@trusted_device_required
+def archive(request):
+    """Finished tasks, newest first, grouped by day. Everyone may look, children too."""
+    day = cards.today()
+    try:
+        before = date.fromisoformat(request.GET.get("before", ""))
+    except ValueError:
+        before = None
+
+    finished = Completion.objects.annotate(
+        day=TruncDate("done_at", tzinfo=timezone.get_current_timezone())
+    )
+    if before is not None:
+        finished = finished.filter(day__lt=before)
+    days = list(
+        finished.order_by("-day").values_list("day", flat=True).distinct()[: ARCHIVE_DAYS + 1]
+    )
+    more = len(days) > ARCHIVE_DAYS
+    days = days[:ARCHIVE_DAYS]
+
+    entries = (
+        finished.filter(day__in=days)
+        .select_related("task", "task__room")
+        .prefetch_related("done_by")
+        .order_by("-done_at")
+    )
+    groups = [{"day": shown, "heading": day_heading(shown, day), "entries": []} for shown in days]
+    by_day = {group["day"]: group for group in groups}
+    for entry in entries:
+        by_day[entry.day]["entries"].append(entry)
+
+    context = {"groups": groups, "next_before": days[-1] if more else None}
+    if request.headers.get("HX-Request"):
+        return render(request, "tasks/_archive_days.html", context)
+    return render(request, "tasks/archive.html", context)
+
+
+@require_http_methods(["GET", "POST"])
+@trusted_device_required
+def look(request):
+    """
+    The picture and font drafts. Whatever is chosen here applies to this device only, so
+    that everyone can try them on their own screen before the family decides.
+    """
+    if request.method == "POST":
+        pictures = request.POST.get("pictures", "")
+        font = request.POST.get("font", "")
+        response = redirect("look")
+        if pictures in picture_drafts.PICTURE_SETS and font in picture_drafts.FONTS:
+            response.set_cookie(
+                picture_drafts.COOKIE_NAME,
+                f"{pictures}.{font}",
+                max_age=400 * 24 * 60 * 60,
+                samesite="Lax",
+            )
+        return response
+
+    # Every picture of the catalogue, as if each were a task or a room.
+    tasks = [Task(picture=entry.key, names={"cs": str(entry.name)}) for entry in catalogue.TASKS]
+    rooms = [Room(picture=entry.key, names={"cs": str(entry.name)}) for entry in catalogue.ROOMS]
+    context = {
+        "picture_sets": picture_drafts.PICTURE_SETS,
+        "fonts": picture_drafts.FONTS,
+        "sample_tasks": tasks,
+        "sample_rooms": rooms,
+    }
+    return render(request, "tasks/look.html", context)

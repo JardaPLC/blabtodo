@@ -36,9 +36,10 @@ class RoomAdmin(admin.ModelAdmin):
 @admin.register(Task)
 class TaskAdmin(admin.ModelAdmin):
     form = TaskAdminForm
-    list_display = ["label", "room", "repeat", "next_card_date", "is_active"]
+    list_display = ["label", "room", "repeat", "next_task", "next_card_date", "is_active"]
     list_filter = ["is_active", "room", "repeat"]
     actions = ["show_today", "skip_waiting_card", "print_stickers"]
+    readonly_fields = ["comes_after_list"]
     fieldsets = [
         (None, {"fields": ["picture", "names", "hint", "room", "effort", "faces"]}),
         (
@@ -55,12 +56,18 @@ class TaskAdmin(admin.ModelAdmin):
                 ]
             },
         ),
+        (_("Chain"), {"fields": ["next_task", "comes_after_list"]}),
         (_("State"), {"fields": ["is_active", "next_card_date"]}),
     ]
 
     @admin.display(description=_("task"))
     def label(self, task):
         return f"{task.emoji}  {task.name}"
+
+    @admin.display(description=_("comes after"))
+    def comes_after_list(self, task):
+        before = [str(other) for other in task.comes_after.all()] if task.pk else []
+        return ", ".join(before) or "-"
 
     def get_urls(self):
         stickers = self.admin_site.admin_view(self.stickers_view)

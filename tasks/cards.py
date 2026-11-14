@@ -114,7 +114,23 @@ def complete(*, task_id: int, card_date: date, people, device=None, note: str = 
         completion.done_by.set(people)
         task.next_card_date = next_after(task.rule, day)
         task.save(update_fields=["next_card_date"])
+        _bring_next_task_forward(task, completion, day)
     return completion
+
+
+def _bring_next_task_forward(task: Task, completion: Completion, day: date) -> None:
+    """
+    A chain: the task's "then show" task gets its card today, unless it already has one.
+
+    The completion remembers what it changed, so that Undo can change it back.
+    """
+    follower = Task.objects.filter(pk=task.next_task_id, is_active=True).first()
+    if follower is None or follower.pk == task.pk or is_waiting(follower, day):
+        return
+    completion.brought_forward = follower
+    completion.brought_forward_from = follower.next_card_date
+    completion.save(update_fields=["brought_forward", "brought_forward_from"])
+    show_today(follower, day)
 
 
 def undo(completion: Completion) -> None:
@@ -125,7 +141,25 @@ def undo(completion: Completion) -> None:
             raise CannotUndo
         task.next_card_date = completion.card_date
         task.save(update_fields=["next_card_date"])
+        _take_next_card_back(completion)
         completion.delete()
+
+
+def _take_next_card_back(completion: Completion) -> None:
+    """
+    Undo of a chain: the card it made appear goes away again, if nobody has done it yet.
+
+    If someone already did it, that stays done.
+    """
+    follower = completion.brought_forward
+    if follower is None:
+        return
+    shown_on = today(completion.done_at)
+    still_waiting = follower.next_card_date == shown_on
+    done_since = follower.completions.filter(card_date=shown_on).exists()
+    if still_waiting and not done_since:
+        follower.next_card_date = completion.brought_forward_from
+        follower.save(update_fields=["next_card_date"])
 
 
 def may_undo_from(completion: Completion, device, now=None) -> bool:

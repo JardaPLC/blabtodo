@@ -13,14 +13,6 @@ pytestmark = pytest.mark.django_db
 TODAY = cards.today
 
 
-@pytest.fixture
-def owner_client(client, adult):
-    adult.is_staff = adult.is_superuser = True
-    adult.save()
-    client.force_login(adult)
-    return client
-
-
 def _empty_task_form() -> dict:
     """The form for adding a task, as the page shows it before anything is filled in."""
     return {
@@ -60,6 +52,7 @@ def _form_showing(task: Task) -> dict:
         "next_card_date": task.next_card_date.isoformat() if task.next_card_date else "",
         "weekdays": list(task.weekdays),
         "faces": [person.pk for person in task.faces.all()],
+        "next_task": task.next_task_id or "",
     }
     if task.day_only:
         form["day_only"] = "on"

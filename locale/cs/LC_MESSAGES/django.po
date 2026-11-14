@@ -850,3 +850,100 @@ msgstr "Úkol, ke kterému patřil, byl smazán nebo se už nepoužívá."
 
 msgid "This code leads nowhere"
 msgstr "Tento kód nikam nevede"
+
+msgid "A one-time task cannot come next. Choose another kind."
+msgstr "Jednorázový úkol nemůže následovat. Vyberte jiný druh."
+
+msgid "Another task shows this one when it is done, so it cannot be a one-time task."
+msgstr "Jiný úkol po svém dokončení zobrazí tento, proto nemůže být jednorázový."
+
+msgid "Chain"
+msgstr "Řetěz"
+
+msgid "Done by"
+msgstr "Kdo to udělal"
+
+msgid ""
+"Drafts to choose from. Try them here and on Today. The choice applies to this device "
+"only, so everyone can try them on their own screen. Once the family has decided, the "
+"chosen pictures and font become the only ones."
+msgstr ""
+"Návrhy na výběr. Vyzkoušejte je tady i v Dnes. Volba platí jen pro toto zařízení, "
+"takže si je každý může vyzkoušet na své obrazovce. Až se rodina rozhodne, zůstanou jen"
+" vybrané obrázky a písmo."
+
+msgid "Emoji (as until now)"
+msgstr "Emoji (jako dosud)"
+
+msgid "Finished"
+msgstr "Hotové"
+
+msgid "Finished tasks"
+msgstr "Hotové úkoly"
+
+msgid "Fluent Emoji: colourful"
+msgstr "Fluent Emoji: barevné"
+
+msgid "Font"
+msgstr "Písmo"
+
+msgid "Look"
+msgstr "Vzhled"
+
+msgid "Look: drafts to choose from"
+msgstr "Vzhled: návrhy na výběr"
+
+msgid "Material Symbols: on coloured tiles"
+msgstr "Material Symbols: na barevných dlaždicích"
+
+#, python-format
+msgid "Next: %(name)s"
+msgstr "Další: %(name)s"
+
+msgid "Nothing has been finished yet. Finished tasks will be listed here."
+msgstr "Zatím nic není hotové. Hotové úkoly se budou objevovat tady."
+
+msgid "Older"
+msgstr "Starší"
+
+msgid "Pictures"
+msgstr "Obrázky"
+
+msgid "Put the laundry away"
+msgstr "Uklidit prádlo"
+
+msgid "Rooms"
+msgstr "Místnosti"
+
+msgid "Sample text"
+msgstr "Ukázka textu"
+
+msgid "Save"
+msgstr "Uložit"
+
+msgid "The device's own (as until now)"
+msgstr "Písmo zařízení (jako dosud)"
+
+msgid ""
+"This would make a circle that never ends. Choose a task that does not lead back here."
+msgstr "Vznikl by kruh, který nikdy neskončí. Vyberte úkol, který nevede zpět sem."
+
+msgid ""
+"When this task is done, the card of the chosen task appears on Today, for example "
+"\"Empty the dishwasher\" after \"Load the dishwasher\". Best set to \"Only when asked "
+"for\"."
+msgstr ""
+"Když je tento úkol hotový, objeví se v Dnes karta vybraného úkolu, například „Vyklidit"
+" myčku“ po „Naplnit myčku“. Ten je nejlepší nastavit na „Jen na vyžádání“."
+
+msgid "Yesterday"
+msgstr "Včera"
+
+msgid "comes after"
+msgstr "následuje po"
+
+msgid "l j F"
+msgstr "l j. E"
+
+msgid "then show"
+msgstr "potom zobrazit"

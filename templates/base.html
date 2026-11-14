@@ -1,5 +1,5 @@
 {% load static tailwind_cli %}<!doctype html>
-<html lang="{{ LANGUAGE_CODE }}" class="h-full">
+<html lang="{{ LANGUAGE_CODE }}" class="h-full{% if look.font != "system" %} font-{{ look.font }}{% endif %}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">

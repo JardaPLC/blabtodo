@@ -33,3 +33,18 @@ def waiting_since(card_date: date, day: date) -> str:
         return _SINCE_WEEKDAY[card_date.weekday()]()
     # Translators: a date format for Django's date filter, giving day and month, as in "3 November".
     return _("since %(date)s") % {"date": date_format(card_date, _("j F"))}
+
+
+def day_heading(shown: date, day: date) -> str:
+    """The heading of one day in the list of finished tasks: Today, Yesterday, or the date."""
+    days = (day - shown).days
+    if days == 0:
+        return _("Today")
+    if days == 1:
+        return _("Yesterday")
+    # Translators: a date format for Django's date filter, giving weekday, day and month,
+    # as in "Monday 2 November".
+    heading = date_format(shown, _("l j F"))
+    if shown.year != day.year:
+        heading += f" {shown.year}"
+    return heading

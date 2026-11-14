@@ -8,6 +8,9 @@ urlpatterns = [
     # A card's number is its task's number, because a task has at most one card.
     path("cards/<int:task_id>/done/", views.done, name="card-done"),
     path("completions/<int:completion_id>/undo/", views.undo, name="completion-undo"),
+    path("done/", views.archive, name="archive"),
+    # Trying the picture and font drafts on this device, until the family has chosen.
+    path("look/", views.look, name="look"),
     # Where a printed QR code leads. The key is random, so the address cannot be guessed.
     path("t/<str:key>/", views.from_qr, name="task-qr"),
 ]

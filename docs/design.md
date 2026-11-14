@@ -2,7 +2,7 @@
 
 A home task manager for one family. Household tasks sit in one shared queue that any screen in the house can show, and marking a task done takes two taps.
 
-- **Status:** draft 0.9, 2026-11-13. Milestone 0 runs on the Pi; its backups and restore rehearsal are still to be done. Milestone 1 is in progress: people, devices, tasks, rooms and the Today and Done screens are built. The archive and the picture and font drafts are next.
+- **Status:** draft 0.10, 2026-11-14. Milestone 0 runs on the Pi; its backups and restore rehearsal are still to be done. Milestone 1 is built: people, devices, tasks, rooms, chains, Today, Done and the list of finished tasks. The picture and font drafts are on the Look page, waiting for the family's choice.
 - **Designed for:** a family with children who cannot read yet and who will grow into it. Czech by default, English as a second language. Used on phones, tablets, PCs and a wall panel. Reachable on the home network only.
 - **Not settled:** see [Open questions](#17-open-questions).
 - **How to read this:** sections 1–6 describe what the app does, 7–13 how it is built, 14–17 the plan, the decisions and what is still open.
@@ -245,6 +245,7 @@ Two things exist internally. A **task** is the definition (what, which picture, 
 8. A monthly task set to the 31st appears on the last day of shorter months.
 9. Each task has an effort size, small, medium or big, worth 1, 2 or 3 points for the jar.
 10. A task can belong to one room, or to none. The room decides where the card shows on the Rooms screen. It changes nothing about when the card appears.
+11. **Chains.** A task can name one task that comes next ("then show"): load the dishwasher, then empty it. When the card is done, the next task's card appears on Today at once, unless it is already waiting. The next task is usually one that is "only asked for"; a repeating one simply has its card brought forward, and a one-time task cannot come next. A chain cannot go round in a circle. Skipping a card does not start the chain. Undo takes the next card away again, unless someone has already done it. There is no delay ("two hours later"): the card simply waits until someone does it.
 
 ### How repetition works inside
 
@@ -557,7 +558,7 @@ Milestone 0 created everything above except `tasks/` and `jar/`, which arrive wi
 
 Milestone 0 comes first on purpose. Containers and Home Assistant packaging are the unfamiliar part, so they are tried while the app is still trivial.
 
-Milestone 1 is delivered as three releases, each usable on its own: 0.2 with people and allowed devices, 0.3 with tasks, rooms, Today and Done, and 0.4 with the archive and the picture and font drafts.
+Milestone 1 was delivered as four releases, each usable on its own: 0.2 with people and allowed devices, 0.3 with tasks, rooms, Today and Done, 0.4 with QR stickers, and 0.5 with chains, the list of finished tasks and the picture and font drafts.
 
 ## 15. Risks to watch
 
@@ -604,12 +605,14 @@ Milestone 1 is delivered as three releases, each usable on its own: 0.2 with peo
 | 29 | A task that is switched on again starts afresh from that day | A card "since" the day it was switched off would be misleading | Reviving the old waiting card |
 | 30 | Day-only tasks are moved on when the queue is read, not by a daily job | One thing less that has to run at the right time | A housekeeping step with its own "last run" record |
 | 31 | A QR sticker holds a link to the task, opened by the phone's own camera app; the app asks before showing the card | Works on plain HTTP and every phone; live camera access in a browser needs HTTPS | Scanning inside the app with the browser's camera |
+| 32 | Chains: one "then show" task per task, shown at once when the card is done; the completion remembers what it brought forward, so Undo can take it back | The real chains (dishes, laundry) are straight lines; reuses "show today", so no new kind of card | Several next tasks; delays ("after two hours"), which need a timer and add little |
+| 33 | The picture and font drafts are chosen per device, in a cookie, on a Look page | Everyone can try them on their own screen, without changing anyone else's; nothing to store or undo once the choice is made | A household setting; screenshots only |
 
 ## 17. Open questions
 
 Nothing here blocks the first milestones. Each item waits until there is something to look at.
 
-1. **Built-in pictures.** Two candidates: Fluent Emoji (MIT licence, colourful, child-friendly, but no household appliances, so a few would be drawn or sourced separately), or Material Symbols on coloured tiles (Apache 2.0 licence, includes appliances, single colour). Postponed: decided in milestone 1, by looking at both on the real Today screen.
-2. **Font.** A rounded, very legible one with full Czech letters. Postponed: chosen together with the pictures.
+1. **Built-in pictures.** Two candidates: Fluent Emoji (MIT licence, colourful, child-friendly, but no household appliances, so a few would be drawn or sourced separately), or Material Symbols on coloured tiles (Apache 2.0 licence, includes appliances, single colour). Both can be tried on the Look page since 0.5; the family is choosing.
+2. **Font.** A rounded, very legible one with full Czech letters. Candidates on the Look page: Andika (made for beginning readers), Nunito (rounded) and Atkinson Hyperlegible Next (made for low vision), all under the SIL Open Font Licence.
 3. **Wall panel.** Android tablet with a kiosk browser, a Pi with a touchscreen, or a Home Assistant dashboard? Undecided, and not needed before milestone 4. Any candidate must meet the browser floor in section 3.7.
 4. **The jar's look.** A jar of marbles, a tree, a garden? And what one point is called in Czech. Postponed: decided in milestone 3, from drafts.

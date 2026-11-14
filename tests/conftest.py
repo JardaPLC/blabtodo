@@ -68,3 +68,12 @@ def trusted_client(client, adult):
     _device, token = trust_device(name="Test device", trusted_by=adult)
     client.cookies[COOKIE_NAME] = token
     return client
+
+
+@pytest.fixture
+def owner_client(client, adult):
+    """A browser signed in to the management pages as the household's owner."""
+    adult.is_staff = adult.is_superuser = True
+    adult.save()
+    client.force_login(adult)
+    return client

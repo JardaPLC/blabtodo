@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% translate "Look" %} · blabtodo{% endblock %}
+
+{% block body %}
+<main class="mx-auto max-w-[100rem] px-4 pt-4 pb-16 sm:px-6 lg:px-10">
+  <a href="{% url 'today' %}" class="btn min-h-12 px-4 text-lg">← {% translate "Today" %}</a>
+  <h1 class="mt-4 text-4xl font-bold tracking-tight sm:text-5xl">{% translate "Look" %}</h1>
+  <p class="mt-2 max-w-3xl text-stone-600">{% translate "Drafts to choose from. Try them here and on Today. The choice applies to this device only, so everyone can try them on their own screen. Once the family has decided, the chosen pictures and font become the only ones." %}</p>
+
+  <form method="post" class="mt-6 grid gap-6 lg:grid-cols-2">
+    {% csrf_token %}
+    <fieldset class="card">
+      <legend class="sr-only">{% translate "Pictures" %}</legend>
+      <p class="text-2xl font-bold" aria-hidden="true">{% translate "Pictures" %}</p>
+      <div class="mt-3 flex flex-col gap-2">
+        {% for value, label in picture_sets.items %}
+        <label class="flex min-h-14 cursor-pointer items-center gap-3 rounded-2xl px-3 ring-1 ring-stone-200 has-checked:bg-green-50 has-checked:ring-2 has-checked:ring-green-600">
+          <input type="radio" name="pictures" value="{{ value }}" class="size-6 accent-green-700"
+                 {% if look.pictures == value %}checked{% endif %} onchange="this.form.submit()">
+          <span class="font-semibold">{{ label }}</span>
+        </label>
+        {% endfor %}
+      </div>
+    </fieldset>
+    <fieldset class="card">
+      <legend class="sr-only">{% translate "Font" %}</legend>
+      <p class="text-2xl font-bold" aria-hidden="true">{% translate "Font" %}</p>
+      <div class="mt-3 flex flex-col gap-2">
+        {% for value, label in fonts.items %}
+        <label class="flex min-h-14 cursor-pointer items-center gap-3 rounded-2xl px-3 ring-1 ring-stone-200 has-checked:bg-green-50 has-checked:ring-2 has-checked:ring-green-600">
+          <input type="radio" name="font" value="{{ value }}" class="size-6 accent-green-700"
+                 {% if look.font == value %}checked{% endif %} onchange="this.form.submit()">
+          <span class="font-semibold">{{ label }}</span>
+        </label>
+        {% endfor %}
+      </div>
+    </fieldset>
+    <noscript><button type="submit" class="btn btn-primary">{% translate "Save" %}</button></noscript>
+  </form>
+
+  <section class="card mt-6">
+    <h2 class="text-2xl font-bold">{% translate "Sample text" %}</h2>
+    <p class="mt-3 text-4xl leading-tight font-bold">Příliš žluťoučký kůň úpěl ďábelské ódy.</p>
+    <p class="mt-2 text-2xl font-semibold">ĚŠČŘŽÝÁÍÉŮÚ ěščřžýáíéůú 0123456789</p>
+    <p class="mt-2">{% translate "Load the dishwasher" %} · {% translate "Hang up the laundry" %} · {% translate "Take out the rubbish" %}</p>
+    <p class="mt-1 text-lg text-stone-500">Il1 O0 rn m · {% translate "since yesterday" %}</p>
+  </section>
+
+  <h2 class="mt-10 text-3xl font-bold">{% translate "Tasks" %}</h2>
+  <ul class="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
+    {% for task in sample_tasks %}
+    <li class="card flex flex-col items-center p-3 text-center">
+      <span class="flex aspect-[4/3] w-full items-center justify-center">
+        {% include "tasks/_picture.html" with item=task size="text-7xl sm:text-8xl" %}
+      </span>
+      <span class="mt-2 leading-tight font-semibold">{{ task.name }}</span>
+    </li>
+    {% endfor %}
+  </ul>
+
+  <h2 class="mt-10 text-3xl font-bold">{% translate "Rooms" %}</h2>
+  <ul class="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
+    {% for room in sample_rooms %}
+    <li class="card flex flex-col items-center p-3 text-center">
+      {% include "tasks/_picture.html" with item=room size="text-6xl" %}
+      <span class="mt-2 leading-tight font-semibold">{{ room.name }}</span>
+    </li>
+    {% endfor %}
+  </ul>
+</main>
+{% endblock %}

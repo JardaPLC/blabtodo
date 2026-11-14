@@ -1,2 +1,13 @@
-{# The picture of a task or room. The one place that decides what is drawn for a picture key; for now an emoji stands in until the picture set is chosen. `size` is a Tailwind text size such as "text-7xl". #}
+{% load static %}
+{# The picture of a task or room: the one place that decides what is drawn for a picture key. Until the picture set is chosen, each device shows the draft it picked on the Look page (tasks/picture_drafts.py). `size` is a Tailwind text size such as "text-7xl"; the pictures are 1em square, so they follow it. #}
+{% if look.pictures == "fluent" %}
+<img src="{% static 'pictures/fluent/'|add:item.picture_draft.file %}" alt="" class="{{ size }} inline-block size-[1em]">
+{% elif look.pictures == "material" %}
+{% with 'pictures/material/'|add:item.picture_draft.file as file %}
+<span class="{{ size }} {{ item.picture_draft.tile }} inline-flex size-[1.1em] items-center justify-center rounded-[0.22em]" aria-hidden="true">
+  <span class="block size-[0.7em] bg-current" style="mask: url('{% static file %}') center / contain no-repeat; -webkit-mask: url('{% static file %}') center / contain no-repeat;"></span>
+</span>
+{% endwith %}
+{% else %}
 <span class="{{ size }} leading-none" aria-hidden="true">{{ item.emoji }}</span>
+{% endif %}

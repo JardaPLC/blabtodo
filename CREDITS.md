@@ -23,6 +23,23 @@ and update its row here.
 - [Django](https://www.djangoproject.com) (BSD-3-Clause) and the other Python packages
   are listed in `pyproject.toml`. They are installed into the image, not copied here.
 
-## Pictures, fonts and sounds
+## Pictures and fonts (drafts)
+
+These are drafts to choose from on the Look page. Once the family has chosen, the others
+are removed. They are fetched at fixed versions by `tools/fetch_drafts.py` and stored in
+`static/pictures/` and `static/fonts/`.
+
+| What | Version | Licence | Source |
+|---|---|---|---|
+| [Fluent Emoji](https://github.com/microsoft/fluentui-emoji), flat style | commit `1ffb34c` | MIT, © Microsoft Corporation | `https://github.com/microsoft/fluentui-emoji` |
+| [Material Symbols](https://github.com/google/material-design-icons), rounded, filled | 0.49.0 | Apache 2.0, © Google | npm `@material-symbols/svg-400` |
+| [Andika](https://software.sil.org/andika/) | 5.3.0 | SIL Open Font Licence 1.1, © SIL International | npm `@fontsource/andika` |
+| [Nunito](https://github.com/googlefonts/nunito) | 5.3.0 | SIL Open Font Licence 1.1, © The Nunito Project Authors | npm `@fontsource-variable/nunito` |
+| [Atkinson Hyperlegible Next](https://www.brailleinstitute.org/freefont/) | 5.3.0 | SIL Open Font Licence 1.1, © Braille Institute of America | npm `@fontsource-variable/atkinson-hyperlegible-next` |
+
+Each task's file is named after its picture key; `tasks/picture_drafts.py` says which
+emoji or symbol it is.
+
+## Sounds
 
 None yet. Each one added later gets a row here with its source and licence.
