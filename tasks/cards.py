@@ -96,6 +96,9 @@ def complete(*, task_id: int, card_date: date, people, device=None, note: str = 
 
     Doing a card today covers today: the next card appears on the next scheduled day
     after today, even if this card had been waiting since last week.
+
+    Two people tapping Done on the same card produce one record: the transaction takes
+    the database's write lock first, so the second one finds the card gone.
     """
     now = now or timezone.now()
     day = today(now)
@@ -137,7 +140,7 @@ def undo(completion: Completion) -> None:
     """Remove a completion and put its card back, as if it had not been done."""
     with transaction.atomic():
         task = completion.task
-        if task.completions.filter(card_date__gt=completion.card_date).exists():
+        if task.completions.filter(done_at__gt=completion.done_at).exists():
             raise CannotUndo
         task.next_card_date = completion.card_date
         task.save(update_fields=["next_card_date"])
@@ -156,7 +159,7 @@ def _take_next_card_back(completion: Completion) -> None:
         return
     shown_on = today(completion.done_at)
     still_waiting = follower.next_card_date == shown_on
-    done_since = follower.completions.filter(card_date=shown_on).exists()
+    done_since = follower.completions.filter(done_at__gt=completion.done_at).exists()
     if still_waiting and not done_since:
         follower.next_card_date = completion.brought_forward_from
         follower.save(update_fields=["next_card_date"])

@@ -947,3 +947,6 @@ msgstr "l j. E"
 
 msgid "then show"
 msgstr "potom zobrazit"
+
+msgid "That did not work. Please try again in a moment."
+msgstr "Nepodařilo se to. Zkuste to prosím za chvíli znovu."

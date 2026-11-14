@@ -251,8 +251,8 @@ class Completion(models.Model):
     task = models.ForeignKey(
         Task, verbose_name=_("task"), on_delete=models.PROTECT, related_name="completions"
     )
-    # The day the card had appeared. With the task it identifies the card, so that two
-    # people tapping Done on the same card at the same moment produce one record.
+    # The day the card had appeared. A task asked for twice in one day (by its QR code or
+    # by a chain) has two completions with the same day; they are told apart by `done_at`.
     card_date = models.DateField(_("card of"))
     done_at = models.DateTimeField(_("done at"), default=timezone.now)
     done_by = models.ManyToManyField(
@@ -281,9 +281,6 @@ class Completion(models.Model):
         verbose_name = _("finished task")
         verbose_name_plural = _("finished tasks")
         ordering = ["-done_at"]
-        constraints = [
-            models.UniqueConstraint(fields=["task", "card_date"], name="one_completion_per_card")
-        ]
 
     def __str__(self):
         return f"{self.task} ({self.card_date})"

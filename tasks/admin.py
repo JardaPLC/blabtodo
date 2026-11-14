@@ -161,7 +161,7 @@ class CompletionAdmin(admin.ModelAdmin):
     @admin.action(description=_("Undo: put the card back as if it had not been done"))
     def put_card_back(self, request, queryset):
         undone, refused = 0, 0
-        for completion in queryset.order_by("-card_date"):
+        for completion in queryset.order_by("-done_at"):
             try:
                 cards.undo(completion)
                 undone += 1
