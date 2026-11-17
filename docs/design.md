@@ -244,7 +244,7 @@ Two things exist internally. A **task** is the definition (what, which picture, 
 7. Editing a task changes future cards only; a card that is already waiting stays. Deleting a task deactivates it, so the archive stays intact.
 8. A monthly task set to the 31st appears on the last day of shorter months.
 9. Each task has an effort size, small, medium or big, worth 1, 2 or 3 points for the jar.
-10. A task can belong to one room, or to none. The room decides where the card shows on the Rooms screen. It changes nothing about when the card appears.
+10. A task can belong to one room, or to none. The room decides where the card shows when Today is filtered by room. It changes nothing about when the card appears.
 11. **Chains.** A task can name one task that comes next ("then show"): load the dishwasher, then empty it. When the card is done, the next task's card appears on Today at once, unless it is already waiting. The next task is usually one that is "only asked for"; a repeating one simply has its card brought forward, and a one-time task cannot come next. A chain cannot go round in a circle. Skipping a card does not start the chain. Undo takes the next card away again, unless someone has already done it. There is no delay ("two hours later"): the card simply waits until someone does it.
 12. **Rounds.** A waiting card can be asked for again: a pile of washing that needs three loads is one card marked ×3, not three tasks. Asking again (the QR code, "+1" on the Done sheet, a chain, the management pages) adds a round; Done takes one off and writes one completion; the card goes after the last round. The card keeps its place in the queue. Skip, and a day-only card nobody did, drop all rounds. A card has at most nine rounds. Two devices tapping Done on the same round still count once, because the sheet sends the number it showed. In a chain, each round done asks for one round of the next task: two loads of the dishwasher, two emptyings.
 
@@ -551,7 +551,7 @@ Milestone 0 created everything above except `tasks/` and `jar/`, which arrive wi
 |---|---|---|
 | **0. Skeleton** | Public repository, tooling, checks, a styled "hello" page in Czech and English that fits a phone, a tablet and a PC, the image built by GitHub, installed on the Pi as a Home Assistant app, backups going to the NAS, memory use measured | The page opens from a phone on home Wi-Fi, and a backup has been restored once |
 | **1. Core loop** | People, trusted devices, tasks and rooms through Django admin, repeat rules, Today, Done (who and note), archive. The Today screen is shown with both picture sets and the font candidates, to choose from | The family can use it for a week, on a phone and on a PC |
-| **2. Family-ready** | Photos, undo, the Rooms screen, the admin view with its switch, task and room editors with catalogue, picture picker and own photos, face filter, shared and personal devices | Nobody needs Django admin for daily use |
+| **2. Family-ready** | Photos, undo, the admin view with its switch, task and room editors with catalogue, picture picker and own photos, face filter, shared and personal devices | Nobody needs Django admin for daily use |
 | **3. Jar** | Two or three drafts of the jar's look to choose from, effort points, goals, celebration, thanks, statistics | The first goal has been celebrated |
 | **4. Kids and panel** | Sounds and animation, read-aloud, second-language line, panel comforts such as returning to Today when idle and dimming at night | A child can mark their own task without help |
 | **5. Installable app** | HTTPS, installable PWA | It sits on the phone like an app |
@@ -609,6 +609,7 @@ Milestone 1 was delivered as four releases, each usable on its own: 0.2 with peo
 | 32 | Chains: one "then show" task per task, shown at once when the card is done; the completion remembers what it brought forward, so Undo can take it back | The real chains (dishes, laundry) are straight lines; reuses "show today", so no new kind of card | Several next tasks; delays ("after two hours"), which need a timer and add little |
 | 33 | The picture and font drafts are chosen per device, in a cookie, on a Look page | Everyone can try them on their own screen, without changing anyone else's; nothing to store or undo once the choice is made | A household setting; screenshots only |
 | 34 | Rounds: a waiting card carries a count, raised by asking again and lowered by Done | One pile, one card; no need to split "wash whites, wash towels"; reuses "show today" and "at most one card per task" | Several cards of the same task; separate tasks per load |
+| 35 | One filter row on Today with a switch between people and rooms; one filter at a time, kept in the address | A display in a room is simply left on that room's address; no second screen to build; "Dad's tasks in the kitchen" is not needed | A separate Rooms screen (decision 23); two filters at once |
 
 ## 17. Open questions
 

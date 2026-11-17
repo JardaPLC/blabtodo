@@ -10,25 +10,61 @@
     </a>
   </div>
 
-  {# Whose cards: everyone's, or only the cards with one person's face on them. #}
-  <nav class="-mx-4 mt-4 flex gap-2 overflow-x-auto px-4 pb-2" aria-label="{% translate 'Whose tasks' %}">
-    <a href="{% url 'today' %}" {% if not face %}aria-current="true"{% endif %}
-       class="flex w-20 shrink-0 flex-col items-center rounded-2xl p-2 text-center ring-2 {% if not face %}bg-white ring-green-600{% else %}ring-transparent hover:bg-white{% endif %}">
+  {# Which cards: everyone's, one person's or one room's. One filter at a time; the switch on the left chooses whether the row shows faces or rooms. The filter is kept in the address, so a display in a room can be left on that room. #}
+  {% with by=card_filter.by active=card_filter.is_active %}
+  <nav class="-mx-4 mt-4 flex gap-2 overflow-x-auto px-4 pb-2" aria-label="{% translate 'Which tasks' %}">
+    <div class="flex w-28 shrink-0 flex-col gap-1 self-stretch rounded-2xl bg-stone-200 p-1" role="group" aria-label="{% translate 'Filter by' %}">
+      <a href="{% url 'today' %}" {% if by == "people" %}aria-current="true"{% endif %}
+         class="flex flex-1 items-center justify-center gap-1 rounded-xl px-2 text-base leading-tight font-semibold {% if by == 'people' %}bg-white text-stone-900 shadow-sm{% else %}text-stone-600 hover:bg-stone-100{% endif %}">
+        <span aria-hidden="true">👪</span> {% translate "People" %}
+      </a>
+      <a href="{% url 'today' %}?by=rooms" {% if by == "rooms" %}aria-current="true"{% endif %}
+         class="flex flex-1 items-center justify-center gap-1 rounded-xl px-2 text-base leading-tight font-semibold {% if by == 'rooms' %}bg-white text-stone-900 shadow-sm{% else %}text-stone-600 hover:bg-stone-100{% endif %}">
+        <span aria-hidden="true">🚪</span> {% translate "Rooms" %}
+      </a>
+    </div>
+
+    <a href="{% url 'today' %}{% if by == 'rooms' %}?by=rooms{% endif %}" {% if not active %}aria-current="true"{% endif %}
+       class="flex w-20 shrink-0 flex-col items-center rounded-2xl p-2 text-center ring-2 {% if not active %}bg-white ring-green-600{% else %}ring-transparent hover:bg-white{% endif %}">
       <span class="inline-flex size-14 items-center justify-center rounded-full bg-stone-200 text-2xl" aria-hidden="true">🏠</span>
-      <span class="mt-1 text-lg leading-tight font-semibold">{% translate "All" %}</span>
+      <span class="mt-1 text-lg leading-tight font-semibold">{% if by == "rooms" %}{% translate "Everywhere" %}{% else %}{% translate "All" %}{% endif %}</span>
     </a>
+
+    {% if by == "rooms" %}
+    {% for room in rooms %}
+    <a href="{% url 'today' %}?room={{ room.pk }}" {% if card_filter.room == room %}aria-current="true"{% endif %}
+       class="relative flex w-24 shrink-0 flex-col items-center rounded-2xl p-2 text-center ring-2 {% if card_filter.room == room %}bg-white ring-green-600{% else %}ring-transparent hover:bg-white{% endif %}">
+      <span class="inline-flex size-14 items-center justify-center rounded-full bg-stone-200">
+        {% include "tasks/_picture.html" with item=room size="text-4xl" %}
+      </span>
+      {% if room.waiting %}<span class="absolute top-1 right-2 min-w-7 rounded-full bg-green-700 px-1.5 text-base leading-7 font-bold text-white" aria-label="{% blocktranslate count waiting=room.waiting %}{{ waiting }} waiting{% plural %}{{ waiting }} waiting{% endblocktranslate %}">{{ room.waiting }}</span>{% endif %}
+      <span class="mt-1 line-clamp-2 w-full text-base leading-tight font-semibold">{{ room.name }}</span>
+    </a>
+    {% endfor %}
+    {% if has_roomless %}
+    <a href="{% url 'today' %}?room=none" {% if card_filter.no_room %}aria-current="true"{% endif %}
+       class="relative flex w-24 shrink-0 flex-col items-center rounded-2xl p-2 text-center ring-2 {% if card_filter.no_room %}bg-white ring-green-600{% else %}ring-transparent hover:bg-white{% endif %}">
+      <span class="inline-flex size-14 items-center justify-center rounded-full bg-stone-200 text-2xl" aria-hidden="true">🧭</span>
+      {% if roomless_waiting %}<span class="absolute top-1 right-2 min-w-7 rounded-full bg-green-700 px-1.5 text-base leading-7 font-bold text-white">{{ roomless_waiting }}</span>{% endif %}
+      <span class="mt-1 line-clamp-2 w-full text-base leading-tight font-semibold">{% translate "Elsewhere" %}</span>
+    </a>
+    {% endif %}
+
+    {% else %}
     {% for person in people %}
-    <a href="{% url 'today' %}?face={{ person.pk }}" {% if face == person %}aria-current="true"{% endif %}
-       class="flex w-20 shrink-0 flex-col items-center rounded-2xl p-2 text-center ring-2 {% if face == person %}bg-white ring-green-600{% else %}ring-transparent hover:bg-white{% endif %}">
+    <a href="{% url 'today' %}?face={{ person.pk }}" {% if card_filter.face == person %}aria-current="true"{% endif %}
+       class="flex w-20 shrink-0 flex-col items-center rounded-2xl p-2 text-center ring-2 {% if card_filter.face == person %}bg-white ring-green-600{% else %}ring-transparent hover:bg-white{% endif %}">
       {% include "people/_face.html" with person=person size="size-14 text-2xl" %}
       <span class="mt-1 w-full truncate text-lg leading-tight font-semibold">{{ person }}</span>
     </a>
     {% endfor %}
+    {% endif %}
   </nav>
+  {% endwith %}
 
   {# The cards refresh by themselves, so a wall panel follows what happens on phones. #}
   <div id="cards" class="mt-4"
-       hx-get="{% url 'cards' %}{% if face %}?face={{ face.pk }}{% endif %}"
+       hx-get="{% url 'cards' %}{{ card_filter.query }}"
        hx-trigger="every 30s" hx-swap="innerHTML">
     {% include "tasks/_cards.html" %}
   </div>

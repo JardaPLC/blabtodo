@@ -1,6 +1,7 @@
 """The Today screen, the sheet for marking a card done, Undo, and the finished tasks."""
 
 import contextlib
+from collections import Counter
 from datetime import date
 
 from django.db.models.functions import TruncDate
@@ -12,7 +13,8 @@ from household.backups import snapshot_if_due
 from people.devices import trusted_device_required
 from people.models import User
 
-from . import cards, catalogue, picture_drafts
+from . import cards, catalogue, filters, picture_drafts
+from .filters import CardFilter
 from .labels import day_heading, waiting_since
 from .models import Completion, Room, Task
 
@@ -21,21 +23,25 @@ def _people():
     return list(User.objects.filter(is_active=True))
 
 
-def _selected_face(request, people) -> User | None:
-    """The person whose cards are being looked at, from `?face=<id>`. None means everyone's."""
-    wanted = request.GET.get("face", "")
-    return next((person for person in people if str(person.pk) == wanted), None)
+def _filter(request, people) -> CardFilter:
+    return filters.from_request(request, people)
 
 
-def _cards_context(day: date, face: User | None) -> dict:
-    waiting = cards.waiting_cards(day)
-    if face is not None:
-        # "Cards with my face on them": how someone who cannot read finds their own tasks.
-        waiting = waiting.filter(faces=face)
-    waiting = list(waiting)
+def _cards_context(day: date, card_filter: CardFilter) -> dict:
+    waiting = list(card_filter.apply(cards.waiting_cards(day)))
     for task in waiting:
         task.waiting_since = waiting_since(task.next_card_date, day)
-    return {"cards": waiting, "face": face}
+    return {"cards": waiting, "card_filter": card_filter, "face": card_filter.face}
+
+
+def _room_buttons(day: date) -> dict:
+    """The rooms to filter by, each with how many cards wait there."""
+    counts = Counter(task.room_id for task in cards.waiting_cards(day))
+    rooms = list(Room.objects.filter(is_active=True))
+    for room in rooms:
+        room.waiting = counts.get(room.pk, 0)
+    has_roomless = Task.objects.filter(is_active=True, room__isnull=True).exists()
+    return {"rooms": rooms, "roomless_waiting": counts.get(None, 0), "has_roomless": has_roomless}
 
 
 @require_GET
@@ -44,12 +50,15 @@ def today(request):
     day = cards.today()
     snapshot_if_due(day)
     people = _people()
+    card_filter = _filter(request, people)
     context = {
         "people": people,
         # The one person who can sign in to the management pages, to remind them how.
         "owner": User.objects.filter(is_superuser=True, is_active=True).first(),
-        **_cards_context(day, _selected_face(request, people)),
+        **_cards_context(day, card_filter),
     }
+    if card_filter.by == filters.ROOMS:
+        context.update(_room_buttons(day))
     return render(request, "tasks/today.html", context)
 
 
@@ -59,9 +68,7 @@ def cards_fragment(request):
     """The card grid alone. The Today screen fetches it again every 30 seconds."""
     day = cards.today()
     snapshot_if_due(day)
-    return render(
-        request, "tasks/_cards.html", _cards_context(day, _selected_face(request, _people()))
-    )
+    return render(request, "tasks/_cards.html", _cards_context(day, _filter(request, _people())))
 
 
 @require_http_methods(["GET", "POST"])
@@ -70,25 +77,26 @@ def done(request, task_id):
     """GET: the sheet that asks who did it. POST: record it and return the refreshed cards."""
     day = cards.today()
     people = _people()
-    face = _selected_face(request, people)
+    card_filter = _filter(request, people)
     task = get_object_or_404(
         Task.objects.select_related("room").prefetch_related("faces"), pk=task_id
     )
 
     if request.method == "GET":
         if not cards.is_waiting(task, day):
-            return _after(request, day, face, gone=True)
-        return _sheet(request, task, people, face, preselected=_preselected(task, face))
+            return _after(request, day, card_filter, gone=True)
+        preselected = _preselected(task, card_filter.face)
+        return _sheet(request, task, people, card_filter, preselected=preselected)
 
     try:
         card_date = date.fromisoformat(request.POST.get("card_date", ""))
     except ValueError:
-        return _after(request, day, face, gone=True)
+        return _after(request, day, card_filter, gone=True)
 
     chosen = set(request.POST.getlist("who"))
     who = [person for person in people if str(person.pk) in chosen]
     if not who:
-        response = _sheet(request, task, people, face, preselected=set(), error=True)
+        response = _sheet(request, task, people, card_filter, preselected=set(), error=True)
         # The form asked for the cards to be replaced. Show the sheet again instead.
         response.headers["HX-Retarget"] = "#sheet"
         response.headers["HX-Reswap"] = "innerHTML"
@@ -108,8 +116,8 @@ def done(request, task_id):
             note=request.POST.get("note", "").strip()[:280],
         )
     except cards.CardGone:
-        return _after(request, day, face, gone=True)
-    return _after(request, day, face, completion=completion)
+        return _after(request, day, card_filter, gone=True)
+    return _after(request, day, card_filter, completion=completion)
 
 
 @require_POST
@@ -117,12 +125,12 @@ def done(request, task_id):
 def one_more(request, task_id):
     """The sheet's "+1": the waiting card is to be done one more time."""
     day = cards.today()
-    face = _selected_face(request, _people())
+    card_filter = _filter(request, _people())
     task = get_object_or_404(Task, pk=task_id)
     if not cards.is_waiting(task, day):
-        return _after(request, day, face, gone=True)
+        return _after(request, day, card_filter, gone=True)
     cards.show_today(task, day)
-    return _after(request, day, face, added=task)
+    return _after(request, day, card_filter, added=task)
 
 
 @require_POST
@@ -130,12 +138,12 @@ def one_more(request, task_id):
 def undo(request, completion_id):
     """The Undo bar: allowed for a short while on the device that recorded the completion."""
     day = cards.today()
-    face = _selected_face(request, _people())
+    card_filter = _filter(request, _people())
     completion = Completion.objects.filter(pk=completion_id).first()
     if completion is not None and cards.may_undo_from(completion, request.device):
         with contextlib.suppress(cards.CannotUndo):
             cards.undo(completion)
-    return _after(request, day, face)
+    return _after(request, day, card_filter)
 
 
 def _preselected(task: Task, face: User | None) -> set[int]:
@@ -146,23 +154,23 @@ def _preselected(task: Task, face: User | None) -> set[int]:
     return {faces[0].pk} if len(faces) == 1 else set()
 
 
-def _sheet(request, task, people, face, *, preselected, error=False):
+def _sheet(request, task, people, card_filter, *, preselected, error=False):
     context = {
         "task": task,
         "people": people,
-        "face": face,
+        "card_filter": card_filter,
         "preselected": preselected,
         "error": error,
     }
     return render(request, "tasks/_sheet.html", context)
 
 
-def _after(request, day, face, *, completion=None, gone=False, added=None):
+def _after(request, day, card_filter, *, completion=None, gone=False, added=None):
     """The refreshed cards, the Undo bar or a notice, and the signal to close the sheet."""
     if completion is not None:
         completion.task.refresh_from_db()
     context = {
-        **_cards_context(day, face),
+        **_cards_context(day, card_filter),
         "completion": completion,
         "gone": gone,
         "added": added,

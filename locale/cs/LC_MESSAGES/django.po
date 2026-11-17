@@ -675,9 +675,6 @@ msgstr "Kdy"
 msgid "Who did it?"
 msgstr "Kdo to udělal?"
 
-msgid "Whose tasks"
-msgstr "Čí úkoly"
-
 msgid "Wipe the table"
 msgstr "Utřít stůl"
 
@@ -981,3 +978,31 @@ msgstr "Zobrazit kartu dnes, nebo ještě jednou, pokud už čeká"
 
 msgid "times"
 msgstr "kolikrát"
+
+#, python-format
+msgid "%(waiting)s waiting"
+msgid_plural "%(waiting)s waiting"
+msgstr[0] "%(waiting)s čeká"
+msgstr[1] "%(waiting)s čekají"
+msgstr[2] "%(waiting)s čeká"
+
+msgid "Elsewhere"
+msgstr "Jinde"
+
+msgid "Filter by"
+msgstr "Filtrovat podle"
+
+msgid "Nothing else is waiting right now."
+msgstr "Nic dalšího teď nečeká."
+
+msgid "Nothing is waiting in this room right now."
+msgstr "V této místnosti teď nic nečeká."
+
+msgid "People"
+msgstr "Lidé"
+
+msgid "Which tasks"
+msgstr "Které úkoly"
+
+msgid "Everywhere"
+msgstr "Všude"

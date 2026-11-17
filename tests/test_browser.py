@@ -610,3 +610,52 @@ def test_a_pile_of_washing_three_rounds_one_card(allowed_page, live_server):
         else:
             expect(grid).to_contain_text("Hotovo!")
     assert Completion.objects.filter(task=task).count() == 3
+
+
+def test_switching_to_rooms_and_working_in_one_room(allowed_page, live_server):
+    kitchen = make_room("Kuchyně", picture="kitchen")
+    bathroom = make_room("Koupelna", picture="bathroom")
+    make_task("Naplnit myčku", room=kitchen)
+    make_task("Utřít stůl", room=kitchen)
+    make_task("Umýt umyvadlo", room=bathroom)
+    make_task("Nakoupit")
+    page = allowed_page
+    page.goto(live_server.url)
+    grid = page.locator("#cards")
+
+    page.get_by_role("link", name="Místnosti").click()
+    expect(page.get_by_role("link", name=re.compile("Kuchyně"))).to_be_visible()
+    expect(page.get_by_role("link", name="Mum")).not_to_be_visible()
+
+    page.get_by_role("link", name=re.compile("Kuchyně")).click()
+    expect(grid).to_contain_text("Naplnit myčku")
+    expect(grid).not_to_contain_text("Umýt umyvadlo")
+
+    # Done keeps the kitchen, and so does the address a room display would be left on.
+    _mark_done(page, "Naplnit myčku")
+    expect(grid).to_contain_text("Utřít stůl")
+    expect(grid).not_to_contain_text("Nakoupit")
+    assert f"room={kitchen.pk}" in page.url
+
+    # Back to people: the room filter is gone.
+    page.get_by_role("link", name="Lidé").click()
+    expect(grid).to_contain_text("Nakoupit")
+
+
+@pytest.mark.skipif(not os.environ.get("BLABTODO_SCREENSHOTS"), reason="no folder named for them")
+def test_screenshots_of_the_room_filter(page: Page, live_server, transactional_db):
+    folder = Path(os.environ["BLABTODO_SCREENSHOTS"])
+    folder.mkdir(parents=True, exist_ok=True)
+    mum = _a_household()
+    _device, token = trust_device(name="Test browser", trusted_by=mum)
+    page.context.add_cookies([{"name": COOKIE_NAME, "value": token, "url": live_server.url}])
+    page.context.add_cookies(
+        [{"name": "blabtodo_look", "value": "material.andika", "url": live_server.url}]
+    )
+
+    page.goto(live_server.url + "/?by=rooms")
+    page.wait_for_load_state("networkidle")
+    _shoot(page, folder, "12-rooms")
+    page.get_by_role("link", name=re.compile("Kuchyně")).click()
+    page.wait_for_load_state("networkidle")
+    _shoot(page, folder, "13-kitchen")

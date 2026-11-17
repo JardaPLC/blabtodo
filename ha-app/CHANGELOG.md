@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.6.1
+
+Today filtered by room.
+
+- The switch at the start of the filter row chooses between **Lidé** (People) and
+  **Místnosti** (Rooms). In room mode the row shows each room in use with the number of
+  cards waiting there, plus **Jinde** (Elsewhere) for tasks without a room.
+- One filter at a time: choosing a room drops the chosen person, and the other way round.
+- The filter is kept in the address. A small display in the kitchen can be left on the
+  kitchen's address; the refresh, Done and Undo stay in the kitchen.
+
 ## 0.6.0
 
 Rounds: one card for a pile that needs several goes.
