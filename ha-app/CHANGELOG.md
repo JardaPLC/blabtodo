@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.7.0
+
+Tasks and rooms are edited in the app, on a phone. No PC needed for everyday changes.
+
+- **Pro dospělé → Upravit úkoly a místnosti** (For adults → Edit tasks and rooms) asks
+  for an adult's PIN. Editing then stays unlocked on that device for half an hour after
+  the last use, or until **Ukončit** (Finish).
+- **Tasks:** a list grouped by room. **Nový úkol** (New task) starts from the catalogue,
+  with search, or from your own name. The editor has a picture picker, room, how often,
+  for whom, how much work, in use, and under **Další nastavení** (More) the hint, the
+  chain, day-only, the end date and the English name. On an existing task: **Zobrazit
+  dnes** / **+1**, **Tentokrát přeskočit** (Skip this time), **QR nálepka** (QR sticker),
+  and **Smazat** (Delete) for a task never done.
+- **Rooms:** a list in order with arrows to move them, new rooms from the catalogue,
+  rename, switch off, delete (its tasks stay, without a room).
+- Family members, devices and corrections of finished tasks stay in the management pages.
+
 ## 0.6.1
 
 Today filtered by room.

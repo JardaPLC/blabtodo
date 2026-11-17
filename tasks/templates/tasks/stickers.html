@@ -10,7 +10,7 @@
     <p class="mt-2 text-stone-600">{% translate "The codes lead to this address:" %} <strong class="text-stone-900">{{ address }}</strong>. {% translate "If the address of the app changes, print the stickers again." %}</p>
     <div class="mt-4 flex gap-3">
       <button type="button" class="btn btn-primary" onclick="window.print()">{% translate "Print" %}</button>
-      <a href="{% url 'admin:tasks_task_changelist' %}" class="btn">{% translate "Back to tasks" %}</a>
+      <a href="{{ back_url }}" class="btn">{% translate "Back to tasks" %}</a>
     </div>
   </div>
 

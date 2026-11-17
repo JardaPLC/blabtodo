@@ -52,6 +52,14 @@
     @apply rounded-3xl bg-white p-6 shadow-sm ring-1 ring-stone-200;
   }
 
+  /*
+    A choice that is tapped: put right after a hidden radio button or checkbox with the
+    class "peer", it shows whether that is chosen.
+  */
+  .chip {
+    @apply inline-flex min-h-12 items-center gap-2 rounded-2xl bg-white px-4 font-semibold ring-1 ring-stone-300 select-none hover:bg-stone-100 peer-checked:bg-green-50 peer-checked:ring-2 peer-checked:ring-green-600 peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-green-700;
+  }
+
   /* A text box. */
   .field {
     @apply block min-h-16 w-full rounded-2xl bg-white px-4 ring-1 ring-stone-300 focus:outline-2 focus:outline-offset-2 focus:outline-green-700 disabled:opacity-40;

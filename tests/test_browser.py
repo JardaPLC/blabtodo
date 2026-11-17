@@ -659,3 +659,84 @@ def test_screenshots_of_the_room_filter(page: Page, live_server, transactional_d
     page.get_by_role("link", name=re.compile("Kuchyně")).click()
     page.wait_for_load_state("networkidle")
     _shoot(page, folder, "13-kitchen")
+
+
+# ---- The adult view ----
+
+
+def _unlock(page: Page, live_server) -> None:
+    page.goto(live_server.url + "/manage/")
+    for digit in ADULT_PIN:
+        page.get_by_role("button", name=digit, exact=True).click()
+    page.get_by_role("button", name="Pokračovat").click()
+    expect(page.get_by_role("heading", name="Pro dospělé")).to_be_visible()
+
+
+def test_adding_a_weekly_task_on_a_phone(allowed_page, live_server, family):
+    from tasks.models import Task
+
+    kitchen = make_room("Kuchyně", picture="kitchen")
+    page = allowed_page
+    page.set_viewport_size({"width": 360, "height": 640})
+    _unlock(page, live_server)
+    folder = os.environ.get("BLABTODO_SCREENSHOTS")
+
+    page.get_by_role("link", name=re.compile("Úkoly")).click()
+    page.get_by_role("link", name=re.compile("Nový úkol")).click()
+    page.get_by_placeholder("Hledat").fill("myčk")
+    expect(page.get_by_role("link", name=re.compile("Zalít květiny"))).not_to_be_visible()
+    if folder:
+        page.screenshot(path=str(Path(folder) / "14-catalogue-phone.png"))
+    page.get_by_role("link", name=re.compile("Naplnit myčku")).click()
+
+    # The kitchen is chosen already, because the picture belongs there.
+    expect(page.get_by_role("radio", name=re.compile("Kuchyně"))).to_be_checked()
+    expect(page.get_by_text("Dny v týdnu", exact=True)).not_to_be_visible()
+    page.get_by_text("Ve vybrané dny v týdnu").click()
+    expect(page.get_by_text("Dny v týdnu", exact=True)).to_be_visible()
+    page.get_by_role("checkbox", name="Pondělí").check(force=True)
+    page.get_by_role("checkbox", name="Čtvrtek").check(force=True)
+    page.locator("label").filter(has_text="Emma").click()
+    if folder:
+        page.screenshot(path=str(Path(folder) / "15-task-editor-phone.png"), full_page=True)
+
+    # Another picture, from the sheet of pictures.
+    page.get_by_role("button", name="Změnit obrázek").click()
+    page.get_by_role("button", name=re.compile("Vyklidit myčku")).click()
+    expect(page.locator("input[name=names_cs]")).to_have_attribute("placeholder", "Vyklidit myčku")
+
+    page.get_by_role("button", name="Uložit").click()
+    expect(page.get_by_text("Uloženo: Vyklidit myčku")).to_be_visible()
+    task = Task.objects.get()
+    assert task.picture == "empty-dishwasher"
+    assert task.weekdays == [0, 3]
+    assert task.room == kitchen
+    assert [person.display_name for person in task.faces.all()] == ["Emma"]
+    if folder:
+        page.screenshot(path=str(Path(folder) / "16-task-list-phone.png"), full_page=True)
+
+
+def test_adding_a_room_and_moving_it_up(allowed_page, live_server):
+    make_room("Kuchyně", picture="kitchen")
+    page = allowed_page
+    _unlock(page, live_server)
+
+    page.get_by_role("link", name=re.compile("Místnosti")).click()
+    page.get_by_role("link", name=re.compile("Nová místnost")).click()
+    page.get_by_role("link", name=re.compile("Koupelna")).click()
+    page.get_by_role("button", name="Uložit").click()
+    expect(page.get_by_text("Uloženo: Koupelna")).to_be_visible()
+
+    page.get_by_role("button", name="Posunout Koupelna nahoru").click()
+    names = page.locator("main li").all_inner_texts()
+    assert "Koupelna" in names[0]
+
+
+def test_finish_locks_the_adult_view(allowed_page, live_server):
+    page = allowed_page
+    _unlock(page, live_server)
+
+    page.get_by_role("button", name="Ukončit").click()
+    expect(page.get_by_role("heading", name="Dnes")).to_be_visible()
+    page.goto(live_server.url + "/manage/")
+    expect(page.get_by_role("button", name="Pokračovat")).to_be_visible()

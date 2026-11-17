@@ -1,0 +1,36 @@
+{% extends "tasks/manage/_base.html" %}
+{% load i18n %}
+
+{% block heading %}{% translate "For adults" %}{% endblock %}
+{% block back %}<a href="{% url 'today' %}" class="btn min-h-12 px-4 text-lg">← {% translate "Today" %}</a>{% endblock %}
+{% block heading_text %}{% translate "For adults" %}{% endblock %}
+
+{% block content %}
+<p class="mt-2 text-stone-600">{% blocktranslate with name=request.adult %}Editing as {{ name }}. It locks by itself after half an hour without use, or with Finish.{% endblocktranslate %}</p>
+
+<div class="mt-6 grid gap-4 sm:grid-cols-2">
+  <a href="{% url 'manage-tasks' %}" class="card flex items-center gap-4 hover:ring-stone-400">
+    <span class="text-5xl leading-none" aria-hidden="true">📋</span>
+    <span>
+      <span class="block text-2xl font-bold">{% translate "Tasks" %}</span>
+      <span class="block text-lg text-stone-600">{% translate "Add, change, chain, stickers" %}</span>
+    </span>
+  </a>
+  <a href="{% url 'manage-rooms' %}" class="card flex items-center gap-4 hover:ring-stone-400">
+    <span class="text-5xl leading-none" aria-hidden="true">🚪</span>
+    <span>
+      <span class="block text-2xl font-bold">{% translate "Rooms" %}</span>
+      <span class="block text-lg text-stone-600">{% translate "Add, rename, order" %}</span>
+    </span>
+  </a>
+</div>
+
+<div class="card mt-6">
+  <h2 class="text-xl font-bold">{% translate "Everything else" %}</h2>
+  <p class="mt-1 text-stone-600">{% translate "Family members, allowed devices and corrections of finished tasks are still in the management pages, made for a PC." %}</p>
+  <div class="mt-4 flex flex-col gap-3 sm:flex-row">
+    <a href="{% url 'admin:index' %}" class="btn">{% translate "Management pages" %}</a>
+    <a href="{% url 'look' %}" class="btn">{% translate "Look: drafts to choose from" %}</a>
+  </div>
+</div>
+{% endblock %}

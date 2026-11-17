@@ -1,0 +1,215 @@
+{% extends "tasks/manage/_base.html" %}
+{% load i18n %}
+
+{# The task editor, made for a phone: what it is, where, when, for whom; the rarely needed settings under More. #}
+{% block heading %}{% if created %}{% translate "New task" %}{% else %}{{ task.name }}{% endif %}{% endblock %}
+{% block back %}<a href="{% url 'manage-tasks' %}" class="btn min-h-12 px-4 text-lg">← {% translate "Tasks" %}</a>{% endblock %}
+{% block heading_text %}{% if created %}{% translate "New task" %}{% else %}{{ task.name }}{% endif %}{% endblock %}
+
+{% block content %}
+{% if not created %}
+{# What can be done with the card right now. #}
+<div class="mt-4 flex flex-wrap gap-2">
+  {% if task.is_active %}
+  <form method="post" action="{% url 'manage-task-show' task.pk %}">
+    {% csrf_token %}
+    <button type="submit" class="btn min-h-12 px-4 text-lg">{% if waiting %}{% translate "+1 more time" %}{% else %}{% translate "Show today" %}{% endif %}</button>
+  </form>
+  {% endif %}
+  {% if waiting %}
+  <form method="post" action="{% url 'manage-task-skip' task.pk %}">
+    {% csrf_token %}
+    <button type="submit" class="btn min-h-12 px-4 text-lg">{% translate "Skip this time" %}</button>
+  </form>
+  {% endif %}
+  {% if task.is_active %}
+  <a href="{% url 'manage-task-sticker' task.pk %}" class="btn min-h-12 px-4 text-lg">{% translate "QR sticker" %}</a>
+  {% endif %}
+</div>
+{% if waiting %}
+<p class="mt-2 text-lg text-stone-600">{% translate "Its card is waiting on Today." %}{% if task.rounds > 1 %} ×{{ task.rounds }}{% endif %}</p>
+{% endif %}
+{% endif %}
+
+<form method="post" class="mt-6 flex flex-col gap-8" x-data="{ repeat: '{{ form.repeat.value|escapejs }}' }">
+  {% csrf_token %}
+  {% if form.non_field_errors %}
+  <div class="rounded-2xl bg-red-50 px-4 py-3 font-semibold text-red-800 ring-1 ring-red-200" role="alert">
+    {% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+  </div>
+  {% endif %}
+
+  {# What: the picture and the name. #}
+  <section class="flex flex-col gap-4">
+    {% include "tasks/manage/_picture_picker.html" %}
+    <div>
+      <label for="id_names_cs" class="text-xl font-bold">{% translate "Name" %}</label>
+      {% with box=form.name_boxes.0 %}
+      <div class="mt-2" x-data="{ fallback: '{{ picture_name|escapejs }}' }"
+           @picture-chosen.window="fallback = $event.detail.name">
+        <input type="text" name="{{ box.name }}" id="id_{{ box.name }}" value="{{ box.value }}" maxlength="60" class="field" :placeholder="fallback">
+      </div>
+      {% endwith %}
+      <p class="mt-1 text-lg text-stone-500">{% translate "Leave empty to use the name of the picture." %}</p>
+      {% for error in form.names.errors %}<p class="mt-1 font-semibold text-red-700">{{ error }}</p>{% endfor %}
+    </div>
+  </section>
+
+  {# Where. #}
+  <fieldset>
+    <legend class="text-xl font-bold">{% translate "Room" %}</legend>
+    <div class="mt-2 flex flex-wrap gap-2">
+      <label class="cursor-pointer">
+        <input type="radio" name="room" value="" class="peer sr-only" {% if not form.chosen_room %}checked{% endif %}>
+        <span class="chip">{% translate "No room" %}</span>
+      </label>
+      {% for room in rooms %}
+      <label class="cursor-pointer">
+        <input type="radio" name="room" value="{{ room.pk }}" class="peer sr-only" {% if form.chosen_room == room.pk|stringformat:'s' %}checked{% endif %}>
+        <span class="chip">{% include "tasks/_picture.html" with item=room size="text-2xl" %} {{ room.name }}</span>
+      </label>
+      {% endfor %}
+    </div>
+    {% for error in form.room.errors %}<p class="mt-1 font-semibold text-red-700">{{ error }}</p>{% endfor %}
+  </fieldset>
+
+  {# When. Only the settings of the chosen kind are shown. #}
+  <fieldset>
+    <legend class="text-xl font-bold">{% translate "When" %}</legend>
+    <div class="mt-2 flex flex-col gap-2">
+      {% for value, label in form.fields.repeat.choices %}
+      <label class="flex min-h-14 cursor-pointer items-center gap-3 rounded-2xl bg-white px-4 ring-1 ring-stone-200 has-checked:bg-green-50 has-checked:ring-2 has-checked:ring-green-600">
+        <input type="radio" name="repeat" value="{{ value }}" x-model="repeat" class="size-6 shrink-0 accent-green-700" {% if form.repeat.value == value %}checked{% endif %}>
+        <span class="leading-tight font-semibold">{{ label }}</span>
+      </label>
+      {% endfor %}
+    </div>
+    {% for error in form.repeat.errors %}<p class="mt-1 font-semibold text-red-700">{{ error }}</p>{% endfor %}
+
+    <div class="mt-4 flex flex-col gap-4">
+      <div x-show="repeat === 'weekly'" {% if form.repeat.value != "weekly" %}x-cloak{% endif %}>
+        <p class="font-semibold">{% translate "Days of the week" %}</p>
+        <div class="mt-2 flex flex-wrap gap-2">
+          {% for value, label in form.fields.weekdays.choices %}
+          <label class="cursor-pointer" title="{{ label }}">
+            <input type="checkbox" name="weekdays" value="{{ value }}" class="peer sr-only" aria-label="{{ label }}" {% if value|stringformat:'s' in form.chosen_weekdays %}checked{% endif %}>
+            <span class="chip min-w-14 justify-center" aria-hidden="true">{{ label|slice:":2" }}</span>
+          </label>
+          {% endfor %}
+        </div>
+        {% for error in form.weekdays.errors %}<p class="mt-1 font-semibold text-red-700">{{ error }}</p>{% endfor %}
+      </div>
+
+      <div x-show="repeat === 'monthly'" {% if form.repeat.value != "monthly" %}x-cloak{% endif %}>
+        <label for="id_day_of_month" class="font-semibold">{% translate "Day of the month" %}</label>
+        <div class="mt-2 flex items-center gap-3">{{ form.day_of_month }} <span class="text-lg text-stone-500">{% translate "31 means the last day in shorter months." %}</span></div>
+        {% for error in form.day_of_month.errors %}<p class="mt-1 font-semibold text-red-700">{{ error }}</p>{% endfor %}
+      </div>
+
+      <div x-show="['days', 'weekly', 'monthly'].includes(repeat)" {% if form.repeat.value not in "days weekly monthly" %}x-cloak{% endif %}>
+        <label for="id_interval" class="font-semibold">
+          <span x-show="repeat === 'days'">{% translate "Every how many days" %}</span>
+          <span x-show="repeat === 'weekly'" x-cloak>{% translate "Every how many weeks" %}</span>
+          <span x-show="repeat === 'monthly'" x-cloak>{% translate "Every how many months" %}</span>
+        </label>
+        <div class="mt-2 flex items-center gap-3">{{ form.interval }} <span class="text-lg text-stone-500">{% translate "1 means every time, 2 every other time." %}</span></div>
+        {% for error in form.interval.errors %}<p class="mt-1 font-semibold text-red-700">{{ error }}</p>{% endfor %}
+      </div>
+
+      <div x-show="repeat !== 'demand'" {% if form.repeat.value == "demand" %}x-cloak{% endif %}>
+        <label for="id_start_date" class="font-semibold">
+          <span x-show="repeat === 'once'">{% translate "On which day" %}</span>
+          <span x-show="repeat !== 'once'" x-cloak>{% translate "Starts on" %}</span>
+        </label>
+        <div class="mt-2 max-w-xs">{{ form.start_date }}</div>
+        {% for error in form.start_date.errors %}<p class="mt-1 font-semibold text-red-700">{{ error }}</p>{% endfor %}
+      </div>
+    </div>
+  </fieldset>
+
+  {# For whom. #}
+  <fieldset>
+    <legend class="text-xl font-bold">{% translate "Meant for" %}</legend>
+    <p class="text-lg text-stone-500">{% translate "Leave empty if anyone can do it. It is a hint: anyone may still do it." %}</p>
+    <div class="mt-2 flex flex-wrap gap-2">
+      {% for person in form.fields.faces.queryset %}
+      <label class="cursor-pointer">
+        <input type="checkbox" name="faces" value="{{ person.pk }}" class="peer sr-only" {% if person.pk|stringformat:'s' in form.chosen_faces %}checked{% endif %}>
+        <span class="chip">{% include "people/_face.html" with person=person size="size-9 text-base" %} {{ person }}</span>
+      </label>
+      {% endfor %}
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend class="text-xl font-bold">{% translate "How much work" %}</legend>
+    <div class="mt-2 flex flex-wrap gap-2">
+      {% for value, label in form.fields.effort.choices %}
+      <label class="cursor-pointer">
+        <input type="radio" name="effort" value="{{ value }}" class="peer sr-only" {% if form.effort.value|stringformat:'s' == value|stringformat:'s' %}checked{% endif %}>
+        <span class="chip">{{ label }}</span>
+      </label>
+      {% endfor %}
+    </div>
+  </fieldset>
+
+  <label class="flex min-h-14 cursor-pointer items-center gap-3 rounded-2xl bg-white px-4 ring-1 ring-stone-200">
+    <input type="checkbox" name="is_active" class="size-6 accent-green-700" {% if form.is_active.value %}checked{% endif %}>
+    <span>
+      <span class="block font-semibold">{% translate "In use" %}</span>
+      <span class="block text-lg leading-tight text-stone-500">{% translate "Switched off, it has no card and keeps its history." %}</span>
+    </span>
+  </label>
+
+  {# The rest: rarely needed. Opened by itself when something in it needs attention. #}
+  <details class="rounded-3xl bg-white p-4 ring-1 ring-stone-200" {% if form.hint.errors or form.end_date.errors or form.next_task.errors or form.names.errors %}open{% endif %}>
+    <summary class="cursor-pointer text-xl font-bold">{% translate "More" %}</summary>
+    <div class="mt-4 flex flex-col gap-5">
+      <div>
+        <label for="id_hint" class="font-semibold">{% translate "Hint" %}</label>
+        <div class="mt-2">{{ form.hint }}</div>
+        <p class="mt-1 text-lg text-stone-500">{% translate "A short note shown when marking it done, for example where things are." %}</p>
+      </div>
+      <div>
+        <label for="id_next_task" class="font-semibold">{% translate "Then show" %}</label>
+        <div class="mt-2">{{ form.next_task }}</div>
+        <p class="mt-1 text-lg text-stone-500">{% translate "When this task is done, the card of the chosen task appears on Today. Best for a task set to Only when asked for." %}</p>
+        {% for error in form.next_task.errors %}<p class="mt-1 font-semibold text-red-700">{{ error }}</p>{% endfor %}
+      </div>
+      <label class="flex cursor-pointer items-start gap-3" x-show="repeat !== 'once' && repeat !== 'demand'">
+        <input type="checkbox" name="day_only" class="mt-1 size-6 shrink-0 accent-green-700" {% if form.day_only.value %}checked{% endif %}>
+        <span>
+          <span class="block font-semibold">{% translate "Only makes sense on the day" %}</span>
+          <span class="block text-lg leading-tight text-stone-500">{% translate "For things like putting the bins out: the card disappears at the end of the day if nobody did it." %}</span>
+        </span>
+      </label>
+      <div x-show="repeat !== 'once' && repeat !== 'demand'">
+        <label for="id_end_date" class="font-semibold">{% translate "Ends on" %}</label>
+        <div class="mt-2 max-w-xs">{{ form.end_date }}</div>
+        {% for error in form.end_date.errors %}<p class="mt-1 font-semibold text-red-700">{{ error }}</p>{% endfor %}
+      </div>
+      {% for box in form.name_boxes|slice:"1:" %}
+      <div>
+        <label for="id_{{ box.name }}" class="font-semibold">{% blocktranslate with language=box.language %}Name in {{ language }}{% endblocktranslate %}</label>
+        <input type="text" name="{{ box.name }}" id="id_{{ box.name }}" value="{{ box.value }}" maxlength="60" class="field mt-2">
+      </div>
+      {% endfor %}
+    </div>
+  </details>
+
+  {# Save is always in reach at the bottom of the screen. #}
+  <div class="sticky bottom-0 -mx-4 flex gap-3 bg-stone-50/95 px-4 pt-3 pb-4 sm:-mx-6 sm:px-6">
+    <a href="{% url 'manage-tasks' %}" class="btn flex-1 px-3">{% translate "Cancel" %}</a>
+    <button type="submit" class="btn btn-primary flex-[2]">{% translate "Save" %}</button>
+  </div>
+</form>
+
+{% if may_delete %}
+<form method="post" action="{% url 'manage-task-delete' task.pk %}" class="mt-10"
+      x-data @submit="if (!confirm('{% translate "Delete this task?" as question %}{{ question|escapejs }}')) $event.preventDefault()">
+  {% csrf_token %}
+  <button type="submit" class="btn w-full text-red-700 ring-red-200 hover:bg-red-50">{% translate "Delete task" %}</button>
+  <p class="mt-2 text-lg text-stone-500">{% translate "Possible because it has never been done. Once done, a task can only be switched off." %}</p>
+</form>
+{% endif %}
+{% endblock %}

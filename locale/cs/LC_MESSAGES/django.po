@@ -614,13 +614,6 @@ msgstr "Ťukněte aspoň na jednu tvář."
 msgid "Tasks"
 msgstr "Úkoly"
 
-msgid ""
-"Tasks, rooms and family members are set up in the management pages. They are made for "
-"a PC."
-msgstr ""
-"Úkoly, místnosti a členové rodiny se nastavují na stránkách správy. Ty jsou určené pro"
-" počítač."
-
 msgid "The end cannot be before the start."
 msgstr "Konec nemůže být před začátkem."
 
@@ -1006,3 +999,271 @@ msgstr "Které úkoly"
 
 msgid "Everywhere"
 msgstr "Všude"
+
+#, python-format
+msgid "%(days)s, every %(n)d week"
+msgid_plural "%(days)s, every %(n)d weeks"
+msgstr[0] "%(days)s, každý %(n)d. týden"
+msgstr[1] "%(days)s, každý %(n)d. týden"
+msgstr[2] "%(days)s, každý %(n)d. týden"
+
+#, python-format
+msgid "%(name)s is waiting on Today."
+msgstr "%(name)s čeká v Dnes."
+
+#, python-format
+msgid "%(tasks)s task"
+msgid_plural "%(tasks)s tasks"
+msgstr[0] "%(tasks)s úkol"
+msgstr[1] "%(tasks)s úkoly"
+msgstr[2] "%(tasks)s úkolů"
+
+msgid "1 means every time, 2 every other time."
+msgstr "1 znamená pokaždé, 2 ob jeden."
+
+msgid "A room not in use is not offered for tasks or as a filter."
+msgstr "Nepoužívaná místnost se nenabízí u úkolů ani ve filtru."
+
+msgid "Add, change, chain, stickers"
+msgstr "Přidat, změnit, řetězy, nálepky"
+
+msgid "Add, rename, order"
+msgstr "Přidat, přejmenovat, seřadit"
+
+msgid "Cancel"
+msgstr "Zrušit"
+
+msgid "Change picture"
+msgstr "Změnit obrázek"
+
+msgid "Choose a picture"
+msgstr "Vyberte obrázek"
+
+msgid "Choose a picture to start from. Its name comes with it and can be changed."
+msgstr "Vyberte obrázek, od kterého začít. Přinese si název, který jde změnit."
+
+msgid "Close"
+msgstr "Zavřít"
+
+msgid "Continue"
+msgstr "Pokračovat"
+
+msgid "Day of the month"
+msgstr "Den v měsíci"
+
+msgid "Delete room"
+msgstr "Smazat místnost"
+
+msgid "Delete task"
+msgstr "Smazat úkol"
+
+msgid "Delete this room?"
+msgstr "Smazat tuto místnost?"
+
+msgid "Delete this task?"
+msgstr "Smazat tento úkol?"
+
+#, python-format
+msgid "Deleted: %(name)s"
+msgstr "Smazáno: %(name)s"
+
+msgid "Edit tasks and rooms"
+msgstr "Upravit úkoly a místnosti"
+
+#, python-format
+msgid ""
+"Editing as %(name)s. It locks by itself after half an hour without use, or with "
+"Finish."
+msgstr ""
+"Upravuje %(name)s. Po půl hodině bez použití se samo zamkne, nebo tlačítkem Ukončit."
+
+msgid "Ends on"
+msgstr "Končí"
+
+msgid "Enter your PIN to edit tasks and rooms on this device."
+msgstr "Zadejte svůj PIN a upravujte úkoly a místnosti na tomto zařízení."
+
+#, python-format
+msgid "Every %(n)d day"
+msgid_plural "Every %(n)d days"
+msgstr[0] "Každý %(n)d. den"
+msgstr[1] "Každé %(n)d dny"
+msgstr[2] "Každých %(n)d dní"
+
+#, python-format
+msgid "Every %(n)d month, %(day)s"
+msgid_plural "Every %(n)d months, %(day)s"
+msgstr[0] "Každý %(n)d. měsíc, %(day)s"
+msgstr[1] "Každé %(n)d měsíce, %(day)s"
+msgstr[2] "Každých %(n)d měsíců, %(day)s"
+
+msgid "Every day"
+msgstr "Každý den"
+
+msgid "Every how many days"
+msgstr "Po kolika dnech"
+
+msgid "Every how many months"
+msgstr "Po kolika měsících"
+
+msgid "Every how many weeks"
+msgstr "Po kolika týdnech"
+
+#, python-format
+msgid "Every month, %(day)s"
+msgstr "Každý měsíc, %(day)s"
+
+msgid "Everything else"
+msgstr "Všechno ostatní"
+
+msgid "Family members and devices are set up in the management pages, made for a PC."
+msgstr "Členové rodiny a zařízení se nastavují ve správě, která je dělaná pro počítač."
+
+msgid ""
+"Family members, allowed devices and corrections of finished tasks are still in the "
+"management pages, made for a PC."
+msgstr ""
+"Členové rodiny, povolená zařízení a opravy hotových úkolů jsou zatím ve správě, která "
+"je dělaná pro počítač."
+
+msgid "Finish"
+msgstr "Ukončit"
+
+msgid "Hint"
+msgstr "Nápověda"
+
+msgid "How much work"
+msgstr "Kolik je to práce"
+
+msgid "In use"
+msgstr "Používá se"
+
+#, python-format
+msgid "Its %(tasks)s task stays, without a room."
+msgid_plural "Its %(tasks)s tasks stay, without a room."
+msgstr[0] "Jeho %(tasks)s úkol zůstane, bez místnosti."
+msgstr[1] "Jeho %(tasks)s úkoly zůstanou, bez místnosti."
+msgstr[2] "Jeho %(tasks)s úkolů zůstane, bez místnosti."
+
+msgid "Its card is waiting on Today."
+msgstr "Jeho karta čeká v Dnes."
+
+msgid "Leave empty to use the name of the picture."
+msgstr "Když zůstane prázdné, použije se název obrázku."
+
+msgid "More"
+msgstr "Další nastavení"
+
+#, python-format
+msgid "Move %(name)s down"
+msgstr "Posunout %(name)s dolů"
+
+#, python-format
+msgid "Move %(name)s up"
+msgstr "Posunout %(name)s nahoru"
+
+#, python-format
+msgid "Name in %(language)s"
+msgstr "Název (%(language)s)"
+
+msgid "New room"
+msgstr "Nová místnost"
+
+msgid "New task"
+msgstr "Nový úkol"
+
+msgid "No picture"
+msgstr "Bez obrázku"
+
+msgid "No room"
+msgstr "Bez místnosti"
+
+msgid "No rooms yet. A task can also be without a room."
+msgstr "Zatím žádné místnosti. Úkol může být i bez místnosti."
+
+msgid "No tasks yet. Start with New task."
+msgstr "Zatím žádné úkoly. Začněte tlačítkem Nový úkol."
+
+msgid "Not in use"
+msgstr "Nepoužívané"
+
+msgid "On which day"
+msgstr "Kterého dne"
+
+#, python-format
+msgid "Once, %(date)s"
+msgstr "Jednou, %(date)s"
+
+msgid "Only makes sense on the day"
+msgstr "Má smysl jen ten den"
+
+msgid ""
+"Possible because it has never been done. Once done, a task can only be switched off."
+msgstr "Jde to, protože ještě nikdy nebyl hotový. Hotový úkol jde už jen vypnout."
+
+msgid "QR sticker"
+msgstr "QR nálepka"
+
+msgid "Room"
+msgstr "Místnost"
+
+#, python-format
+msgid "Saved: %(name)s"
+msgstr "Uloženo: %(name)s"
+
+msgid "Search"
+msgstr "Hledat"
+
+msgid "Show today"
+msgstr "Zobrazit dnes"
+
+msgid "Skip this time"
+msgstr "Tentokrát přeskočit"
+
+#, python-format
+msgid "Skipped: %(name)s"
+msgstr "Přeskočeno: %(name)s"
+
+msgid "Starts on"
+msgstr "Začíná"
+
+msgid "Switched off, it has no card and keeps its history."
+msgstr "Vypnutý úkol nemá kartu a jeho historie zůstává."
+
+msgid "Tasks and rooms are edited right here, after your PIN."
+msgstr "Úkoly a místnosti se upravují přímo tady, po zadání PINu."
+
+msgid "The rooms are shown in this order everywhere. Move them with the arrows."
+msgstr "Místnosti se všude ukazují v tomto pořadí. Posouvejte je šipkami."
+
+msgid "Then show"
+msgstr "Potom zobrazit"
+
+msgid "This task has been done before, so it can only be switched off."
+msgstr "Tento úkol už byl hotový, takže jde jen vypnout."
+
+msgid "Waiting"
+msgstr "Čeká"
+
+msgid "When asked for"
+msgstr "Na vyžádání"
+
+msgid ""
+"When this task is done, the card of the chosen task appears on Today. Best for a task "
+"set to Only when asked for."
+msgstr ""
+"Když je tento úkol hotový, objeví se v Dnes karta vybraného úkolu. Nejlépe se hodí "
+"úkol nastavený na Jen na vyžádání."
+
+msgid "Your own"
+msgstr "Vlastní"
+
+#, python-format
+msgid "on day %(day)d"
+msgstr "%(day)d. dne"
+
+msgid "on the last day"
+msgstr "poslední den"
+
+msgid "without a picture from the list"
+msgstr "bez obrázku ze seznamu"

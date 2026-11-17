@@ -103,11 +103,11 @@
   <details class="mt-16 text-stone-600">
     <summary class="cursor-pointer text-lg font-semibold">{% translate "For adults" %}</summary>
     <div class="card mt-3">
-      <p>{% translate "Tasks, rooms and family members are set up in the management pages. They are made for a PC." %}</p>
-      {% if owner %}
-      <p class="mt-2">{% translate "Sign in there with the password chosen at the start. The user name is:" %} <strong class="text-stone-900">{{ owner.username }}</strong></p>
-      {% endif %}
-      <div class="mt-4 flex flex-col gap-3 sm:flex-row">
+      <p>{% translate "Tasks and rooms are edited right here, after your PIN." %}</p>
+      <a href="{% url 'manage' %}" class="btn btn-primary mt-3 w-full sm:w-auto">{% translate "Edit tasks and rooms" %}</a>
+      <p class="mt-4">{% translate "Family members and devices are set up in the management pages, made for a PC." %}
+      {% if owner %}{% translate "Sign in there with the password chosen at the start. The user name is:" %} <strong class="text-stone-900">{{ owner.username }}</strong>{% endif %}</p>
+      <div class="mt-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
         <a href="{% url 'admin:index' %}" class="btn">{% translate "Management pages" %}</a>
         <a href="{% url 'check' %}" class="btn">{% translate "Device check" %}</a>
         <a href="{% url 'look' %}" class="btn">{% translate "Look: drafts to choose from" %}</a>

@@ -1,0 +1,16 @@
+{% load i18n %}
+{# One task in the list of tasks: its picture, name, how often it comes, and whether its card waits now. #}
+<li>
+  <a href="{% url 'manage-task' task.pk %}" class="card flex items-center gap-4 p-3 hover:ring-stone-400">
+    <span class="flex size-14 shrink-0 items-center justify-center">
+      {% include "tasks/_picture.html" with item=task size="text-4xl" %}
+    </span>
+    <span class="min-w-0 flex-1">
+      <span class="block leading-tight font-semibold">{{ task.name }}</span>
+      <span class="mt-0.5 block text-lg leading-tight text-stone-500">{{ task.summary }}{% if task.next_task %} · → {{ task.next_task.name }}{% endif %}</span>
+    </span>
+    {% if task.waiting %}
+    <span class="shrink-0 rounded-full bg-green-100 px-3 py-1 text-base font-semibold text-green-800">{% translate "Waiting" %}{% if task.rounds > 1 %} ×{{ task.rounds }}{% endif %}</span>
+    {% endif %}
+  </a>
+</li>

@@ -1,0 +1,34 @@
+{% extends "tasks/manage/_base.html" %}
+{% load i18n %}
+
+{# The first step of adding a task or room: pick a picture from the catalogue, which brings its name with it, or start from nothing. #}
+{% block heading %}{% if kind == "tasks" %}{% translate "New task" %}{% else %}{% translate "New room" %}{% endif %}{% endblock %}
+{% block back %}<a href="{% if kind == 'tasks' %}{% url 'manage-tasks' %}{% else %}{% url 'manage-rooms' %}{% endif %}" class="btn min-h-12 px-4 text-lg">← {% if kind == "tasks" %}{% translate "Tasks" %}{% else %}{% translate "Rooms" %}{% endif %}</a>{% endblock %}
+{% block heading_text %}{% if kind == "tasks" %}{% translate "New task" %}{% else %}{% translate "New room" %}{% endif %}{% endblock %}
+
+{% block content %}
+<div x-data="{ search: '' }">
+  <p class="mt-2 text-stone-600">{% translate "Choose a picture to start from. Its name comes with it and can be changed." %}</p>
+  <input type="search" x-model="search" class="field mt-4" placeholder="{% translate 'Search' %}" aria-label="{% translate 'Search' %}">
+
+  <ul class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
+    <li x-show="!search">
+      <a href="{{ own_url }}" class="card flex h-full flex-col items-center justify-center p-3 text-center hover:ring-stone-400">
+        <span class="text-6xl leading-none" aria-hidden="true">✏️</span>
+        <span class="mt-2 leading-tight font-semibold">{% translate "Your own" %}</span>
+        <span class="text-base leading-tight text-stone-500">{% translate "without a picture from the list" %}</span>
+      </a>
+    </li>
+    {% for sample in samples %}
+    <li data-name="{{ sample.name|lower }}" x-show="!search || $el.dataset.name.includes(search.toLowerCase())">
+      <a href="?picture={{ sample.picture }}" class="card flex h-full flex-col items-center p-3 text-center hover:ring-stone-400">
+        <span class="flex aspect-[4/3] w-full items-center justify-center">
+          {% include "tasks/_picture.html" with item=sample size="text-6xl" %}
+        </span>
+        <span class="mt-2 leading-tight font-semibold">{{ sample.name }}</span>
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}
