@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.6.0
+
+Rounds: one card for a pile that needs several goes.
+
+- A waiting card can be asked for again. A pile of washing for three loads is one card
+  marked **×3**. Add a round with **+1 ještě jednou** on the Done sheet, by scanning the
+  task's QR code again, or with **Kolikrát** (Times) in the management pages.
+- Done takes one round off; the card goes after the last one. Each round is listed under
+  Hotové on its own.
+- In a chain, each load asks for one emptying: two loads of the dishwasher leave
+  **Vyklidit myčku ×2**.
+- The licence texts of the pictures and fonts are now included next to them.
+
 ## 0.5.1
 
 Fix: **Done did nothing** for a task that had already been done earlier the same day,

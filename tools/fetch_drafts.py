@@ -32,6 +32,12 @@ FONTS = {
     "atkinson-latin-ext.woff2": ATKINSON + "latin-ext-wght-normal.woff2",
 }
 
+LICENCES = {
+    "Andika-OFL.txt": "@fontsource/andika@5.3.0",
+    "Nunito-OFL.txt": "@fontsource-variable/nunito@5.3.0",
+    "AtkinsonHyperlegibleNext-OFL.txt": "@fontsource-variable/atkinson-hyperlegible-next@5.3.0",
+}
+
 
 def fetch(url: str, target: Path) -> None:
     target.parent.mkdir(parents=True, exist_ok=True)
@@ -62,6 +68,13 @@ def main() -> None:
     fetch(f"{MATERIAL}{material}-fill.svg", pictures / "material" / "fallback.svg")
     for name, source in FONTS.items():
         fetch("https://cdn.jsdelivr.net/npm/" + source, ROOT / "static" / "fonts" / name)
+
+    # The licence texts, which have to travel with the files.
+    fetch(FLUENT.replace("/assets/", "/LICENSE"), pictures / "fluent" / "LICENSE")
+    fetch(MATERIAL.replace("/rounded/", "/LICENSE"), pictures / "material" / "LICENSE")
+    licences = ROOT / "static" / "fonts" / "licences"
+    for name, package in LICENCES.items():
+        fetch(f"https://cdn.jsdelivr.net/npm/{package}/LICENSE", licences / name)
 
 
 if __name__ == "__main__":

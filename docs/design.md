@@ -246,6 +246,7 @@ Two things exist internally. A **task** is the definition (what, which picture, 
 9. Each task has an effort size, small, medium or big, worth 1, 2 or 3 points for the jar.
 10. A task can belong to one room, or to none. The room decides where the card shows on the Rooms screen. It changes nothing about when the card appears.
 11. **Chains.** A task can name one task that comes next ("then show"): load the dishwasher, then empty it. When the card is done, the next task's card appears on Today at once, unless it is already waiting. The next task is usually one that is "only asked for"; a repeating one simply has its card brought forward, and a one-time task cannot come next. A chain cannot go round in a circle. Skipping a card does not start the chain. Undo takes the next card away again, unless someone has already done it. There is no delay ("two hours later"): the card simply waits until someone does it.
+12. **Rounds.** A waiting card can be asked for again: a pile of washing that needs three loads is one card marked ×3, not three tasks. Asking again (the QR code, "+1" on the Done sheet, a chain, the management pages) adds a round; Done takes one off and writes one completion; the card goes after the last round. The card keeps its place in the queue. Skip, and a day-only card nobody did, drop all rounds. A card has at most nine rounds. Two devices tapping Done on the same round still count once, because the sheet sends the number it showed. In a chain, each round done asks for one round of the next task: two loads of the dishwasher, two emptyings.
 
 ### How repetition works inside
 
@@ -607,6 +608,7 @@ Milestone 1 was delivered as four releases, each usable on its own: 0.2 with peo
 | 31 | A QR sticker holds a link to the task, opened by the phone's own camera app; the app asks before showing the card | Works on plain HTTP and every phone; live camera access in a browser needs HTTPS | Scanning inside the app with the browser's camera |
 | 32 | Chains: one "then show" task per task, shown at once when the card is done; the completion remembers what it brought forward, so Undo can take it back | The real chains (dishes, laundry) are straight lines; reuses "show today", so no new kind of card | Several next tasks; delays ("after two hours"), which need a timer and add little |
 | 33 | The picture and font drafts are chosen per device, in a cookie, on a Look page | Everyone can try them on their own screen, without changing anyone else's; nothing to store or undo once the choice is made | A household setting; screenshots only |
+| 34 | Rounds: a waiting card carries a count, raised by asking again and lowered by Done | One pile, one card; no need to split "wash whites, wash towels"; reuses "show today" and "at most one card per task" | Several cards of the same task; separate tasks per load |
 
 ## 17. Open questions
 

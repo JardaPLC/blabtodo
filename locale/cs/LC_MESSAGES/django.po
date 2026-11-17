@@ -581,9 +581,6 @@ msgstr "Prostřít stůl"
 msgid "Shovel the snow"
 msgstr "Odklidit sníh"
 
-msgid "Show the card today"
-msgstr "Zobrazit kartu dnes"
-
 msgid "Skip the waiting card (not needed this time)"
 msgstr "Přeskočit čekající kartu (tentokrát není potřeba)"
 
@@ -950,3 +947,37 @@ msgstr "potom zobrazit"
 
 msgid "That did not work. Please try again in a moment."
 msgstr "Nepodařilo se to. Zkuste to prosím za chvíli znovu."
+
+#, python-format
+msgid "%(name)s: %(rounds)s× in all"
+msgstr "%(name)s: celkem %(rounds)s×"
+
+#, python-format
+msgid "%(rounds)s times"
+msgstr "%(rounds)s×"
+
+#, python-format
+msgid "%(rounds)s× still to go"
+msgstr "Zbývá ještě %(rounds)s×"
+
+msgid "+1 more time"
+msgstr "+1 ještě jednou"
+
+msgid "How many times the waiting card has to be done, for example 3 loads of washing."
+msgstr "Kolikrát je potřeba čekající kartu udělat, například 3 pračky prádla."
+
+#, python-format
+msgid "It is to be done %(rounds)s time. Add one more?"
+msgid_plural "It is to be done %(rounds)s times. Add one more?"
+msgstr[0] "Má se udělat %(rounds)s×. Přidat ještě jednou?"
+msgstr[1] "Má se udělat %(rounds)s×. Přidat ještě jednou?"
+msgstr[2] "Má se udělat %(rounds)s×. Přidat ještě jednou?"
+
+msgid "One more time"
+msgstr "Ještě jednou"
+
+msgid "Show the card today, or one more time if it is waiting"
+msgstr "Zobrazit kartu dnes, nebo ještě jednou, pokud už čeká"
+
+msgid "times"
+msgstr "kolikrát"

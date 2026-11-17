@@ -81,14 +81,15 @@ def test_the_next_card_goes_to_the_end_of_the_queue(adult):
     assert waiting(TUE) == [older, empty]
 
 
-def test_a_card_that_already_waits_is_not_doubled_or_moved(adult):
+def test_a_card_that_already_waits_gets_one_more_round_and_keeps_its_place(adult):
     load, empty = chain("Load", "Empty")
     cards.show_today(empty, MON)
     done(load, MON, adult)
 
     empty.refresh_from_db()
     assert waiting(MON) == [empty]
-    assert Completion.objects.get().brought_forward is None
+    assert empty.rounds == 2
+    assert empty.next_card_date == MON
 
 
 def test_a_repeating_next_task_has_its_card_brought_forward(adult):
@@ -251,7 +252,6 @@ def test_a_chain_can_run_twice_in_one_day(adult):
     morning, evening = noon(MON), noon(MON) + timedelta(hours=8)
     load.repeat = ON_DEMAND
     load.save()
-    cards.show_today(load, MON)
 
     done(load, MON, adult, now=morning)
     done(empty, MON, adult, now=morning + timedelta(hours=2))
@@ -267,7 +267,6 @@ def test_undo_in_the_evening_takes_back_the_evenings_next_card(adult):
     load, empty = chain("Load", "Empty")
     load.repeat = ON_DEMAND
     load.save()
-    cards.show_today(load, MON)
     done(load, MON, adult, now=noon(MON))
     done(empty, MON, adult, now=noon(MON) + timedelta(hours=2))
     cards.show_today(load, MON)

@@ -95,16 +95,34 @@ def done(request, task_id):
         return response
 
     try:
+        rounds = int(request.POST.get("rounds", ""))
+    except ValueError:
+        rounds = None
+    try:
         completion = cards.complete(
             task_id=task.pk,
             card_date=card_date,
             people=who,
+            rounds=rounds,
             device=request.device,
             note=request.POST.get("note", "").strip()[:280],
         )
     except cards.CardGone:
         return _after(request, day, face, gone=True)
     return _after(request, day, face, completion=completion)
+
+
+@require_POST
+@trusted_device_required
+def one_more(request, task_id):
+    """The sheet's "+1": the waiting card is to be done one more time."""
+    day = cards.today()
+    face = _selected_face(request, _people())
+    task = get_object_or_404(Task, pk=task_id)
+    if not cards.is_waiting(task, day):
+        return _after(request, day, face, gone=True)
+    cards.show_today(task, day)
+    return _after(request, day, face, added=task)
 
 
 @require_POST
@@ -139,9 +157,16 @@ def _sheet(request, task, people, face, *, preselected, error=False):
     return render(request, "tasks/_sheet.html", context)
 
 
-def _after(request, day, face, *, completion=None, gone=False):
+def _after(request, day, face, *, completion=None, gone=False, added=None):
     """The refreshed cards, the Undo bar or a notice, and the signal to close the sheet."""
-    context = {**_cards_context(day, face), "completion": completion, "gone": gone}
+    if completion is not None:
+        completion.task.refresh_from_db()
+    context = {
+        **_cards_context(day, face),
+        "completion": completion,
+        "gone": gone,
+        "added": added,
+    }
     response = render(request, "tasks/_after_done.html", context)
     response.headers["HX-Retarget"] = "#cards"
     response.headers["HX-Reswap"] = "innerHTML"
@@ -162,8 +187,8 @@ def from_qr(request, key):
     day = cards.today()
     already_waiting = cards.is_waiting(task, day)
     if request.method == "POST":
-        if not already_waiting:
-            cards.show_today(task, day)
+        # Shows the card, or adds a round to the one that is waiting.
+        cards.show_today(task, day)
         return redirect("today")
     return render(request, "tasks/qr.html", {"task": task, "already_waiting": already_waiting})
 
