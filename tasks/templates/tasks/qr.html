@@ -13,7 +13,14 @@
 
   {% if already_waiting %}
   <p class="mt-6 text-center text-2xl font-bold">{% translate "It is already waiting on Today." %}</p>
-  <a href="{% url 'today' %}" class="btn btn-primary mt-auto w-full">{% translate "Go to Today" %}</a>
+  <p class="mt-2 text-center text-stone-600">
+    {% blocktranslate count rounds=task.rounds %}It is to be done {{ rounds }} time. Add one more?{% plural %}It is to be done {{ rounds }} times. Add one more?{% endblocktranslate %}
+  </p>
+  <form method="post" class="mt-auto flex gap-3 pt-6">
+    {% csrf_token %}
+    <a href="{% url 'today' %}" class="btn flex-1 px-3">{% translate "Not now" %}</a>
+    <button type="submit" class="btn btn-primary flex-[2]">{% translate "One more time" %}</button>
+  </form>
   {% else %}
   <p class="mt-6 text-center text-2xl font-bold">{% translate "Show this task on Today?" %}</p>
   <form method="post" class="mt-auto flex gap-3 pt-6">

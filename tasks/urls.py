@@ -7,6 +7,7 @@ urlpatterns = [
     path("cards/", views.cards_fragment, name="cards"),
     # A card's number is its task's number, because a task has at most one card.
     path("cards/<int:task_id>/done/", views.done, name="card-done"),
+    path("cards/<int:task_id>/one-more/", views.one_more, name="card-one-more"),
     path("completions/<int:completion_id>/undo/", views.undo, name="completion-undo"),
     path("done/", views.archive, name="archive"),
     # Trying the picture and font drafts on this device, until the family has chosen.

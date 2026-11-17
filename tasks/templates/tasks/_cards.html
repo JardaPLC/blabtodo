@@ -8,7 +8,11 @@
             class="card flex h-full w-full cursor-pointer flex-col items-center p-3 text-center hover:ring-stone-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700"
             hx-get="{% url 'card-done' task.pk %}{% if face %}?face={{ face.pk }}{% endif %}"
             hx-target="#sheet" hx-swap="innerHTML">
-      <span class="flex aspect-[4/3] w-full items-center justify-center">
+      <span class="relative flex aspect-[4/3] w-full items-center justify-center">
+        {% if task.rounds > 1 %}
+        <span class="absolute top-0 right-0 z-10 rounded-full bg-green-700 px-3 py-1 text-2xl leading-none font-bold text-white"
+              aria-label="{% blocktranslate with rounds=task.rounds %}{{ rounds }} times{% endblocktranslate %}">×{{ task.rounds }}</span>
+        {% endif %}
         {% include "tasks/_picture.html" with item=task size="text-7xl sm:text-8xl" %}
       </span>
       <span class="mt-2 leading-tight font-semibold">{{ task.name }}</span>

@@ -31,6 +31,7 @@ def _empty_task_form() -> dict:
         "end_date": "",
         "is_active": "on",
         "next_card_date": "",
+        "rounds": "1",
     }
 
 
@@ -53,6 +54,7 @@ def _form_showing(task: Task) -> dict:
         "weekdays": list(task.weekdays),
         "faces": [person.pk for person in task.faces.all()],
         "next_task": task.next_task_id or "",
+        "rounds": str(task.rounds),
     }
     if task.day_only:
         form["day_only"] = "on"

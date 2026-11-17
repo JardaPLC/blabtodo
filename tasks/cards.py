@@ -49,7 +49,8 @@ def _move_day_only_tasks_on(day: date) -> None:
     missed = Task.objects.filter(is_active=True, day_only=True, next_card_date__lt=day)
     for task in missed:
         task.next_card_date = first_on_or_after(task.rule, day)
-        task.save(update_fields=["next_card_date"])
+        task.rounds = 1
+        task.save(update_fields=["next_card_date", "rounds"])
 
 
 def is_waiting(task: Task, day: date) -> bool:
@@ -90,21 +91,34 @@ def replan_after_edit(task: Task, day: date) -> None:
     )
 
 
-def complete(*, task_id: int, card_date: date, people, device=None, note: str = "", now=None):
+def complete(
+    *,
+    task_id: int,
+    card_date: date,
+    people,
+    rounds: int | None = None,
+    device=None,
+    note: str = "",
+    now=None,
+):
     """
     Record that a card was done, and move its task on.
 
-    Doing a card today covers today: the next card appears on the next scheduled day
-    after today, even if this card had been waiting since last week.
+    A card asked for several times ("rounds", such as three loads of washing) loses one
+    round and stays. Doing the last round today covers today: the next card appears on
+    the next scheduled day after today, even if the card had been waiting since last week.
 
     Two people tapping Done on the same card produce one record: the transaction takes
-    the database's write lock first, so the second one finds the card gone.
+    the database's write lock first, so the second one finds the card gone, or with one
+    round fewer than their sheet showed (`rounds`).
     """
     now = now or timezone.now()
     day = today(now)
     with transaction.atomic():
         task = Task.objects.filter(pk=task_id).first()
         if task is None or not is_waiting(task, day) or task.next_card_date != card_date:
+            raise CardGone
+        if rounds is not None and task.rounds != rounds:
             raise CardGone
         completion = Completion.objects.create(
             task=task,
@@ -115,24 +129,31 @@ def complete(*, task_id: int, card_date: date, people, device=None, note: str = 
             points=task.effort,
         )
         completion.done_by.set(people)
-        task.next_card_date = next_after(task.rule, day)
-        task.save(update_fields=["next_card_date"])
+        if task.rounds > 1:
+            task.rounds -= 1
+        else:
+            task.next_card_date = next_after(task.rule, day)
+        task.save(update_fields=["next_card_date", "rounds"])
         _bring_next_task_forward(task, completion, day)
     return completion
 
 
 def _bring_next_task_forward(task: Task, completion: Completion, day: date) -> None:
     """
-    A chain: the task's "then show" task gets its card today, unless it already has one.
+    A chain: the task's "then show" task gets its card today, or one more round if its
+    card is already waiting. Each load of the dishwasher asks for one emptying.
 
     The completion remembers what it changed, so that Undo can change it back.
     """
     follower = Task.objects.filter(pk=task.next_task_id, is_active=True).first()
-    if follower is None or follower.pk == task.pk or is_waiting(follower, day):
+    if follower is None or follower.pk == task.pk:
         return
     completion.brought_forward = follower
     completion.brought_forward_from = follower.next_card_date
-    completion.save(update_fields=["brought_forward", "brought_forward_from"])
+    completion.brought_forward_rounds = follower.rounds if is_waiting(follower, day) else 0
+    completion.save(
+        update_fields=["brought_forward", "brought_forward_from", "brought_forward_rounds"]
+    )
     show_today(follower, day)
 
 
@@ -142,27 +163,34 @@ def undo(completion: Completion) -> None:
         task = completion.task
         if task.completions.filter(done_at__gt=completion.done_at).exists():
             raise CannotUndo
-        task.next_card_date = completion.card_date
-        task.save(update_fields=["next_card_date"])
+        if is_waiting(task, today()) and task.next_card_date == completion.card_date:
+            # The card had more rounds and is still there: it gets its round back.
+            task.rounds += 1
+        else:
+            task.next_card_date = completion.card_date
+            task.rounds = 1
+        task.save(update_fields=["next_card_date", "rounds"])
         _take_next_card_back(completion)
         completion.delete()
 
 
 def _take_next_card_back(completion: Completion) -> None:
     """
-    Undo of a chain: the card it made appear goes away again, if nobody has done it yet.
-
-    If someone already did it, that stays done.
+    Undo of a chain: the card or round it added goes away again, if nobody has done any
+    of it since. If someone has, that stays done.
     """
     follower = completion.brought_forward
     if follower is None:
         return
-    shown_on = today(completion.done_at)
-    still_waiting = follower.next_card_date == shown_on
-    done_since = follower.completions.filter(done_at__gt=completion.done_at).exists()
-    if still_waiting and not done_since:
+    if follower.completions.filter(done_at__gt=completion.done_at).exists():
+        return
+    if not is_waiting(follower, today()) or follower.rounds <= completion.brought_forward_rounds:
+        return
+    if follower.rounds > 1:
+        follower.rounds -= 1
+    else:
         follower.next_card_date = completion.brought_forward_from
-        follower.save(update_fields=["next_card_date"])
+    follower.save(update_fields=["next_card_date", "rounds"])
 
 
 def may_undo_from(completion: Completion, device, now=None) -> bool:
@@ -173,12 +201,27 @@ def may_undo_from(completion: Completion, device, now=None) -> bool:
 
 
 def skip(task: Task, day: date) -> None:
-    """Drop the waiting card ("not needed this time"). Nothing is recorded."""
+    """Drop the waiting card with all its rounds ("not needed this time"). Nothing is recorded."""
     task.next_card_date = next_after(task.rule, day)
-    task.save(update_fields=["next_card_date"])
+    task.rounds = 1
+    task.save(update_fields=["next_card_date", "rounds"])
+
+
+# A card cannot be asked for more often than this. Enough for any pile of washing, and a
+# QR code scanned again and again cannot run away with it.
+MAX_ROUNDS = 9
 
 
 def show_today(task: Task, day: date) -> None:
-    """Make the task's card appear now, ahead of its schedule."""
-    task.next_card_date = day
-    task.save(update_fields=["next_card_date"])
+    """
+    Ask for the task now: its card appears today, ahead of its schedule. If the card is
+    already waiting, it gets one more round instead ("three loads of washing").
+    """
+    # What counts is the card as it is now, not as it was when the task was read.
+    task.refresh_from_db(fields=["next_card_date", "rounds", "is_active", "day_only"])
+    if is_waiting(task, day):
+        task.rounds = min(task.rounds + 1, MAX_ROUNDS)
+    else:
+        task.next_card_date = day
+        task.rounds = 1
+    task.save(update_fields=["next_card_date", "rounds"])

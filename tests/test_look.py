@@ -84,9 +84,17 @@ def test_every_catalogue_picture_has_a_file_in_both_sets(pictures):
     assert (STATIC / "pictures" / pictures / "fallback.svg").is_file()
 
 
+def test_every_picture_set_and_font_comes_with_its_licence():
+    assert "MIT License" in (STATIC / "pictures" / "fluent" / "LICENSE").read_text()
+    assert "Apache License" in (STATIC / "pictures" / "material" / "LICENSE").read_text()
+    for font in ["Andika", "Nunito", "AtkinsonHyperlegibleNext"]:
+        text = (STATIC / "fonts" / "licences" / f"{font}-OFL.txt").read_text(encoding="utf-8")
+        assert "SIL OPEN FONT LICENSE" in text.upper()
+
+
 def test_every_font_file_the_stylesheet_names_is_there():
     css = (Path(settings.BASE_DIR) / "styles" / "app.css").read_text(encoding="utf-8")
     for font in ["andika", "nunito", "atkinson"]:
         assert f"html.font-{font}" in css
-    for name in (STATIC / "fonts").iterdir():
+    for name in (STATIC / "fonts").glob("*.woff2"):
         assert f"../fonts/{name.name}" in css

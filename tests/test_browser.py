@@ -574,3 +574,39 @@ def test_when_done_fails_the_screen_says_so_instead_of_doing_nothing(
     expect(page.locator("#problem")).to_contain_text("Nepodařilo se to")
     expect(sheet).not_to_be_visible()
     expect(page.locator("#cards")).to_contain_text("Zalít květiny")
+
+
+def test_a_pile_of_washing_three_rounds_one_card(allowed_page, live_server):
+    task = make_task("Vyprat prádlo", picture="load-washing-machine")
+    page = allowed_page
+    page.goto(live_server.url)
+    grid, sheet = page.locator("#cards"), page.locator("#sheet")
+    card = page.get_by_role("button", name=re.compile("Vyprat prádlo"))
+
+    # Two taps on "+1": the pile needs three loads.
+    for expected in ["×2", "×3"]:
+        card.click()
+        sheet.get_by_role("button", name="+1 ještě jednou").click()
+        expect(sheet).not_to_be_visible()
+        expect(grid).to_contain_text(expected)
+    folder = os.environ.get("BLABTODO_SCREENSHOTS")
+    if folder:
+        Path(folder).mkdir(parents=True, exist_ok=True)
+        page.set_viewport_size({"width": 360, "height": 640})
+        page.screenshot(path=str(Path(folder) / "11-rounds-card-phone.png"))
+        card.click()
+        expect(sheet).to_contain_text("Zbývá ještě 3×")
+        page.screenshot(path=str(Path(folder) / "11-rounds-sheet-phone.png"))
+        page.keyboard.press("Escape")
+
+    for left in ["×2", None, "Hotovo!"]:
+        _mark_done(page, "Vyprat prádlo")
+        if left == "×2":
+            expect(grid).to_contain_text("×2")
+            expect(page.locator("#undo-bar")).to_contain_text("Zbývá ještě 2×")
+        elif left is None:
+            expect(grid).to_contain_text("Vyprat prádlo")
+            expect(grid).not_to_contain_text("×")
+        else:
+            expect(grid).to_contain_text("Hotovo!")
+    assert Completion.objects.filter(task=task).count() == 3

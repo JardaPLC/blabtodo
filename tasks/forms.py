@@ -125,6 +125,7 @@ class TaskAdminForm(forms.ModelForm):
             "next_task",
             "is_active",
             "next_card_date",
+            "rounds",
         ]
 
     def __init__(self, *args, **kwargs):

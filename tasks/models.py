@@ -163,6 +163,16 @@ class Task(NamedInLanguages):
     # printed, and kept, so that printed stickers keep working.
     qr_key = models.CharField(max_length=32, unique=True, null=True, blank=True, editable=False)
     next_card_date = models.DateField(_("next card appears on"), null=True, blank=True)
+    # How many times the waiting card is asked for: 3 for three loads of washing. Done
+    # takes one off; the card goes when none is left. Means nothing while no card waits.
+    rounds = models.PositiveSmallIntegerField(
+        _("times"),
+        default=1,
+        validators=[MinValueValidator(1), MaxValueValidator(9)],
+        help_text=_(
+            "How many times the waiting card has to be done, for example 3 loads of washing."
+        ),
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -276,6 +286,8 @@ class Completion(models.Model):
         Task, null=True, blank=True, on_delete=models.SET_NULL, related_name="+", editable=False
     )
     brought_forward_from = models.DateField(null=True, blank=True, editable=False)
+    # How many rounds that task's card had before: 0 if it was not waiting.
+    brought_forward_rounds = models.PositiveSmallIntegerField(default=0, editable=False)
 
     class Meta:
         verbose_name = _("finished task")

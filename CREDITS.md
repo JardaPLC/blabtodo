@@ -38,7 +38,9 @@ are removed. They are fetched at fixed versions by `tools/fetch_drafts.py` and s
 | [Atkinson Hyperlegible Next](https://www.brailleinstitute.org/freefont/) | 5.3.0 | SIL Open Font Licence 1.1, © Braille Institute of America | npm `@fontsource-variable/atkinson-hyperlegible-next` |
 
 Each task's file is named after its picture key; `tasks/picture_drafts.py` says which
-emoji or symbol it is.
+emoji or symbol it is. The full licence texts are next to the files:
+`static/pictures/fluent/LICENSE`, `static/pictures/material/LICENSE` and
+`static/fonts/licences/`.
 
 ## Sounds
 

@@ -36,7 +36,15 @@ class RoomAdmin(admin.ModelAdmin):
 @admin.register(Task)
 class TaskAdmin(admin.ModelAdmin):
     form = TaskAdminForm
-    list_display = ["label", "room", "repeat", "next_task", "next_card_date", "is_active"]
+    list_display = [
+        "label",
+        "room",
+        "repeat",
+        "next_task",
+        "next_card_date",
+        "rounds",
+        "is_active",
+    ]
     list_filter = ["is_active", "room", "repeat"]
     actions = ["show_today", "skip_waiting_card", "print_stickers"]
     readonly_fields = ["comes_after_list"]
@@ -57,7 +65,7 @@ class TaskAdmin(admin.ModelAdmin):
             },
         ),
         (_("Chain"), {"fields": ["next_task", "comes_after_list"]}),
-        (_("State"), {"fields": ["is_active", "next_card_date"]}),
+        (_("State"), {"fields": ["is_active", "next_card_date", "rounds"]}),
     ]
 
     @admin.display(description=_("task"))
@@ -119,7 +127,7 @@ class TaskAdmin(admin.ModelAdmin):
             cards.replan_after_edit(obj, day)
         super().save_model(request, obj, form, change)
 
-    @admin.action(description=_("Show the card today"))
+    @admin.action(description=_("Show the card today, or one more time if it is waiting"))
     def show_today(self, request, queryset):
         day = cards.today()
         for task in queryset:

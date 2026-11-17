@@ -9,11 +9,18 @@
        x-show="shown" x-transition.opacity>
     <span class="leading-tight">
       <span class="block font-semibold">{% blocktranslate with name=completion.task.name %}Done: {{ name }}{% endblocktranslate %}</span>
+      {% if completion.task.next_card_date == completion.card_date %}<span class="block text-lg text-stone-300">{% blocktranslate with rounds=completion.task.rounds %}{{ rounds }}× still to go{% endblocktranslate %}</span>{% endif %}
       {% if completion.brought_forward %}<span class="block text-lg text-stone-300">{% blocktranslate with name=completion.brought_forward.name %}Next: {{ name }}{% endblocktranslate %}</span>{% endif %}
     </span>
     <button type="button" class="btn min-h-12 shrink-0 px-5"
             hx-post="{% url 'completion-undo' completion.pk %}{% if face %}?face={{ face.pk }}{% endif %}"
             hx-target="#cards" hx-swap="innerHTML">{% translate "Undo" %}</button>
+  </div>
+  {% elif added %}
+  <div class="pointer-events-auto mx-auto max-w-xl rounded-2xl bg-stone-900 px-5 py-4 text-white shadow-lg"
+       role="status" x-data="{ shown: true }" x-init="setTimeout(() => shown = false, 6000)"
+       x-show="shown" x-transition.opacity>
+    <span class="font-semibold">{% blocktranslate with name=added.name rounds=added.rounds %}{{ name }}: {{ rounds }}× in all{% endblocktranslate %}</span>
   </div>
   {% elif gone %}
   <div class="pointer-events-auto mx-auto max-w-xl rounded-2xl bg-stone-900 px-5 py-4 text-white shadow-lg"
