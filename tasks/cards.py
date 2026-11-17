@@ -91,6 +91,33 @@ def replan_after_edit(task: Task, day: date) -> None:
     )
 
 
+# Changing any of these changes on which days a task is scheduled.
+RULE_FIELDS = {"repeat", "interval", "weekdays", "day_of_month", "start_date", "end_date"}
+
+
+def plan_after_edit(task: Task, changed: set[str], *, created: bool, day: date) -> None:
+    """
+    Set the day of the next card after a task was added or changed in an editor. Does not
+    save. `changed` names the fields the editor changed.
+
+    A day set by hand is kept. A new task gets its first card the usual way. A task that
+    is switched on again starts afresh. A change to when it repeats replans a card that
+    is not waiting yet; a waiting card stays.
+    """
+    date_set_by_hand = "next_card_date" in changed and task.next_card_date is not None
+    date_cleared_by_hand = "next_card_date" in changed and task.next_card_date is None
+    switched_on_again = not created and "is_active" in changed and task.is_active
+    if date_set_by_hand:
+        return
+    if created:
+        plan_first_card(task)
+    elif switched_on_again:
+        plan_from(task, day)
+        task.rounds = 1
+    elif date_cleared_by_hand or RULE_FIELDS & changed:
+        replan_after_edit(task, day)
+
+
 def complete(
     *,
     task_id: int,

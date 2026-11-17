@@ -1,0 +1,35 @@
+{% extends "tasks/manage/_base.html" %}
+{% load i18n %}
+
+{% block heading %}{% translate "Tasks" %}{% endblock %}
+{% block heading_text %}{% translate "Tasks" %}{% endblock %}
+
+{% block content %}
+<a href="{% url 'manage-task-new' %}" class="btn btn-primary mt-4 w-full sm:w-auto">＋ {% translate "New task" %}</a>
+
+{% for group in groups %}
+<section class="mt-8">
+  <h2 class="flex items-center gap-2 text-xl font-bold">
+    {% if group.room %}{% include "tasks/_picture.html" with item=group.room size="text-2xl" %}{% endif %}
+    {{ group.title }}
+  </h2>
+  <ul class="mt-3 flex flex-col gap-2">
+    {% for task in group.tasks %}{% include "tasks/manage/_task_row.html" %}{% endfor %}
+  </ul>
+</section>
+{% empty %}
+<div class="card mt-6 py-10 text-center">
+  <p class="text-6xl leading-none" aria-hidden="true">📋</p>
+  <p class="mt-4 text-stone-600">{% translate "No tasks yet. Start with New task." %}</p>
+</div>
+{% endfor %}
+
+{% if not_in_use %}
+<section class="mt-10">
+  <h2 class="text-xl font-bold text-stone-500">{% translate "Not in use" %}</h2>
+  <ul class="mt-3 flex flex-col gap-2 opacity-70">
+    {% for task in not_in_use %}{% include "tasks/manage/_task_row.html" %}{% endfor %}
+  </ul>
+</section>
+{% endif %}
+{% endblock %}

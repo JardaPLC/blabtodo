@@ -1,6 +1,6 @@
 from django.urls import path
 
-from . import views
+from . import manage, views
 
 urlpatterns = [
     path("", views.today, name="today"),
@@ -14,4 +14,22 @@ urlpatterns = [
     path("look/", views.look, name="look"),
     # Where a printed QR code leads. The key is random, so the address cannot be guessed.
     path("t/<str:key>/", views.from_qr, name="task-qr"),
+    # The adult view: editing tasks and rooms in the app.
+    path("manage/", manage.home, name="manage"),
+    path("manage/tasks/", manage.task_list, name="manage-tasks"),
+    path("manage/tasks/new/", manage.task_new, name="manage-task-new"),
+    path("manage/tasks/<int:task_id>/", manage.task_edit, name="manage-task"),
+    path("manage/tasks/<int:task_id>/show/", manage.task_show, name="manage-task-show"),
+    path("manage/tasks/<int:task_id>/skip/", manage.task_skip, name="manage-task-skip"),
+    path("manage/tasks/<int:task_id>/delete/", manage.task_delete, name="manage-task-delete"),
+    path("manage/tasks/<int:task_id>/sticker/", manage.task_sticker, name="manage-task-sticker"),
+    path("manage/rooms/", manage.room_list, name="manage-rooms"),
+    path("manage/rooms/new/", manage.room_new, name="manage-room-new"),
+    path("manage/rooms/<int:room_id>/", manage.room_edit, name="manage-room"),
+    path(
+        "manage/rooms/<int:room_id>/move/<str:direction>/",
+        manage.room_move,
+        name="manage-room-move",
+    ),
+    path("manage/rooms/<int:room_id>/delete/", manage.room_delete, name="manage-room-delete"),
 ]

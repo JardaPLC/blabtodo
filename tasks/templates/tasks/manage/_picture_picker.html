@@ -1,0 +1,42 @@
+{% load i18n %}
+{# Choosing a picture: the chosen one large, and a sheet with every picture of the catalogue. Choosing one also offers its name, as the placeholder of the name box. Expects `form`, `preview` (the chosen picture as an unsaved task or room), `blank` (no picture) and `pictures`. #}
+<div x-data="{ picture: '{{ form.picture.value|default:''|escapejs }}' }">
+  <input type="hidden" name="picture" :value="picture" value="{{ form.picture.value|default:'' }}">
+  <div class="flex items-center gap-4">
+    <span x-ref="preview" class="flex size-28 shrink-0 items-center justify-center rounded-3xl bg-white ring-1 ring-stone-200">
+      {% include "tasks/_picture.html" with item=preview size="text-7xl" %}
+    </span>
+    <button type="button" class="btn" @click="$refs.pictures.showModal()">{% translate "Change picture" %}</button>
+  </div>
+  {% for error in form.picture.errors %}<p class="mt-1 font-semibold text-red-700">{{ error }}</p>{% endfor %}
+
+  <dialog x-ref="pictures" aria-label="{% translate 'Choose a picture' %}"
+          class="m-0 h-dvh max-h-none w-screen max-w-none overflow-y-auto bg-stone-50 p-0 text-xl text-stone-900 backdrop:bg-stone-900/60 sm:m-auto sm:h-fit sm:max-h-[92dvh] sm:w-full sm:max-w-2xl sm:rounded-3xl">
+    <div class="sticky top-0 z-10 flex items-center justify-between gap-3 bg-stone-50 px-4 pt-4 pb-3">
+      <h2 class="text-2xl font-bold">{% translate "Choose a picture" %}</h2>
+      <button type="button" class="btn min-h-12 px-4 text-lg" @click="$refs.pictures.close()">{% translate "Close" %}</button>
+    </div>
+    <ul class="grid grid-cols-3 gap-2 px-4 pb-6 sm:grid-cols-4">
+      {% for sample in pictures %}
+      <li>
+        <button type="button" data-name="{{ sample.name }}"
+                class="flex h-full w-full cursor-pointer flex-col items-center rounded-2xl bg-white p-2 text-center ring-1 ring-stone-200 hover:ring-stone-400"
+                :class="picture === '{{ sample.picture }}' && 'ring-4 ring-green-600'"
+                @click="picture = '{{ sample.picture }}'; $refs.preview.innerHTML = $el.querySelector('[data-art]').innerHTML; $dispatch('picture-chosen', { name: $el.dataset.name }); $refs.pictures.close()">
+          <span data-art class="flex aspect-square w-full items-center justify-center">{% include "tasks/_picture.html" with item=sample size="text-5xl" %}</span>
+          <span class="mt-1 text-base leading-tight">{{ sample.name }}</span>
+        </button>
+      </li>
+      {% endfor %}
+      <li>
+        <button type="button" data-name=""
+                class="flex h-full w-full cursor-pointer flex-col items-center rounded-2xl bg-white p-2 text-center ring-1 ring-stone-200 hover:ring-stone-400"
+                :class="picture === '' && 'ring-4 ring-green-600'"
+                @click="picture = ''; $refs.preview.innerHTML = $el.querySelector('[data-art]').innerHTML; $dispatch('picture-chosen', { name: '' }); $refs.pictures.close()">
+          <span data-art class="flex aspect-square w-full items-center justify-center">{% include "tasks/_picture.html" with item=blank size="text-5xl" %}</span>
+          <span class="mt-1 text-base leading-tight">{% translate "No picture" %}</span>
+        </button>
+      </li>
+    </ul>
+  </dialog>
+</div>

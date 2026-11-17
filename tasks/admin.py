@@ -5,21 +5,17 @@ For now these are Django's own admin pages. The touch-friendly task editor repla
 for everyday use in milestone 2.
 """
 
-import segno
 from django.contrib import admin, messages
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.urls import path, reverse
-from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import ngettext
 
 from . import cards
 from .forms import RoomAdminForm, TaskAdminForm
 from .models import Completion, Room, Task
-
-# Changing any of these changes on which days the task is scheduled.
-RULE_FIELDS = {"repeat", "interval", "weekdays", "day_of_month", "start_date", "end_date"}
+from .stickers import stickers_context
 
 
 @admin.register(Room)
@@ -87,20 +83,13 @@ class TaskAdmin(admin.ModelAdmin):
         return redirect(reverse("admin:tasks_task_stickers") + "?ids=" + chosen)
 
     def stickers_view(self, request):
-        """
-        A page of QR stickers for the chosen tasks.
-
-        Each code holds the full address of the task's scan page, as this browser reached
-        the app. That is why the stickers are printed from the address the family uses.
-        """
+        """A page of QR stickers for the chosen tasks."""
         ids = [int(part) for part in request.GET.get("ids", "").split(",") if part.isdigit()]
-        stickers = []
-        for task in Task.objects.filter(pk__in=ids, is_active=True):
-            address = request.build_absolute_uri(reverse("task-qr", args=[task.ensure_qr_key()]))
-            code = segno.make(address, error="m").svg_inline(omitsize=True, title=task.name)
-            stickers.append((task, mark_safe(code)))  # noqa: S308 - segno escapes the title
-        context = {"stickers": stickers, "address": request.build_absolute_uri("/")}
-        return TemplateResponse(request, "tasks/stickers.html", context)
+        tasks = Task.objects.filter(pk__in=ids, is_active=True)
+        back = reverse("admin:tasks_task_changelist")
+        return TemplateResponse(
+            request, "tasks/stickers.html", stickers_context(request, tasks, back)
+        )
 
     def has_delete_permission(self, request, obj=None):
         # A task that was never done can be deleted, for example one added by mistake.
@@ -112,19 +101,7 @@ class TaskAdmin(admin.ModelAdmin):
         return super().has_delete_permission(request, obj)
 
     def save_model(self, request, obj, form, change):
-        day = cards.today()
-        date_set_by_hand = "next_card_date" in form.changed_data and obj.next_card_date is not None
-        date_cleared_by_hand = "next_card_date" in form.changed_data and obj.next_card_date is None
-        switched_on_again = change and "is_active" in form.changed_data and obj.is_active
-
-        if date_set_by_hand:
-            pass
-        elif not change:
-            cards.plan_first_card(obj)
-        elif switched_on_again:
-            cards.plan_from(obj, day)
-        elif date_cleared_by_hand or RULE_FIELDS & set(form.changed_data):
-            cards.replan_after_edit(obj, day)
+        cards.plan_after_edit(obj, set(form.changed_data), created=not change, day=cards.today())
         super().save_model(request, obj, form, change)
 
     @admin.action(description=_("Show the card today, or one more time if it is waiting"))

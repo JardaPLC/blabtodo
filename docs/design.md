@@ -2,7 +2,7 @@
 
 A home task manager for one family. Household tasks sit in one shared queue that any screen in the house can show, and marking a task done takes two taps.
 
-- **Status:** draft 0.10, 2026-11-14. Milestone 0 runs on the Pi; its backups and restore rehearsal are still to be done. Milestone 1 is built: people, devices, tasks, rooms, chains, Today, Done and the list of finished tasks. The picture and font drafts are on the Look page, waiting for the family's choice.
+- **Status:** draft 0.11, 2026-11-17. Milestone 0 runs on the Pi; its backups and restore rehearsal are still to be done. Milestone 1 is built: people, devices, tasks, rooms, chains, rounds, Today with its people and room filter, Done and the list of finished tasks. Milestone 2 has started: tasks and rooms are edited in the app, in the first part of the admin view.
 - **Designed for:** a family with children who cannot read yet and who will grow into it. Czech by default, English as a second language. Used on phones, tablets, PCs and a wall panel. Reachable on the home network only.
 - **Not settled:** see [Open questions](#17-open-questions).
 - **How to read this:** sections 1–6 describe what the app does, 7–13 how it is built, 14–17 the plan, the decisions and what is still open.
@@ -144,7 +144,7 @@ Newest first, grouped by day. Each entry shows the picture, the title, the faces
 
 ### 3.5 Admin view
 
-Tasks (a list and an editor with a picture picker and repeat settings), Rooms, People, Jar goals, Statistics, Devices, Settings. Its own Queue and Archive lists carry the correction buttons: skip a card, reopen a finished one, change who did it. In the first milestone tasks are set up in Django's admin pages; the admin view comes right after.
+Tasks (a list and an editor with a picture picker and repeat settings), Rooms, People, Jar goals, Statistics, Devices, Settings. Its own Queue and Archive lists carry the correction buttons: skip a card, reopen a finished one, change who did it. Built so far (0.7): the way in with a PIN, the task list and editor (catalogue, picture picker, repeat, room, faces, effort, chain, show today, skip, QR sticker, delete when never done) and the room list and editor (catalogue, order, delete). People, devices and corrections of finished tasks are still in Django's admin pages.
 
 ### 3.6 Rules for every screen
 
@@ -610,6 +610,7 @@ Milestone 1 was delivered as four releases, each usable on its own: 0.2 with peo
 | 33 | The picture and font drafts are chosen per device, in a cookie, on a Look page | Everyone can try them on their own screen, without changing anyone else's; nothing to store or undo once the choice is made | A household setting; screenshots only |
 | 34 | Rounds: a waiting card carries a count, raised by asking again and lowered by Done | One pile, one card; no need to split "wash whites, wash towels"; reuses "show today" and "at most one card per task" | Several cards of the same task; separate tasks per load |
 | 35 | One filter row on Today with a switch between people and rooms; one filter at a time, kept in the address | A display in a room is simply left on that room's address; no second screen to build; "Dad's tasks in the kitchen" is not needed | A separate Rooms screen (decision 23); two filters at once |
+| 36 | The admin view is unlocked with an adult's PIN for 30 minutes on that browser, extended while it is used, and ends with Finish | One PIN, the same pause after wrong tries; no passwords on a phone; a forgotten phone locks itself | Django's own sign-in with a password; an unlock that lasts until signed out |
 
 ## 17. Open questions
 

@@ -138,11 +138,89 @@ class TaskAdminForm(forms.ModelForm):
         if self.instance.pk is not None:
             followers = followers.exclude(pk=self.instance.pk)
         self.fields["next_task"].queryset = followers
-        self.fields["next_card_date"].help_text = _(
-            "Leave empty to let the app work it out. Set a day to make the card appear then."
-        )
+        if "next_card_date" in self.fields:
+            self.fields["next_card_date"].help_text = _(
+                "Leave empty to let the app work it out. Set a day to make the card appear then."
+            )
 
     def clean(self):
         cleaned = super().clean()
         cleaned["names"] = _names_or_those_of_the_picture(self, catalogue.TASKS_BY_KEY)
         return cleaned
+
+
+# ---- The editors in the app (the adult view) ----
+
+
+class NameBoxesMixin:
+    """The name boxes one by one, so that an editor can show the main one first."""
+
+    def name_boxes(self) -> list[dict]:
+        value = self["names"].value()
+        if isinstance(value, dict):
+            values = [value.get(code, "") for code, _language in settings.LANGUAGES]
+        else:
+            values = list(value or [])
+        values += [""] * (len(settings.LANGUAGES) - len(values))
+        return [
+            {"name": f"names_{code}", "language": language, "value": values[index] or ""}
+            for index, (code, language) in enumerate(settings.LANGUAGES)
+        ]
+
+
+class TaskEditForm(NameBoxesMixin, TaskAdminForm):
+    """
+    The task editor of the adult view: the same rules as the management pages, without
+    the fields that only the app itself should move (the next card's day, the rounds).
+    """
+
+    class Meta(TaskAdminForm.Meta):
+        fields = [
+            field
+            for field in TaskAdminForm.Meta.fields
+            if field not in {"next_card_date", "rounds"}
+        ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for box in self.fields["names"].widget.widgets:
+            box.attrs["class"] = "field"
+        for name in ["start_date", "end_date"]:
+            self.fields[name].widget = forms.DateInput(
+                attrs={"type": "date", "class": "field"}, format="%Y-%m-%d"
+            )
+        for name in ["interval", "day_of_month"]:
+            self.fields[name].widget.attrs.update({"class": "field w-28 text-center"})
+        self.fields["hint"].widget.attrs["class"] = "field"
+        self.fields["next_task"].widget.attrs["class"] = "field"
+
+    def chosen(self, name: str) -> set[str]:
+        """The chosen values of a field with several choices, as text, for ticking boxes."""
+        value = self[name].value() or []
+        if not isinstance(value, list | tuple | set):
+            value = [value]
+        return {str(getattr(item, "pk", item)) for item in value}
+
+    @property
+    def chosen_weekdays(self) -> set[str]:
+        return self.chosen("weekdays")
+
+    @property
+    def chosen_faces(self) -> set[str]:
+        return self.chosen("faces")
+
+    @property
+    def chosen_room(self) -> str:
+        return next(iter(self.chosen("room")), "")
+
+
+class RoomEditForm(NameBoxesMixin, RoomAdminForm):
+    """The room editor of the adult view. The order is changed with arrows in the list."""
+
+    class Meta(RoomAdminForm.Meta):
+        fields = ["names", "picture", "is_active"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for box in self.fields["names"].widget.widgets:
+            box.attrs["class"] = "field"

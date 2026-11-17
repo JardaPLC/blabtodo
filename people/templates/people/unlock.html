@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{# The way into the adult view. Kept compact like the device screen: the pad fits a phone without scrolling. #}
+{% block body %}
+<main class="mx-auto max-w-md px-4 pt-4 pb-6">
+  <a href="{% url 'today' %}" class="btn min-h-12 px-4 text-lg">← {% translate "Today" %}</a>
+  <h1 class="mt-3 text-2xl leading-tight font-bold tracking-tight sm:text-3xl">{% translate "For adults" %}</h1>
+  <p class="mt-2 text-lg leading-snug text-stone-600">{% translate "Enter your PIN to edit tasks and rooms on this device." %}</p>
+  {% translate "Continue" as submit_label %}
+  {% include "people/_pin_pad.html" %}
+</main>
+{% endblock %}

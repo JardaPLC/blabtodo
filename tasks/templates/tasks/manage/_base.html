@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{# The frame of every page of the adult view: where it goes back to, its title, who is editing, and Finish. #}
+{% block title %}{% block heading %}{% endblock %} · blabtodo{% endblock %}
+
+{% block body %}
+<main class="mx-auto max-w-3xl px-4 pt-4 pb-32 sm:px-6">
+  <div class="flex items-center justify-between gap-3">
+    {% block back %}<a href="{% url 'manage' %}" class="btn min-h-12 px-4 text-lg">← {% translate "For adults" %}</a>{% endblock %}
+    <form method="post" action="{% url 'finish' %}">
+      {% csrf_token %}
+      <button type="submit" class="btn min-h-12 px-4 text-lg">{% translate "Finish" %}</button>
+    </form>
+  </div>
+  <h1 class="mt-4 text-3xl leading-tight font-bold tracking-tight sm:text-4xl">{% block heading_text %}{% endblock %}</h1>
+
+  {% if messages %}
+  <div class="mt-4 flex flex-col gap-2" aria-live="polite">
+    {% for message in messages %}
+    <p class="rounded-2xl px-4 py-3 font-semibold {% if message.level_tag == 'error' %}bg-red-50 text-red-800 ring-1 ring-red-200{% else %}bg-green-50 text-green-900 ring-1 ring-green-200{% endif %}">{{ message }}</p>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% block content %}{% endblock %}
+</main>
+{% endblock %}
