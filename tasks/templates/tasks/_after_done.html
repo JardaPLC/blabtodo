@@ -13,7 +13,7 @@
       {% if completion.brought_forward %}<span class="block text-lg text-stone-300">{% blocktranslate with name=completion.brought_forward.name %}Next: {{ name }}{% endblocktranslate %}</span>{% endif %}
     </span>
     <button type="button" class="btn min-h-12 shrink-0 px-5"
-            hx-post="{% url 'completion-undo' completion.pk %}{% if face %}?face={{ face.pk }}{% endif %}"
+            hx-post="{% url 'completion-undo' completion.pk %}{{ card_filter.query }}"
             hx-target="#cards" hx-swap="innerHTML">{% translate "Undo" %}</button>
   </div>
   {% elif added %}

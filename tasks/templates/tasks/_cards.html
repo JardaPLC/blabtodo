@@ -6,7 +6,7 @@
   <li>
     <button type="button"
             class="card flex h-full w-full cursor-pointer flex-col items-center p-3 text-center hover:ring-stone-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700"
-            hx-get="{% url 'card-done' task.pk %}{% if face %}?face={{ face.pk }}{% endif %}"
+            hx-get="{% url 'card-done' task.pk %}{{ card_filter.query }}"
             hx-target="#sheet" hx-swap="innerHTML">
       <span class="relative flex aspect-[4/3] w-full items-center justify-center">
         {% if task.rounds > 1 %}
@@ -16,7 +16,7 @@
         {% include "tasks/_picture.html" with item=task size="text-7xl sm:text-8xl" %}
       </span>
       <span class="mt-2 leading-tight font-semibold">{{ task.name }}</span>
-      {% if task.room %}
+      {% if task.room and not card_filter.room %}
       <span class="mt-1 text-lg leading-tight text-stone-500">{{ task.room.name }}</span>
       {% endif %}
       <span class="mt-auto flex min-h-11 w-full items-end justify-between gap-2 pt-2">
@@ -36,7 +36,7 @@
   <p class="text-7xl leading-none" aria-hidden="true">🎉</p>
   <p class="mt-4 text-3xl font-bold">{% translate "All done!" %}</p>
   <p class="mt-2 text-stone-600">
-    {% if face %}{% translate "Nothing is waiting for this person right now." %}{% else %}{% translate "Nothing is waiting right now." %}{% endif %}
+    {% if card_filter.face %}{% translate "Nothing is waiting for this person right now." %}{% elif card_filter.room %}{% translate "Nothing is waiting in this room right now." %}{% elif card_filter.no_room %}{% translate "Nothing else is waiting right now." %}{% else %}{% translate "Nothing is waiting right now." %}{% endif %}
   </p>
 </div>
 {% endif %}

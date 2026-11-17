@@ -1,7 +1,7 @@
 {% load i18n %}
 {# The sheet for marking one card done. Loaded into the <dialog> of the Today screen. #}
 <form class="flex min-h-full flex-col"
-      hx-post="{% url 'card-done' task.pk %}{% if face %}?face={{ face.pk }}{% endif %}"
+      hx-post="{% url 'card-done' task.pk %}{{ card_filter.query }}"
       hx-target="#cards" hx-swap="innerHTML"
       x-data="{ picked: {{ preselected|length }}, note: false }">
   {# Which card this is. If someone else finishes it meanwhile, the server can tell. #}
@@ -42,7 +42,7 @@
     <div class="mt-4 flex flex-wrap gap-2">
       {# One more round, for a pile that needs several: three loads of washing. #}
       <button type="button" class="btn min-h-12 px-4 text-lg"
-              hx-post="{% url 'card-one-more' task.pk %}{% if face %}?face={{ face.pk }}{% endif %}"
+              hx-post="{% url 'card-one-more' task.pk %}{{ card_filter.query }}"
               hx-target="#cards" hx-swap="innerHTML">{% translate "+1 more time" %}</button>
       <button type="button" class="btn min-h-12 px-4 text-lg" x-show="!note"
               @click="note = true; $nextTick(() => $refs.note.focus())">{% translate "Add a note" %}</button>
